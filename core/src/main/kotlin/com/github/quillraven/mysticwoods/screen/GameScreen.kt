@@ -26,6 +26,7 @@ class GameScreen : KtxScreen {
         componentListener<PhysicComponentListener>()
         componentListener<ImageComponentListener>()
 
+        system<PlayerInputSystem>()
         system<SpawnSystem>()
         system<MoveSystem>()
         system<PhysicSystem>()
