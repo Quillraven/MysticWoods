@@ -64,8 +64,8 @@ class PhysicSystem(
             val (bodyX, bodyY) = physicCmp.body.position
 
             setPosition(
-                MathUtils.lerp(prevX, bodyX - width * 0.5f, alpha),
-                MathUtils.lerp(prevY, bodyY - height * 0.5f, alpha)
+                MathUtils.lerp(prevX, bodyX - width * 0.5f, 1f - alpha),
+                MathUtils.lerp(prevY, bodyY - height * 0.5f, 1f - alpha)
             )
         }
     }
