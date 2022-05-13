@@ -1,0 +1,314 @@
+
+characters.png
+size: 2048, 64
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+player/attack
+  rotate: false
+  xy: 54, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 2
+player/attack
+  rotate: false
+  xy: 418, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 1
+player/attack
+  rotate: false
+  xy: 678, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 3
+player/attack
+  rotate: false
+  xy: 782, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 0
+player/death
+  rotate: false
+  xy: 210, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 2
+player/death
+  rotate: false
+  xy: 574, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 1
+player/death
+  rotate: false
+  xy: 938, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 0
+player/idle
+  rotate: false
+  xy: 158, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 3
+player/idle
+  rotate: false
+  xy: 314, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 0
+player/idle
+  rotate: false
+  xy: 366, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 5
+player/idle
+  rotate: false
+  xy: 522, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 2
+player/idle
+  rotate: false
+  xy: 730, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 4
+player/idle
+  rotate: false
+  xy: 886, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 1
+player/run
+  rotate: false
+  xy: 2, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 0
+player/run
+  rotate: false
+  xy: 106, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 5
+player/run
+  rotate: false
+  xy: 262, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 2
+player/run
+  rotate: false
+  xy: 470, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 4
+player/run
+  rotate: false
+  xy: 626, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 1
+player/run
+  rotate: false
+  xy: 834, 2
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 3
+slime/attack
+  rotate: false
+  xy: 1062, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 5
+slime/attack
+  rotate: false
+  xy: 1134, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+slime/attack
+  rotate: false
+  xy: 1386, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 4
+slime/attack
+  rotate: false
+  xy: 1422, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+slime/attack
+  rotate: false
+  xy: 1566, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 6
+slime/attack
+  rotate: false
+  xy: 1746, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+slime/attack
+  rotate: false
+  xy: 1818, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+slime/death
+  rotate: false
+  xy: 1170, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 4
+slime/death
+  rotate: false
+  xy: 1242, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+slime/death
+  rotate: false
+  xy: 1458, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+slime/death
+  rotate: false
+  xy: 1602, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+slime/death
+  rotate: false
+  xy: 1854, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+slime/fear
+  rotate: false
+  xy: 1098, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+slime/fear
+  rotate: false
+  xy: 1278, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+slime/fear
+  rotate: false
+  xy: 1674, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+slime/idle
+  rotate: false
+  xy: 990, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+slime/idle
+  rotate: false
+  xy: 1314, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+slime/idle
+  rotate: false
+  xy: 1494, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+slime/idle
+  rotate: false
+  xy: 1638, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+slime/run
+  rotate: false
+  xy: 1026, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+slime/run
+  rotate: false
+  xy: 1206, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 4
+slime/run
+  rotate: false
+  xy: 1350, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+slime/run
+  rotate: false
+  xy: 1530, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+slime/run
+  rotate: false
+  xy: 1710, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 0
+slime/run
+  rotate: false
+  xy: 1782, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 5
