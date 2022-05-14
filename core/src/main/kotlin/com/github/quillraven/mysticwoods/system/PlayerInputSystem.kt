@@ -9,14 +9,14 @@ import com.github.quillraven.fleks.IteratingSystem
 import com.github.quillraven.mysticwoods.component.MoveComponent
 import com.github.quillraven.mysticwoods.component.PlayerComponent
 import ktx.app.KtxInputAdapter
-import ktx.math.vec2
 
 @AllOf([PlayerComponent::class])
 class PlayerInputSystem(
     private val moveCmps: ComponentMapper<MoveComponent>
 ) : IteratingSystem(), KtxInputAdapter {
     private var updateMovement = false
-    private val angle = vec2()
+    private var playerCos = 0f
+    private var playerSin = 0f
     private val pressedKeys = mutableSetOf<Int>()
 
     init {
@@ -34,10 +34,10 @@ class PlayerInputSystem(
         if (keycode.isMovementKey()) {
             updateMovement = true
             when (keycode) {
-                UP -> angle.y = 1f
-                DOWN -> angle.y = -1f
-                RIGHT -> angle.x = 1f
-                LEFT -> angle.x = -1f
+                UP -> playerSin = 1f
+                DOWN -> playerSin = -1f
+                RIGHT -> playerCos = 1f
+                LEFT -> playerCos = -1f
             }
             return true
         }
@@ -49,10 +49,10 @@ class PlayerInputSystem(
         if (keycode.isMovementKey()) {
             updateMovement = true
             when (keycode) {
-                UP -> angle.y = if (isPressed(DOWN)) -1f else 0f
-                DOWN -> angle.y = if (isPressed(UP)) 1f else 0f
-                RIGHT -> angle.x = if (isPressed(LEFT)) -1f else 0f
-                LEFT -> angle.x = if (isPressed(RIGHT)) 1f else 0f
+                UP -> playerSin = if (isPressed(DOWN)) -1f else 0f
+                DOWN -> playerSin = if (isPressed(UP)) 1f else 0f
+                RIGHT -> playerCos = if (isPressed(LEFT)) -1f else 0f
+                LEFT -> playerCos = if (isPressed(RIGHT)) 1f else 0f
             }
             return true
         }
@@ -62,7 +62,10 @@ class PlayerInputSystem(
     override fun onTickEntity(entity: Entity) {
         if (updateMovement) {
             updateMovement = false
-            moveCmps[entity].angle.set(angle)
+            with(moveCmps[entity]) {
+                cos = playerCos
+                sin = playerSin
+            }
         }
     }
 }

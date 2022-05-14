@@ -1,6 +1,6 @@
 package com.github.quillraven.mysticwoods.system
 
-import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.math.Interpolation
 import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
@@ -18,22 +18,23 @@ class MoveSystem(
     private val imgCmps: ComponentMapper<ImageComponent>,
 ) : IteratingSystem() {
     private fun setSpeedImpulse(
-        speed: Vector2,
-        angle: Vector2,
+        speed: Float,
+        cos: Float,
+        sin: Float,
         physicCmp: PhysicComponent
     ) {
         val mass = physicCmp.body.mass
         val (velX, velY) = physicCmp.body.linearVelocity
-        val (speedX, speedY) = speed
         physicCmp.impulse.set(
-            mass * (speedX * angle.x - velX),
-            mass * (speedY * angle.y - velY)
+            mass * (speed * cos - velX),
+            mass * (speed * sin - velY)
         )
     }
 
     override fun onTickEntity(entity: Entity) {
         val moveCmp = moveCmps[entity]
-        if (moveCmp.angle.isZero) {
+        if (moveCmp.cos == 0f && moveCmp.sin == 0f) {
+            // no movement
             if (moveCmp.alpha > 0) {
                 // entity is moving -> stop it
                 moveCmp.alpha = 0f
@@ -49,17 +50,18 @@ class MoveSystem(
 
         val physicCmp = physicCmps[entity]
         if (moveCmp.alpha >= 1) {
-            setSpeedImpulse(moveCmp.max, moveCmp.angle, physicCmp)
+            setSpeedImpulse(moveCmp.max, moveCmp.cos, moveCmp.sin, physicCmp)
         } else {
-            // multiply by 0.5f to take 2 seconds instead of 1 to get to maximum speed
-            moveCmp.alpha += (deltaTime * 0.5f)
-            moveCmp.speed.lerp(moveCmp.max, moveCmp.alpha)
-            setSpeedImpulse(moveCmp.speed, moveCmp.angle, physicCmp)
+            // multiply by 0.5f to take ~2 seconds instead of 1 to get to maximum speed
+            moveCmp.alpha = (moveCmp.alpha + (deltaTime * 0.5f)).coerceAtMost(1f)
+            moveCmp.speed = Interpolation.pow3Out.apply(0f, moveCmp.max, moveCmp.alpha)
+            setSpeedImpulse(moveCmp.speed, moveCmp.cos, moveCmp.sin, physicCmp)
         }
 
+        // flip image if entity moves left/right
         imgCmps.getOrNull(entity)?.let { imgCmp ->
-            if (moveCmp.angle.x != 0f) {
-                imgCmp.image.flipX = moveCmp.angle.x < 0
+            if (moveCmp.cos != 0f) {
+                imgCmp.image.flipX = moveCmp.cos < 0
             }
         }
     }
