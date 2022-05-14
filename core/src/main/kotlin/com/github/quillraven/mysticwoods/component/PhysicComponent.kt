@@ -16,6 +16,7 @@ class PhysicComponent(
     val impulse: Vector2 = vec2()
 ) {
     lateinit var body: Body
+    val prevPos = vec2()
 
     companion object {
         fun EntityCreateCfg.physicCmpFromImage(

@@ -36,16 +36,8 @@ class PhysicSystem(
 
     // store position before world update for smooth interpolated rendering
     override fun onTickEntity(entity: Entity) {
-        val imageCmp = imageCmps[entity]
         val physicCmp = physicCmps[entity]
-        val (bodyX, bodyY) = physicCmp.body.position
-
-        imageCmp.image.run {
-            setPosition(
-                bodyX - width * 0.5f,
-                bodyY - height * 0.5f
-            )
-        }
+        physicCmp.prevPos.set(physicCmp.body.position)
 
         if (!physicCmp.impulse.isZero) {
             physicCmp.body.applyLinearImpulse(physicCmp.impulse, physicCmp.body.worldCenter, true)
@@ -59,13 +51,12 @@ class PhysicSystem(
         val physicCmp = physicCmps[entity]
 
         imageCmp.image.run {
-            val prevX = x
-            val prevY = y
+            val (prevX, prevY) = physicCmp.prevPos
             val (bodyX, bodyY) = physicCmp.body.position
 
             setPosition(
-                MathUtils.lerp(prevX, bodyX - width * 0.5f, 1f - alpha),
-                MathUtils.lerp(prevY, bodyY - height * 0.5f, 1f - alpha)
+                MathUtils.lerp(prevX, bodyX, alpha) - width * 0.5f,
+                MathUtils.lerp(prevY, bodyY, alpha) - height * 0.5f
             )
         }
     }
