@@ -19,21 +19,21 @@ class MoveSystem(
 ) : IteratingSystem() {
     private fun setSpeedImpulse(
         speed: Vector2,
-        angleDeg: Vector2,
+        angle: Vector2,
         physicCmp: PhysicComponent
     ) {
         val mass = physicCmp.body.mass
         val (velX, velY) = physicCmp.body.linearVelocity
         val (speedX, speedY) = speed
         physicCmp.impulse.set(
-            mass * (speedX * angleDeg.x - velX),
-            mass * (speedY * angleDeg.y - velY)
+            mass * (speedX * angle.x - velX),
+            mass * (speedY * angle.y - velY)
         )
     }
 
     override fun onTickEntity(entity: Entity) {
         val moveCmp = moveCmps[entity]
-        if (moveCmp.stop) {
+        if (moveCmp.angle.isZero) {
             if (moveCmp.alpha > 0) {
                 // entity is moving -> stop it
                 moveCmp.alpha = 0f
@@ -49,17 +49,17 @@ class MoveSystem(
 
         val physicCmp = physicCmps[entity]
         if (moveCmp.alpha >= 1) {
-            setSpeedImpulse(moveCmp.max, moveCmp.angleDeg, physicCmp)
+            setSpeedImpulse(moveCmp.max, moveCmp.angle, physicCmp)
         } else {
             // multiply by 0.5f to take 2 seconds instead of 1 to get to maximum speed
             moveCmp.alpha += (deltaTime * 0.5f)
             moveCmp.speed.lerp(moveCmp.max, moveCmp.alpha)
-            setSpeedImpulse(moveCmp.speed, moveCmp.angleDeg, physicCmp)
+            setSpeedImpulse(moveCmp.speed, moveCmp.angle, physicCmp)
         }
 
         imgCmps.getOrNull(entity)?.let { imgCmp ->
-            if (moveCmp.angleDeg.x != 0f) {
-                imgCmp.image.flipX = moveCmp.angleDeg.x < 0
+            if (moveCmp.angle.x != 0f) {
+                imgCmp.image.flipX = moveCmp.angle.x < 0
             }
         }
     }
