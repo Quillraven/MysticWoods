@@ -15,6 +15,6 @@ class MysticWoods : KtxGame<KtxScreen>() {
 
     companion object {
         // 32px = 1m in our physic world
-        const val UNIT_SCALE = 1 / 32
+        const val UNIT_SCALE = 1 / 32f
     }
 }

@@ -4,10 +4,7 @@ package com.github.quillraven.mysticwoods.system
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import com.github.quillraven.fleks.AllOf
-import com.github.quillraven.fleks.ComponentMapper
-import com.github.quillraven.fleks.Entity
-import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.fleks.*
 import com.github.quillraven.mysticwoods.component.AnimationComponent
 import com.github.quillraven.mysticwoods.component.AnimationComponent.Companion.NO_ANIMATION
 import com.github.quillraven.mysticwoods.component.ImageComponent
@@ -17,10 +14,10 @@ import ktx.log.logger
 
 @AllOf(components = [AnimationComponent::class, ImageComponent::class])
 class AnimationSystem(
+    @Qualifier("CharacterAtlas") private val atlas: TextureAtlas,
     private val animationCmps: ComponentMapper<AnimationComponent>,
     private val imageCmps: ComponentMapper<ImageComponent>,
 ) : IteratingSystem() {
-    private val atlas = TextureAtlas("graphics/characters.atlas")
     private val cachedAnimations = mutableMapOf<String, Animation<TextureRegionDrawable>>()
 
     override fun onTickEntity(entity: Entity) {
@@ -59,9 +56,5 @@ class AnimationSystem(
     companion object {
         private val LOG = logger<AnimationSystem>()
         private const val DEFAULT_FRAME_DURATION = 1 / 8f
-    }
-
-    override fun onDispose() {
-        atlas.dispose()
     }
 }

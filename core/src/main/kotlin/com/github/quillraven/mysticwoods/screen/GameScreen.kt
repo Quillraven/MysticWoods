@@ -1,5 +1,6 @@
 package com.github.quillraven.mysticwoods.screen
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.GdxRuntimeException
@@ -15,6 +16,7 @@ import ktx.box2d.createWorld
 fun gdxError(message: Any): Nothing = throw GdxRuntimeException(message.toString())
 
 class GameScreen : KtxScreen {
+    private val characterAtlas = TextureAtlas("graphics/characters.atlas")
     private val gameStage = Stage(ExtendViewport(16f, 9f))
     private val phWorld = createWorld(gravity = Vector2.Zero).apply {
         autoClearForces = false
@@ -22,6 +24,7 @@ class GameScreen : KtxScreen {
     private val eWorld = World {
         inject(phWorld)
         inject("GameStage", gameStage)
+        inject("CharacterAtlas", characterAtlas)
 
         componentListener<PhysicComponentListener>()
         componentListener<ImageComponentListener>()
@@ -48,5 +51,6 @@ class GameScreen : KtxScreen {
         eWorld.dispose()
         phWorld.disposeSafely()
         gameStage.disposeSafely()
+        characterAtlas.disposeSafely()
     }
 }
