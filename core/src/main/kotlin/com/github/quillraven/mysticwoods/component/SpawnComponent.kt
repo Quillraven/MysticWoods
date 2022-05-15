@@ -4,10 +4,6 @@ import com.badlogic.gdx.math.Vector2
 import com.github.quillraven.mysticwoods.MysticWoods.Companion.UNIT_SCALE
 import ktx.math.vec2
 
-enum class SpawnType {
-    UNDEFINED, PLAYER, SLIME
-}
-
 data class SpawnCfg(
     val atlasKey: String,
     val scaleSize: Float = 1f,
@@ -21,6 +17,6 @@ data class SpawnCfg(
 }
 
 data class SpawnComponent(
-    var type: SpawnType = SpawnType.UNDEFINED,
+    var type: String = "",
     var location: Vector2 = vec2()
 )

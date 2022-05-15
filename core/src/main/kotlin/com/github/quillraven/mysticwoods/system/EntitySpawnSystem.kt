@@ -25,7 +25,7 @@ class EntitySpawnSystem(
     private val physicWorld: World,
     private val spawnCmps: ComponentMapper<SpawnComponent>,
 ) : MapListener, IteratingSystem() {
-    private val cachedCfgs = mutableMapOf<SpawnType, SpawnCfg>()
+    private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
     private val cachedSizes = mutableMapOf<String, Vector2>()
 
     init {
@@ -69,7 +69,7 @@ class EntitySpawnSystem(
                     add<MoveComponent> { max = DEFAULT_SPEED * cfg.scaleSpeed }
                 }
 
-                if (type == SpawnType.PLAYER) {
+                if (type == PLAYER_TYPE) {
                     add<PlayerComponent>()
                 }
             }
@@ -78,11 +78,11 @@ class EntitySpawnSystem(
         world.remove(entity)
     }
 
-    private fun spawnCfg(type: SpawnType): SpawnCfg = cachedCfgs.getOrPut(type) {
-        when (type) {
-            SpawnType.PLAYER -> SpawnCfg("player", scaleSpeed = 3f, physicOffset = vec2(0f, -10f * UNIT_SCALE))
-            SpawnType.SLIME -> SpawnCfg("slime")
-            SpawnType.UNDEFINED -> gdxError("SpawnType must be specified")
+    private fun spawnCfg(type: String): SpawnCfg = cachedCfgs.getOrPut(type) {
+        when {
+            type == PLAYER_TYPE -> SpawnCfg("player", scaleSpeed = 3f, physicOffset = vec2(0f, -10f * UNIT_SCALE))
+            type.isNotBlank() -> SpawnCfg(type.lowercase())
+            else -> gdxError("SpawnType must be specified")
         }
     }
 
@@ -105,7 +105,7 @@ class EntitySpawnSystem(
 
             world.entity {
                 add<SpawnComponent> {
-                    type = SpawnType.valueOf(typeStr)
+                    type = typeStr
                     location.set(mapObj.x * UNIT_SCALE, mapObj.y * UNIT_SCALE)
                 }
             }
@@ -115,5 +115,6 @@ class EntitySpawnSystem(
     companion object {
         private val LOG = logger<EntitySpawnSystem>()
         private val COLLISION_OFFSET = vec2()
+        private const val PLAYER_TYPE = "PLAYER"
     }
 }
