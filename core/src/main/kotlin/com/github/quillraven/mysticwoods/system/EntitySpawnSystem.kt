@@ -20,7 +20,7 @@ import ktx.math.vec2
 import ktx.tiled.*
 
 @AllOf([SpawnComponent::class])
-class SpawnSystem(
+class EntitySpawnSystem(
     @Qualifier("GameAtlas") private val atlas: TextureAtlas,
     private val physicWorld: World,
     private val spawnCmps: ComponentMapper<SpawnComponent>,
@@ -113,7 +113,7 @@ class SpawnSystem(
     }
 
     companion object {
-        private val LOG = logger<SpawnSystem>()
+        private val LOG = logger<EntitySpawnSystem>()
         private val COLLISION_OFFSET = vec2()
     }
 }
