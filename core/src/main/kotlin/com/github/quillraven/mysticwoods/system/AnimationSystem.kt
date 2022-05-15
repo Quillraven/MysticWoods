@@ -14,7 +14,7 @@ import ktx.log.logger
 
 @AllOf(components = [AnimationComponent::class, ImageComponent::class])
 class AnimationSystem(
-    @Qualifier("CharacterAtlas") private val atlas: TextureAtlas,
+    @Qualifier("GameAtlas") private val atlas: TextureAtlas,
     private val animationCmps: ComponentMapper<AnimationComponent>,
     private val imageCmps: ComponentMapper<ImageComponent>,
 ) : IteratingSystem() {

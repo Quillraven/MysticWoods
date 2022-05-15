@@ -3,8 +3,10 @@ package com.github.quillraven.mysticwoods
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.github.quillraven.mysticwoods.screen.GameScreen
+import com.github.quillraven.mysticwoods.service.MapService
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
+import ktx.assets.disposeSafely
 
 class MysticWoods : KtxGame<KtxScreen>() {
     override fun create() {
@@ -13,8 +15,13 @@ class MysticWoods : KtxGame<KtxScreen>() {
         setScreen<GameScreen>()
     }
 
+    override fun dispose() {
+        super.dispose()
+        MapService.disposeSafely()
+    }
+
     companion object {
-        // 32px = 1m in our physic world
-        const val UNIT_SCALE = 1 / 32f
+        // 16px = 1m in our physic world
+        const val UNIT_SCALE = 1 / 16f
     }
 }

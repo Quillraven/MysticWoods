@@ -1,6 +1,7 @@
 package com.github.quillraven.mysticwoods.system
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Scaling
@@ -11,32 +12,24 @@ import com.github.quillraven.mysticwoods.component.*
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.physicCmpFromImage
 import com.github.quillraven.mysticwoods.component.SpawnCfg.Companion.DEFAULT_SPEED
 import com.github.quillraven.mysticwoods.screen.gdxError
+import com.github.quillraven.mysticwoods.service.MapListener
+import com.github.quillraven.mysticwoods.service.MapService
 import ktx.box2d.box
 import ktx.log.logger
 import ktx.math.vec2
+import ktx.tiled.*
 
 @AllOf([SpawnComponent::class])
 class SpawnSystem(
-    @Qualifier("CharacterAtlas") private val atlas: TextureAtlas,
+    @Qualifier("GameAtlas") private val atlas: TextureAtlas,
     private val physicWorld: World,
     private val spawnCmps: ComponentMapper<SpawnComponent>,
-) : IteratingSystem() {
+) : MapListener, IteratingSystem() {
     private val cachedCfgs = mutableMapOf<SpawnType, SpawnCfg>()
     private val cachedSizes = mutableMapOf<String, Vector2>()
 
     init {
-        world.entity {
-            add<SpawnComponent> {
-                type = SpawnType.PLAYER
-                location.set(1f, 1f)
-            }
-        }
-        world.entity {
-            add<SpawnComponent> {
-                type = SpawnType.SLIME
-                location.set(4f, 1f)
-            }
-        }
+        MapService.addListener(this)
     }
 
     override fun onTickEntity(entity: Entity) {
@@ -103,6 +96,20 @@ class SpawnSystem(
             vec2(firstFrame.originalWidth * UNIT_SCALE, firstFrame.originalHeight * UNIT_SCALE)
         }
 
+    }
+
+    override fun onMapChanged(map: TiledMap) {
+        val entityLayer = map.layer("entities")
+        entityLayer.objects.forEach { mapObj ->
+            val typeStr = mapObj.type ?: gdxError("MapObject ${mapObj.id} of 'entities' layer does not have a TYPE")
+
+            world.entity {
+                add<SpawnComponent> {
+                    type = SpawnType.valueOf(typeStr)
+                    location.set(mapObj.x * UNIT_SCALE, mapObj.y * UNIT_SCALE)
+                }
+            }
+        }
     }
 
     companion object {

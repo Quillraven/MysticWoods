@@ -1,0 +1,48 @@
+
+map.png
+size: 512, 256
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+chest
+  rotate: false
+  xy: 0, 0
+  size: 64, 16
+  orig: 64, 16
+  offset: 0, 0
+  index: 1
+decor_16x16
+  rotate: false
+  xy: 0, 16
+  size: 64, 80
+  orig: 64, 80
+  offset: 0, 0
+  index: -1
+fences
+  rotate: false
+  xy: 327, 175
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+grass
+  rotate: false
+  xy: 64, 80
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+objects
+  rotate: false
+  xy: 0, 96
+  size: 231, 143
+  orig: 231, 143
+  offset: 0, 0
+  index: -1
+plains
+  rotate: false
+  xy: 231, 47
+  size: 96, 192
+  orig: 96, 192
+  offset: 0, 0
+  index: -1

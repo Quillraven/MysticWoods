@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="5">
+ <tileset firstgid="1" source="map.tsx"/>
+ <tileset firstgid="513" name="entities" tilewidth="48" tileheight="48" tilecount="2" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image width="32" height="32" source="../../assets_raw/game/slime/idle_00.png"/>
+  </tile>
+  <tile id="1">
+   <image width="48" height="48" source="../../assets_raw/game/player/idle_00.png"/>
+  </tile>
+ </tileset>
+ <layer id="1" name="ground" width="32" height="18">
+  <data encoding="base64" compression="zlib">
+   eJzVlFEKwDAIQ71KN6/ee47BCmO0W0wjox8P+qGiMbaaWQVwMI6h3N77BZvf2BL7VZOpbY8vbcpA07Yf9c6VMP2t5BWEnp/QGd+86ES9lRnNGPUu4km0JvJXKHatmImJ/YMZHdQ3kX1XkV04mXfy9HNE48h9zep1APvaX3E=
+  </data>
+ </layer>
+ <layer id="2" name="bgd_decoration" width="32" height="18">
+  <data encoding="base64" compression="zlib">
+   eJzdlW0KgCAMhu3+p8j6V5eowD4v0U1a4EDG1IlS0QMSNJ3Td70pxXN63qfSFsqDdJVSfeWPS+uu7dNArhnGEsjpssO8Qzj3K0jOWPtDLE1WRXK0rdl44ivEt8C5Yv3CgT07wLoRxpSh9xP9gtoNCWue0o+iyV1I+47WG7tS7nxUz1Ie9yeoPiXXhXzo1sLVJ8WXS3ynMVL9McZb3x+CvZ/jj1w+957Qmznvxn3f+p/ivhcIFjR4
+  </data>
+ </layer>
+ <layer id="3" name="fgd_decoration" width="32" height="18">
+  <data encoding="base64" compression="zlib">
+   eJxjYGBgaGdkYOgA4oECy4F2r6Cx/UPRj4lA9UlAnIxHXydQrotG/moEmtsExM14zF8JlFtFI/sXQs1dPIDxRk1ATHzSEhATn7QEgz0+yY0fUvThK4fQ44fYMouUeMVXDqHHD7Fl1mCP14ECtCybiQG0LJuHCwAAR/wePQ==
+  </data>
+ </layer>
+ <objectgroup id="5" name="entities">
+  <object id="1" type="SLIME" gid="513" x="197.974" y="165.544" width="32" height="32"/>
+  <object id="2" type="SLIME" gid="513" x="233.919" y="159.44" width="32" height="32"/>
+  <object id="3" type="SLIME" gid="513" x="48.7686" y="68.9" width="32" height="32"/>
+  <object id="4" type="PLAYER" gid="514" x="407" y="270.189" width="48" height="48"/>
+ </objectgroup>
+</map>
