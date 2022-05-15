@@ -17,7 +17,6 @@ import com.github.quillraven.mysticwoods.service.MapService
 import ktx.box2d.body
 import ktx.box2d.loop
 import ktx.collections.GdxArray
-import ktx.log.logger
 import ktx.math.component1
 import ktx.math.component2
 import ktx.math.vec2
@@ -40,35 +39,46 @@ class CollisionSpawnSystem(
         MapService.addListener(this)
     }
 
+    private fun TiledMapTileLayer.forEachCell(
+        startX: Int,
+        startY: Int,
+        size: Int,
+        action: (TiledMapTileLayer.Cell, Int, Int) -> Unit
+    ) {
+        for (x in startX - size..startX + size) {
+            for (y in startY - size until startY + size) {
+                this.getCell(x, y)?.let { action(it, x, y) }
+            }
+        }
+    }
+
     override fun onTickEntity(entity: Entity) {
         if (entity in playerCmps) {
             // for player entities we will spawn the collision objects around them that are not spawned yet
             val (playerX, playerY) = physicCmps[entity].body.position
 
-            // TODO remove nesting by using extension functions
             tileLayers.forEach { layer ->
-                for (x in playerX.toInt() - SPAWN_AREA_SIZE..playerX.toInt() + SPAWN_AREA_SIZE) {
-                    for (y in playerY.toInt() - SPAWN_AREA_SIZE until playerY.toInt() + SPAWN_AREA_SIZE) {
-                        layer.getCell(x, y)?.let { tileCell ->
-                            if (tileCell.tile.objects.isEmpty()) {
-                                // tileCell is not linked to a tile with collision objects -> do nothing
-                                return@let
-                            }
-                            if (tileCell in processedCells) {
-                                // tileCell already processed -> do nothing
-                                return@let
-                            }
+                layer.forEachCell(playerX.toInt(), playerY.toInt(), SPAWN_AREA_SIZE) { tileCell, x, y ->
+                    if (tileCell.tile.objects.isEmpty()) {
+                        // tileCell is not linked to a tile with collision objects -> do nothing
+                        return@forEachCell
+                    }
+                    if (tileCell in processedCells) {
+                        // tileCell already processed -> do nothing
+                        return@forEachCell
+                    }
 
-                            processedCells.add(tileCell)
-                            tileCell.tile.objects.forEach { mapObj ->
-                                LOG.debug { "Creating tiled entity" }
-                                world.entity {
-                                    physicCmpFromShape2D(physicWorld, x, y, mapObj.shape)
-                                    add<TiledComponent> {
-                                        cell = tileCell
-                                        nearbyEntities.add(entity)
-                                    }
-                                }
+                    processedCells.add(tileCell)
+                    tileCell.tile.objects.forEach { mapObj ->
+                        world.entity {
+                            physicCmpFromShape2D(physicWorld, x, y, mapObj.shape)
+                            add<TiledComponent> {
+                                cell = tileCell
+                                // add entity immediately here, otherwise the newly created
+                                // collision entity might get removed by the code below because
+                                // the physic collision event will come later in the PhysicSystem when
+                                // the physic world gets updated
+                                nearbyEntities.add(entity)
                             }
                         }
                     }
@@ -78,7 +88,6 @@ class CollisionSpawnSystem(
             // for existing collision tiled entities we check if there are no nearby entities anymore
             // and remove them in that case
             if (tiledCmps[entity].nearbyEntities.isEmpty()) {
-                LOG.debug { "Removing tiled entity" }
                 processedCells.remove(tiledCmps[entity].cell)
                 world.remove(entity)
             }
@@ -108,6 +117,5 @@ class CollisionSpawnSystem(
 
     companion object {
         const val SPAWN_AREA_SIZE = 3
-        private val LOG = logger<CollisionSpawnSystem>()
     }
 }
