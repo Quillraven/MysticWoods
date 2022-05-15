@@ -15,8 +15,8 @@ import com.github.quillraven.mysticwoods.screen.gdxError
 import com.github.quillraven.mysticwoods.system.CollisionSpawnSystem.Companion.SPAWN_AREA_SIZE
 import ktx.box2d.BodyDefinition
 import ktx.box2d.body
-import ktx.box2d.box
 import ktx.box2d.circle
+import ktx.box2d.loop
 import ktx.math.vec2
 
 class PhysicComponent(
@@ -62,13 +62,15 @@ class PhysicComponent(
 
                     return add {
                         body = world.body(BodyDef.BodyType.StaticBody) {
-                            position.set(
-                                bodyX + bodyW * 0.5f,
-                                bodyY + bodyH * 0.5f
-                            )
+                            position.set(bodyX, bodyY)
                             fixedRotation = true
                             allowSleep = false
-                            box(bodyW, bodyH)
+                            loop(
+                                vec2(0f, 0f),
+                                vec2(bodyW, 0f),
+                                vec2(bodyW, bodyH),
+                                vec2(0f, bodyH),
+                            )
                             circle(SPAWN_AREA_SIZE + 2f) { isSensor = true }
                         }
                     }

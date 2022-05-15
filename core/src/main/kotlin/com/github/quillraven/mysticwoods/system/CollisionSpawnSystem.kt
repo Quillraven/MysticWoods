@@ -2,6 +2,7 @@ package com.github.quillraven.mysticwoods.system
 
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
+import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
 import com.github.quillraven.fleks.AnyOf
 import com.github.quillraven.fleks.ComponentMapper
@@ -13,12 +14,17 @@ import com.github.quillraven.mysticwoods.component.PlayerComponent
 import com.github.quillraven.mysticwoods.component.TiledComponent
 import com.github.quillraven.mysticwoods.service.MapListener
 import com.github.quillraven.mysticwoods.service.MapService
+import ktx.box2d.body
+import ktx.box2d.loop
 import ktx.collections.GdxArray
 import ktx.log.logger
 import ktx.math.component1
 import ktx.math.component2
+import ktx.math.vec2
+import ktx.tiled.height
 import ktx.tiled.isEmpty
 import ktx.tiled.shape
+import ktx.tiled.width
 
 @AnyOf([PlayerComponent::class, TiledComponent::class])
 class CollisionSpawnSystem(
@@ -81,6 +87,23 @@ class CollisionSpawnSystem(
 
     override fun onMapChanged(map: TiledMap) {
         map.layers.getByType(TiledMapTileLayer::class.java, tileLayers)
+        world.entity {
+            val w = map.width.toFloat()
+            val h = map.height.toFloat()
+            add<PhysicComponent> {
+                body = physicWorld.body(BodyDef.BodyType.StaticBody) {
+                    position.set(0f, 0f)
+                    fixedRotation = true
+                    allowSleep = false
+                    loop(
+                        vec2(0f, 0f),
+                        vec2(w, 0f),
+                        vec2(w, h),
+                        vec2(0f, h),
+                    ) { userData = "mapArea" }
+                }
+            }
+        }
     }
 
     companion object {

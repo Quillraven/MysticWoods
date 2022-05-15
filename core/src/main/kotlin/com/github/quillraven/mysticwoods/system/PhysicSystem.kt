@@ -99,6 +99,7 @@ class PhysicSystem(
         // and other entities.
         // Do not collide normal entities with each other like player and slimes
         contact.isEnabled = contact.fixtureA.entity in tiledCmps || contact.fixtureB.entity in tiledCmps
+                || contact.fixtureA.userData == "mapArea" || contact.fixtureB.userData == "mapArea"
     }
 
     override fun postSolve(contact: Contact, impulse: ContactImpulse) = Unit
