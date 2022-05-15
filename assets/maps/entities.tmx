@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="9">
+ <tileset firstgid="1" name="map" tilewidth="16" tileheight="16" spacing="6" margin="3" tilecount="121" columns="11">
+  <image source="../graphics/map.png" width="242" height="242"/>
+ </tileset>
+ <tileset firstgid="122" name="entities" tilewidth="48" tileheight="48" tilecount="3" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="1">
+   <image width="48" height="48" source="../../assets_raw/game/player/idle_00.png"/>
+  </tile>
+  <tile id="2">
+   <image width="32" height="32" source="../../assets_raw/game/slime/idle_00.png"/>
+  </tile>
+  <tile id="3">
+   <image width="16" height="16" source="../../assets_raw/game/chest/idle_00.png"/>
+  </tile>
+ </tileset>
+ <layer id="1" name="ground" width="32" height="18">
+  <data encoding="base64" compression="zlib">
+   eJzjYWBg4BkkOJMINUZArEkDc/HhECS7NYA4l4D6GDR9xGBi/KUPxIxAbIXHjcRifzR+GhZz8anxp0K40gv7kRjP1MbqRNqBHt4wTE44I5tlQEW/0CqMQDgGixiuMKEkbOjtR3Tz0N1Mqh9AZYUWkXFPC4ycnmiZHtDNJ9VfoHDSYyC9vqAWBpWXLgyI+oIY92PLA8RgXGkIvVzHpo6YshxdnpBfiEkXmSSopQUG2QsASwYsHg==
+  </data>
+ </layer>
+ <layer id="2" name="bgd_1" width="32" height="18">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAvKANiISR+GJnmlAAxCxCXQ/lsROorBWJBIDaB8q1xqDPBIZ4HpT2BWBeIBYi0FxfAZT81QDoQWyBhGTrbL4fEzkPjU9N+GyAuYkCkJVjcoduHzX5nLGLJQJxNgv0BQBzJgOkXQvaD3J3HgAlsiRSDAR8g9mCA+EWSBPsD8JhJLMDnriggloayK4BYiQL7Qf7ClSeJASpYxHDZj1620Argsp9aZQsh4IPGpyR8ickzsDKaGHvwpStqAvT6iN76YfURMQBbuiRFPzZASpzjSpfIZhBbD+MCyOkIW9lICoDVC+gYuc0BAGKjGqo=
+  </data>
+ </layer>
+ <layer id="3" name="fgd_1" width="32" height="18">
+  <data encoding="base64" compression="zlib">
+   eJxjYCAPhANxPBCnkql/FAxuUDyAdrMCccIA2j/SgTsQRwIx0wDZP1TLlpGQZ/joYAcuMFLS5UhIR4MFAADlIgcs
+  </data>
+ </layer>
+ <objectgroup id="4" name="entities">
+  <object id="1" gid="123" x="22.75" y="270" width="48" height="48"/>
+  <object id="2" gid="125" x="400" y="80" width="16" height="16"/>
+  <object id="3" gid="124" x="379" y="99.75" width="32" height="32"/>
+  <object id="4" gid="124" x="409.5" y="112.25" width="32" height="32"/>
+  <object id="5" gid="124" x="139.5" y="210" width="32" height="32"/>
+  <object id="6" gid="124" x="127.5" y="91" width="32" height="32"/>
+  <object id="7" gid="124" x="335" y="229.5" width="32" height="32"/>
+  <object id="8" gid="125" x="432" y="16" width="16" height="16"/>
+ </objectgroup>
+</map>
