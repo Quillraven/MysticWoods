@@ -1,9 +1,11 @@
 package com.github.quillraven.mysticwoods.system
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.World
+import com.badlogic.gdx.scenes.scene2d.Event
+import com.badlogic.gdx.scenes.scene2d.EventListener
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Scaling
 import com.github.quillraven.fleks.*
 import com.github.quillraven.mysticwoods.MysticWoods.Companion.UNIT_SCALE
@@ -11,9 +13,8 @@ import com.github.quillraven.mysticwoods.actor.FlipImage
 import com.github.quillraven.mysticwoods.component.*
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.physicCmpFromImage
 import com.github.quillraven.mysticwoods.component.SpawnCfg.Companion.DEFAULT_SPEED
+import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.screen.gdxError
-import com.github.quillraven.mysticwoods.service.MapListener
-import com.github.quillraven.mysticwoods.service.MapService
 import ktx.box2d.box
 import ktx.log.logger
 import ktx.math.vec2
@@ -22,14 +23,15 @@ import ktx.tiled.*
 @AllOf([SpawnComponent::class])
 class EntitySpawnSystem(
     @Qualifier("GameAtlas") private val atlas: TextureAtlas,
+    @Qualifier("GameStage") stage: Stage,
     private val physicWorld: World,
     private val spawnCmps: ComponentMapper<SpawnComponent>,
-) : MapListener, IteratingSystem() {
+) : EventListener, IteratingSystem() {
     private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
     private val cachedSizes = mutableMapOf<String, Vector2>()
 
     init {
-        MapService.addListener(this)
+        stage.addListener(this)
     }
 
     override fun onTickEntity(entity: Entity) {
@@ -98,18 +100,22 @@ class EntitySpawnSystem(
 
     }
 
-    override fun onMapChanged(map: TiledMap) {
-        val entityLayer = map.layer("entities")
-        entityLayer.objects.forEach { mapObj ->
-            val typeStr = mapObj.type ?: gdxError("MapObject ${mapObj.id} of 'entities' layer does not have a TYPE")
+    override fun handle(event: Event?): Boolean {
+        if (event is MapChangeEvent) {
+            val entityLayer = event.map.layer("entities")
+            entityLayer.objects.forEach { mapObj ->
+                val typeStr = mapObj.type ?: gdxError("MapObject ${mapObj.id} of 'entities' layer does not have a TYPE")
 
-            world.entity {
-                add<SpawnComponent> {
-                    type = typeStr
-                    location.set(mapObj.x * UNIT_SCALE, mapObj.y * UNIT_SCALE)
+                world.entity {
+                    add<SpawnComponent> {
+                        type = typeStr
+                        location.set(mapObj.x * UNIT_SCALE, mapObj.y * UNIT_SCALE)
+                    }
                 }
             }
+            return true
         }
+        return false
     }
 
     companion object {

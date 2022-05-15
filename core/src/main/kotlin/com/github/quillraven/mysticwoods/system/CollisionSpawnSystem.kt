@@ -1,19 +1,17 @@
 package com.github.quillraven.mysticwoods.system
 
-import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
-import com.github.quillraven.fleks.AnyOf
-import com.github.quillraven.fleks.ComponentMapper
-import com.github.quillraven.fleks.Entity
-import com.github.quillraven.fleks.IteratingSystem
+import com.badlogic.gdx.scenes.scene2d.Event
+import com.badlogic.gdx.scenes.scene2d.EventListener
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.github.quillraven.fleks.*
 import com.github.quillraven.mysticwoods.component.PhysicComponent
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.physicCmpFromShape2D
 import com.github.quillraven.mysticwoods.component.PlayerComponent
 import com.github.quillraven.mysticwoods.component.TiledComponent
-import com.github.quillraven.mysticwoods.service.MapListener
-import com.github.quillraven.mysticwoods.service.MapService
+import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import ktx.box2d.body
 import ktx.box2d.loop
 import ktx.collections.GdxArray
@@ -28,15 +26,16 @@ import ktx.tiled.width
 @AnyOf([PlayerComponent::class, TiledComponent::class])
 class CollisionSpawnSystem(
     private val physicWorld: World,
+    @Qualifier("GameStage") stage: Stage,
     private val playerCmps: ComponentMapper<PlayerComponent>,
     private val physicCmps: ComponentMapper<PhysicComponent>,
     private val tiledCmps: ComponentMapper<TiledComponent>,
-) : MapListener, IteratingSystem() {
+) : EventListener, IteratingSystem() {
     private val tileLayers = GdxArray<TiledMapTileLayer>()
     private val processedCells = mutableSetOf<TiledMapTileLayer.Cell>()
 
     init {
-        MapService.addListener(this)
+        stage.addListener(this)
     }
 
     private fun TiledMapTileLayer.forEachCell(
@@ -94,25 +93,29 @@ class CollisionSpawnSystem(
         }
     }
 
-    override fun onMapChanged(map: TiledMap) {
-        map.layers.getByType(TiledMapTileLayer::class.java, tileLayers)
-        world.entity {
-            val w = map.width.toFloat()
-            val h = map.height.toFloat()
-            add<PhysicComponent> {
-                body = physicWorld.body(BodyDef.BodyType.StaticBody) {
-                    position.set(0f, 0f)
-                    fixedRotation = true
-                    allowSleep = false
-                    loop(
-                        vec2(0f, 0f),
-                        vec2(w, 0f),
-                        vec2(w, h),
-                        vec2(0f, h),
-                    ) { userData = "mapArea" }
+    override fun handle(event: Event?): Boolean {
+        if (event is MapChangeEvent) {
+            event.map.layers.getByType(TiledMapTileLayer::class.java, tileLayers)
+            world.entity {
+                val w = event.map.width.toFloat()
+                val h = event.map.height.toFloat()
+                add<PhysicComponent> {
+                    body = physicWorld.body(BodyDef.BodyType.StaticBody) {
+                        position.set(0f, 0f)
+                        fixedRotation = true
+                        allowSleep = false
+                        loop(
+                            vec2(0f, 0f),
+                            vec2(w, 0f),
+                            vec2(w, h),
+                            vec2(0f, h),
+                        ) { userData = "mapArea" }
+                    }
                 }
             }
+            return true
         }
+        return false
     }
 
     companion object {

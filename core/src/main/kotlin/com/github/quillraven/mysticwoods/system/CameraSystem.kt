@@ -1,13 +1,13 @@
 package com.github.quillraven.mysticwoods.system
 
 import com.badlogic.gdx.graphics.Camera
-import com.badlogic.gdx.maps.tiled.TiledMap
+import com.badlogic.gdx.scenes.scene2d.Event
+import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.quillraven.fleks.*
 import com.github.quillraven.mysticwoods.component.ImageComponent
 import com.github.quillraven.mysticwoods.component.PlayerComponent
-import com.github.quillraven.mysticwoods.service.MapListener
-import com.github.quillraven.mysticwoods.service.MapService
+import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import ktx.tiled.height
 import ktx.tiled.width
 
@@ -15,13 +15,13 @@ import ktx.tiled.width
 class CameraSystem(
     @Qualifier("GameStage") stage: Stage,
     private val imageCmps: ComponentMapper<ImageComponent>,
-) : MapListener, IteratingSystem() {
+) : EventListener, IteratingSystem() {
     private val camera: Camera = stage.camera
     private var maxW = 0f
     private var maxH = 0f
 
     init {
-        MapService.addListener(this)
+        stage.addListener(this)
     }
 
     override fun onTickEntity(entity: Entity) {
@@ -39,8 +39,12 @@ class CameraSystem(
         }
     }
 
-    override fun onMapChanged(map: TiledMap) {
-        maxW = map.width.toFloat()
-        maxH = map.height.toFloat()
+    override fun handle(event: Event?): Boolean {
+        if (event is MapChangeEvent) {
+            maxW = event.map.width.toFloat()
+            maxH = event.map.height.toFloat()
+            return true
+        }
+        return false
     }
 }

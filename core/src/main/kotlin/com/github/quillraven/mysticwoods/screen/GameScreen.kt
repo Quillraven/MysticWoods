@@ -1,6 +1,8 @@
 package com.github.quillraven.mysticwoods.screen
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.maps.tiled.TiledMap
+import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.GdxRuntimeException
@@ -8,7 +10,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.component.ImageComponent.Companion.ImageComponentListener
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.PhysicComponentListener
-import com.github.quillraven.mysticwoods.service.MapService
+import com.github.quillraven.mysticwoods.event.MapChangeEvent
+import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.system.*
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
@@ -40,9 +43,17 @@ class GameScreen : KtxScreen {
         system<RenderSystem>()
         system<DebugSystem>()
     }
+    private var currentMap: TiledMap? = null
 
     override fun show() {
-        MapService.setMap("maps/demo.tmx")
+        setMap("maps/demo.tmx")
+    }
+
+    private fun setMap(path: String) {
+        currentMap?.disposeSafely()
+        val newMap = TmxMapLoader().load(path)
+        currentMap = newMap
+        gameStage.fire(MapChangeEvent(newMap))
     }
 
     override fun resize(width: Int, height: Int) {
@@ -58,5 +69,6 @@ class GameScreen : KtxScreen {
         phWorld.disposeSafely()
         gameStage.disposeSafely()
         gameAtlas.disposeSafely()
+        currentMap?.disposeSafely()
     }
 }
