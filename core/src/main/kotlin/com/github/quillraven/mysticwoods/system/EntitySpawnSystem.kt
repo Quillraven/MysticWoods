@@ -2,6 +2,7 @@ package com.github.quillraven.mysticwoods.system
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
@@ -53,22 +54,32 @@ class EntitySpawnSystem(
                     nextAnimation(cfg.atlasKey, AnimationType.IDLE)
                 }
 
-                this.physicCmpFromImage(physicWorld, imageCmp.image) { width, height ->
+                this.physicCmpFromImage(physicWorld, imageCmp.image, cfg.bodyType) { width, height ->
                     val w = width * cfg.scalePhysic.x
                     val h = height * cfg.scalePhysic.y
+
                     // hit box
                     box(w, h, cfg.physicOffset) {
-                        isSensor = true
+                        isSensor = cfg.bodyType != BodyDef.BodyType.StaticBody
                     }
-                    // collision box
-                    val collH = h * 0.4f
-                    COLLISION_OFFSET.set(cfg.physicOffset)
-                    COLLISION_OFFSET.y -= h * 0.5f - collH * 0.5f
-                    box(w, collH, COLLISION_OFFSET)
+
+                    if (cfg.bodyType != BodyDef.BodyType.StaticBody) {
+                        // collision box
+                        val collH = h * 0.4f
+                        COLLISION_OFFSET.set(cfg.physicOffset)
+                        COLLISION_OFFSET.y -= h * 0.5f - collH * 0.5f
+                        box(w, collH, COLLISION_OFFSET)
+                    }
                 }
 
                 if (cfg.scaleSpeed != 0f) {
                     add<MoveComponent> { max = DEFAULT_SPEED * cfg.scaleSpeed }
+                }
+
+                if (cfg.bodyType != BodyDef.BodyType.StaticBody) {
+                    // entity is not static -> add collision component to spawn
+                    // collision entities around it
+                    add<CollisionComponent>()
                 }
 
                 if (type == PLAYER_TYPE) {
@@ -82,7 +93,25 @@ class EntitySpawnSystem(
 
     private fun spawnCfg(type: String): SpawnCfg = cachedCfgs.getOrPut(type) {
         when {
-            type == PLAYER_TYPE -> SpawnCfg("player", scaleSpeed = 3f, physicOffset = vec2(0f, -10f * UNIT_SCALE))
+            // player is 48x48 graphic -> scale down physic body to match 16x16 world
+            type == PLAYER_TYPE -> SpawnCfg(
+                "player",
+                scaleSpeed = 3f,
+                scalePhysic = vec2(0.3f, 0.3f),
+                physicOffset = vec2(0f, -10f * UNIT_SCALE)
+            )
+            // chest gets a StaticBody so that entities cannot walk through it
+            // because DynamicBody entities do not collide with each other
+            type == "CHEST" -> SpawnCfg(
+                "chest",
+                bodyType = BodyDef.BodyType.StaticBody
+            )
+            // slim is a 32x32 graphic -> scale down physic body to match 16x16 world
+            type == "SLIME" -> SpawnCfg(
+                "slime",
+                scalePhysic = vec2(0.3f, 0.3f),
+                physicOffset = vec2(0f, -2f * UNIT_SCALE)
+            )
             type.isNotBlank() -> SpawnCfg(type.lowercase())
             else -> gdxError("SpawnType must be specified")
         }

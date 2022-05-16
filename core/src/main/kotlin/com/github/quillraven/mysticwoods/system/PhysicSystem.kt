@@ -2,11 +2,13 @@ package com.github.quillraven.mysticwoods.system
 
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.*
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType.DynamicBody
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType.StaticBody
 import com.badlogic.gdx.physics.box2d.World
 import com.github.quillraven.fleks.*
+import com.github.quillraven.mysticwoods.component.CollisionComponent
 import com.github.quillraven.mysticwoods.component.ImageComponent
 import com.github.quillraven.mysticwoods.component.PhysicComponent
-import com.github.quillraven.mysticwoods.component.PlayerComponent
 import com.github.quillraven.mysticwoods.component.TiledComponent
 import ktx.log.logger
 import ktx.math.component1
@@ -18,7 +20,7 @@ class PhysicSystem(
     private val imageCmps: ComponentMapper<ImageComponent>,
     private val physicCmps: ComponentMapper<PhysicComponent>,
     private val tiledCmps: ComponentMapper<TiledComponent>,
-    private val playerCmps: ComponentMapper<PlayerComponent>,
+    private val collisionCmps: ComponentMapper<CollisionComponent>,
 ) : IteratingSystem(interval = Fixed(1 / 60f)), ContactListener {
     init {
         physicWorld.setContactListener(this)
@@ -74,9 +76,9 @@ class PhysicSystem(
 
         // keep track of nearby entities for tiled collision entities.
         // when there are no nearby entities then the collision object will be removed
-        if (entityA in tiledCmps && entityB in playerCmps && contact.fixtureA.isSensor) {
+        if (entityA in tiledCmps && entityB in collisionCmps && contact.fixtureA.isSensor) {
             tiledCmps[entityA].nearbyEntities += entityB
-        } else if (entityB in tiledCmps && entityA in playerCmps && contact.fixtureB.isSensor) {
+        } else if (entityB in tiledCmps && entityA in collisionCmps && contact.fixtureB.isSensor) {
             tiledCmps[entityB].nearbyEntities += entityA
         }
     }
@@ -87,19 +89,17 @@ class PhysicSystem(
 
         // keep track of nearby entities for tiled collision entities.
         // when there are no nearby entities then the collision object will be removed
-        if (entityA in tiledCmps && entityB in playerCmps && contact.fixtureA.isSensor) {
+        if (entityA in tiledCmps && entityB in collisionCmps && contact.fixtureA.isSensor) {
             tiledCmps[entityA].nearbyEntities -= entityB
-        } else if (entityB in tiledCmps && entityA in playerCmps && contact.fixtureB.isSensor) {
+        } else if (entityB in tiledCmps && entityA in collisionCmps && contact.fixtureB.isSensor) {
             tiledCmps[entityB].nearbyEntities -= entityA
         }
     }
 
     override fun preSolve(contact: Contact, oldManifold: Manifold) {
-        // only allow collision between tiled entities (=collision objects)
-        // and other entities.
-        // Do not collide normal entities with each other like player and slimes
-        contact.isEnabled = contact.fixtureA.entity in tiledCmps || contact.fixtureB.entity in tiledCmps
-                || contact.fixtureA.userData == "mapArea" || contact.fixtureB.userData == "mapArea"
+        // only allow collision between Dynamic and Static bodies
+        contact.isEnabled = (contact.fixtureA.body.type == StaticBody && contact.fixtureB.body.type == DynamicBody) ||
+                (contact.fixtureB.body.type == StaticBody && contact.fixtureA.body.type == DynamicBody)
     }
 
     override fun postSolve(contact: Contact, impulse: ContactImpulse) = Unit

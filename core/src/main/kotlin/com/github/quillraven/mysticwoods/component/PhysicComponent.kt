@@ -4,7 +4,8 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Shape2D
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
-import com.badlogic.gdx.physics.box2d.BodyDef
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType.StaticBody
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.github.quillraven.fleks.ComponentListener
@@ -29,6 +30,7 @@ class PhysicComponent(
         fun EntityCreateCfg.physicCmpFromImage(
             world: World,
             image: Image,
+            bodyType: BodyType,
             fixtureAction: BodyDefinition.(Float, Float) -> Unit
         ): PhysicComponent {
             val x = image.x
@@ -37,7 +39,7 @@ class PhysicComponent(
             val height = image.height
 
             return add {
-                body = world.body(BodyDef.BodyType.DynamicBody) {
+                body = world.body(bodyType) {
                     position.set(x + width * 0.5f, y + height * 0.5f)
                     fixedRotation = true
                     allowSleep = false
@@ -61,7 +63,7 @@ class PhysicComponent(
                     val bodyH = shape.height * UNIT_SCALE
 
                     return add {
-                        body = world.body(BodyDef.BodyType.StaticBody) {
+                        body = world.body(StaticBody) {
                             position.set(bodyX, bodyY)
                             fixedRotation = true
                             allowSleep = false

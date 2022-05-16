@@ -36,6 +36,7 @@ class GameScreen : KtxScreen {
         system<PlayerInputSystem>()
         system<EntitySpawnSystem>()
         system<CollisionSpawnSystem>()
+        system<CollisionDespawnSystem>()
         system<MoveSystem>()
         system<PhysicSystem>()
         system<AnimationSystem>()
@@ -46,6 +47,7 @@ class GameScreen : KtxScreen {
     private var currentMap: TiledMap? = null
 
     override fun show() {
+        // TODO update Fleks to have access to systems and check for EventListener systems and add them to the stage
         setMap("maps/demo.tmx")
     }
 

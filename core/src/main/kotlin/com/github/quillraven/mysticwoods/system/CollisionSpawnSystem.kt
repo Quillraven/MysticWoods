@@ -7,10 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.quillraven.fleks.*
+import com.github.quillraven.mysticwoods.component.CollisionComponent
 import com.github.quillraven.mysticwoods.component.PhysicComponent
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.physicCmpFromShape2D
-import com.github.quillraven.mysticwoods.component.PlayerComponent
 import com.github.quillraven.mysticwoods.component.TiledComponent
+import com.github.quillraven.mysticwoods.event.CollisionDespawnEvent
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import ktx.box2d.body
 import ktx.box2d.loop
@@ -23,13 +24,11 @@ import ktx.tiled.isEmpty
 import ktx.tiled.shape
 import ktx.tiled.width
 
-@AnyOf([PlayerComponent::class, TiledComponent::class])
+@AllOf([CollisionComponent::class, PhysicComponent::class])
 class CollisionSpawnSystem(
     private val physicWorld: World,
     @Qualifier("GameStage") stage: Stage,
-    private val playerCmps: ComponentMapper<PlayerComponent>,
     private val physicCmps: ComponentMapper<PhysicComponent>,
-    private val tiledCmps: ComponentMapper<TiledComponent>,
 ) : EventListener, IteratingSystem() {
     private val tileLayers = GdxArray<TiledMapTileLayer>()
     private val processedCells = mutableSetOf<TiledMapTileLayer.Cell>()
@@ -52,50 +51,44 @@ class CollisionSpawnSystem(
     }
 
     override fun onTickEntity(entity: Entity) {
-        if (entity in playerCmps) {
-            // for player entities we will spawn the collision objects around them that are not spawned yet
-            val (playerX, playerY) = physicCmps[entity].body.position
+        // for collision entities we will spawn the collision objects around them that are not spawned yet
+        val (entityX, entityY) = physicCmps[entity].body.position
 
-            tileLayers.forEach { layer ->
-                layer.forEachCell(playerX.toInt(), playerY.toInt(), SPAWN_AREA_SIZE) { tileCell, x, y ->
-                    if (tileCell.tile.objects.isEmpty()) {
-                        // tileCell is not linked to a tile with collision objects -> do nothing
-                        return@forEachCell
-                    }
-                    if (tileCell in processedCells) {
-                        // tileCell already processed -> do nothing
-                        return@forEachCell
-                    }
+        tileLayers.forEach { layer ->
+            layer.forEachCell(entityX.toInt(), entityY.toInt(), SPAWN_AREA_SIZE) { tileCell, x, y ->
+                if (tileCell.tile.objects.isEmpty()) {
+                    // tileCell is not linked to a tile with collision objects -> do nothing
+                    return@forEachCell
+                }
+                if (tileCell in processedCells) {
+                    // tileCell already processed -> do nothing
+                    return@forEachCell
+                }
 
-                    processedCells.add(tileCell)
-                    tileCell.tile.objects.forEach { mapObj ->
-                        world.entity {
-                            physicCmpFromShape2D(physicWorld, x, y, mapObj.shape)
-                            add<TiledComponent> {
-                                cell = tileCell
-                                // add entity immediately here, otherwise the newly created
-                                // collision entity might get removed by the code below because
-                                // the physic collision event will come later in the PhysicSystem when
-                                // the physic world gets updated
-                                nearbyEntities.add(entity)
-                            }
+                processedCells.add(tileCell)
+                tileCell.tile.objects.forEach { mapObj ->
+                    world.entity {
+                        physicCmpFromShape2D(physicWorld, x, y, mapObj.shape)
+                        add<TiledComponent> {
+                            cell = tileCell
+                            // add entity immediately here, otherwise the newly created
+                            // collision entity might get removed by the CollisionDespawnSystem because
+                            // the physic collision event will come later in the PhysicSystem when
+                            // the physic world gets updated
+                            nearbyEntities.add(entity)
                         }
                     }
                 }
-            }
-        } else {
-            // for existing collision tiled entities we check if there are no nearby entities anymore
-            // and remove them in that case
-            if (tiledCmps[entity].nearbyEntities.isEmpty()) {
-                processedCells.remove(tiledCmps[entity].cell)
-                world.remove(entity)
             }
         }
     }
 
     override fun handle(event: Event?): Boolean {
         if (event is MapChangeEvent) {
+            processedCells.clear()
             event.map.layers.getByType(TiledMapTileLayer::class.java, tileLayers)
+
+            // create map boundary collision object
             world.entity {
                 val w = event.map.width.toFloat()
                 val h = event.map.height.toFloat()
@@ -109,10 +102,13 @@ class CollisionSpawnSystem(
                             vec2(w, 0f),
                             vec2(w, h),
                             vec2(0f, h),
-                        ) { userData = "mapArea" }
+                        )
                     }
                 }
             }
+            return true
+        } else if (event is CollisionDespawnEvent) {
+            processedCells.remove(event.cell)
             return true
         }
         return false
