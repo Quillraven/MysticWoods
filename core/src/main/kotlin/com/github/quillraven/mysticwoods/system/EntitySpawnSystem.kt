@@ -54,6 +54,8 @@ class EntitySpawnSystem(
                     nextAnimation(cfg.atlasKey, AnimationType.IDLE)
                 }
 
+                add<StateComponent>()
+
                 this.physicCmpFromImage(physicWorld, imageCmp.image, cfg.bodyType) { width, height ->
                     val w = width * cfg.scalePhysic.x
                     val h = height * cfg.scalePhysic.y
