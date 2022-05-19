@@ -15,7 +15,7 @@ import com.github.quillraven.mysticwoods.component.*
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.physicCmpFromImage
 import com.github.quillraven.mysticwoods.component.SpawnCfg.Companion.DEFAULT_SPEED
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
-import com.github.quillraven.mysticwoods.screen.gdxError
+import ktx.app.gdxError
 import ktx.box2d.box
 import ktx.log.logger
 import ktx.math.vec2

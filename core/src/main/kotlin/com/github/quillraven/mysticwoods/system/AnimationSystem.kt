@@ -8,7 +8,7 @@ import com.github.quillraven.fleks.*
 import com.github.quillraven.mysticwoods.component.AnimationComponent
 import com.github.quillraven.mysticwoods.component.AnimationComponent.Companion.NO_ANIMATION
 import com.github.quillraven.mysticwoods.component.ImageComponent
-import com.github.quillraven.mysticwoods.screen.gdxError
+import ktx.app.gdxError
 import ktx.collections.map
 import ktx.log.logger
 

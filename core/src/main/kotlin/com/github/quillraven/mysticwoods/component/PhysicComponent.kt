@@ -12,8 +12,8 @@ import com.github.quillraven.fleks.ComponentListener
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.EntityCreateCfg
 import com.github.quillraven.mysticwoods.MysticWoods.Companion.UNIT_SCALE
-import com.github.quillraven.mysticwoods.screen.gdxError
 import com.github.quillraven.mysticwoods.system.CollisionSpawnSystem.Companion.SPAWN_AREA_SIZE
+import ktx.app.gdxError
 import ktx.box2d.BodyDefinition
 import ktx.box2d.body
 import ktx.box2d.circle

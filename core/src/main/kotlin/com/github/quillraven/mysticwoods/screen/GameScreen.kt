@@ -5,7 +5,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.utils.GdxRuntimeException
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.component.ImageComponent.Companion.ImageComponentListener
@@ -16,8 +15,6 @@ import com.github.quillraven.mysticwoods.system.*
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 import ktx.box2d.createWorld
-
-fun gdxError(message: Any): Nothing = throw GdxRuntimeException(message.toString())
 
 class GameScreen : KtxScreen {
     private val gameAtlas = TextureAtlas("graphics/game.atlas")
