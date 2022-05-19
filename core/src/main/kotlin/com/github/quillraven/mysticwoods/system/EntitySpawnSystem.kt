@@ -73,7 +73,7 @@ class EntitySpawnSystem(
                 }
 
                 if (cfg.scaleSpeed != 0f) {
-                    add<MoveComponent> { max = DEFAULT_SPEED * cfg.scaleSpeed }
+                    add<MoveComponent> { speed = DEFAULT_SPEED * cfg.scaleSpeed }
                 }
 
                 if (cfg.bodyType != BodyDef.BodyType.StaticBody) {
