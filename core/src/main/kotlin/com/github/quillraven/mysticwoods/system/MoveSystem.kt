@@ -20,8 +20,8 @@ class MoveSystem(
         val moveCmp = moveCmps[entity]
         val physicCmp = physicCmps[entity]
 
-        if (moveCmp.cos == 0f && moveCmp.sin == 0f) {
-            // no movement
+        if (moveCmp.cos == 0f && moveCmp.sin == 0f || moveCmp.root) {
+            // no direction for movement or entity is rooted
             if (!physicCmp.body.linearVelocity.isZero) {
                 // entity is moving -> stop it
                 val mass = physicCmp.body.mass
