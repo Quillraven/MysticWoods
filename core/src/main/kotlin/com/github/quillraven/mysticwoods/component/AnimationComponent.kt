@@ -10,6 +10,7 @@ enum class AnimationType {
 }
 
 data class AnimationComponent(
+    var atlasKey: String = "",
     var stateTime: Float = 0f,
     var mode: Animation.PlayMode = Animation.PlayMode.LOOP
 ) {
@@ -18,12 +19,19 @@ data class AnimationComponent(
         private set
 
     fun nextAnimation(atlasKey: String, type: AnimationType) {
+        this.atlasKey = atlasKey
+        nextAnimation = "$atlasKey/${type.atlasKey}"
+    }
+
+    fun nextAnimation(type: AnimationType) {
         nextAnimation = "$atlasKey/${type.atlasKey}"
     }
 
     fun clearAnimation() {
         nextAnimation = NO_ANIMATION
     }
+
+    fun isAnimationFinished() = animation.isAnimationFinished(stateTime)
 
     companion object {
         const val NO_ANIMATION = ""
