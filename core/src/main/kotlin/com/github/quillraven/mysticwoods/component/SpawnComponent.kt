@@ -8,6 +8,7 @@ data class SpawnCfg(
     val atlasKey: String,
     val scaleSize: Float = 1f,
     val scaleSpeed: Float = 1f,
+    val canAttack: Boolean = true,
     val bodyType: BodyType = BodyType.DynamicBody,
     val scalePhysic: Vector2 = vec2(1f, 1f),
     val physicOffset: Vector2 = vec2(0f, 0f),

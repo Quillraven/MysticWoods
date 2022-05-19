@@ -6,15 +6,18 @@ import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.mysticwoods.component.AttackComponent
 import com.github.quillraven.mysticwoods.component.MoveComponent
 import com.github.quillraven.mysticwoods.component.PlayerComponent
 import ktx.app.KtxInputAdapter
 
 @AllOf([PlayerComponent::class])
 class PlayerInputSystem(
-    private val moveCmps: ComponentMapper<MoveComponent>
+    private val moveCmps: ComponentMapper<MoveComponent>,
+    private val attackCmps: ComponentMapper<AttackComponent>
 ) : IteratingSystem(), KtxInputAdapter {
     private var updateMovement = false
+    private var triggerAttack = false
     private var playerCos = 0f
     private var playerSin = 0f
     private val pressedKeys = mutableSetOf<Int>()
@@ -39,6 +42,9 @@ class PlayerInputSystem(
                 RIGHT -> playerCos = 1f
                 LEFT -> playerCos = -1f
             }
+            return true
+        } else if (keycode == SPACE) {
+            triggerAttack = true
             return true
         }
         return false
@@ -66,6 +72,10 @@ class PlayerInputSystem(
                 cos = playerCos
                 sin = playerSin
             }
+        }
+        if (triggerAttack) {
+            triggerAttack = false
+            attackCmps[entity].doAttack = true
         }
     }
 }

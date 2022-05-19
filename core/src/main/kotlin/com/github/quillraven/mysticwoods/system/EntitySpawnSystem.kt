@@ -76,6 +76,10 @@ class EntitySpawnSystem(
                     add<MoveComponent> { speed = DEFAULT_SPEED * cfg.scaleSpeed }
                 }
 
+                if (cfg.canAttack) {
+                    add<AttackComponent>()
+                }
+
                 if (cfg.bodyType != BodyDef.BodyType.StaticBody) {
                     // entity is not static -> add collision component to spawn
                     // collision entities around it
@@ -104,7 +108,8 @@ class EntitySpawnSystem(
             // because DynamicBody entities do not collide with each other
             type == "CHEST" -> SpawnCfg(
                 "chest",
-                bodyType = BodyDef.BodyType.StaticBody
+                bodyType = BodyDef.BodyType.StaticBody,
+                canAttack = false
             )
             // slim is a 32x32 graphic -> scale down physic body to match 16x16 world
             type == "SLIME" -> SpawnCfg(
