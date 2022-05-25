@@ -6,13 +6,13 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Scaling
 import com.github.quillraven.fleks.*
 import com.github.quillraven.mysticwoods.MysticWoods.Companion.UNIT_SCALE
 import com.github.quillraven.mysticwoods.actor.FlipImage
 import com.github.quillraven.mysticwoods.component.*
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.physicCmpFromImage
+import com.github.quillraven.mysticwoods.component.SpawnCfg.Companion.DEFAULT_LIFE
 import com.github.quillraven.mysticwoods.component.SpawnCfg.Companion.DEFAULT_SPEED
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import ktx.app.gdxError
@@ -24,7 +24,6 @@ import ktx.tiled.*
 @AllOf([SpawnComponent::class])
 class EntitySpawnSystem(
     @Qualifier("GameAtlas") private val atlas: TextureAtlas,
-    @Qualifier("GameStage") stage: Stage,
     private val physicWorld: World,
     private val spawnCmps: ComponentMapper<SpawnComponent>,
 ) : EventListener, IteratingSystem() {
@@ -49,8 +48,6 @@ class EntitySpawnSystem(
                 add<AnimationComponent> {
                     nextAnimation(cfg.atlasKey, AnimationType.IDLE)
                 }
-
-                add<StateComponent>()
 
                 this.physicCmpFromImage(physicWorld, imageCmp.image, cfg.bodyType) { width, height ->
                     val w = width * cfg.scalePhysic.x
@@ -78,6 +75,13 @@ class EntitySpawnSystem(
                     add<AttackComponent>()
                 }
 
+                if (cfg.lifeScale > 0) {
+                    add<LifeComponent> {
+                        max = DEFAULT_LIFE * cfg.lifeScale
+                        life = max
+                    }
+                }
+
                 if (cfg.bodyType != BodyDef.BodyType.StaticBody) {
                     // entity is not static -> add collision component to spawn
                     // collision entities around it
@@ -87,6 +91,10 @@ class EntitySpawnSystem(
                 if (type == PLAYER_TYPE) {
                     add<PlayerComponent>()
                 }
+
+                // add state component at the end since its ComponentListener initialization logic
+                // depends on some of the components added above
+                add<StateComponent>()
             }
         }
 
@@ -107,11 +115,13 @@ class EntitySpawnSystem(
             type == "CHEST" -> SpawnCfg(
                 "chest",
                 bodyType = BodyDef.BodyType.StaticBody,
-                canAttack = false
+                canAttack = false,
+                lifeScale = 0f,
             )
             // slim is a 32x32 graphic -> scale down physic body to match 16x16 world
             type == "SLIME" -> SpawnCfg(
                 "slime",
+                lifeScale = 0.25f,
                 scalePhysic = vec2(0.3f, 0.3f),
                 physicOffset = vec2(0f, -2f * UNIT_SCALE)
             )

@@ -88,10 +88,14 @@ class PhysicSystem(
         val entityB = contact.fixtureB.entity
 
         // keep track of nearby entities for tiled collision entities.
-        // when there are no nearby entities then the collision object will be removed
-        if (entityA in tiledCmps && entityB in collisionCmps && contact.fixtureA.isSensor) {
+        // when there are no nearby entities then the collision object will be removed.
+        // Note: we cannot add the collision component check in endContact because when an entity
+        // gets removed then it does not have any components anymore, but it might be part of the
+        // nearbyEntities set.
+        // -> simply remove entities all the time because the set will take care of correct removal calls
+        if (entityA in tiledCmps && contact.fixtureA.isSensor) {
             tiledCmps[entityA].nearbyEntities -= entityB
-        } else if (entityB in tiledCmps && entityA in collisionCmps && contact.fixtureB.isSensor) {
+        } else if (entityB in tiledCmps && contact.fixtureB.isSensor) {
             tiledCmps[entityB].nearbyEntities -= entityA
         }
     }

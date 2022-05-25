@@ -5,8 +5,10 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
-import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.quillraven.fleks.*
+import com.github.quillraven.fleks.AllOf
+import com.github.quillraven.fleks.ComponentMapper
+import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.IteratingSystem
 import com.github.quillraven.mysticwoods.component.CollisionComponent
 import com.github.quillraven.mysticwoods.component.PhysicComponent
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.physicCmpFromShape2D
@@ -27,7 +29,6 @@ import ktx.tiled.width
 @AllOf([CollisionComponent::class, PhysicComponent::class])
 class CollisionSpawnSystem(
     private val physicWorld: World,
-    @Qualifier("GameStage") stage: Stage,
     private val physicCmps: ComponentMapper<PhysicComponent>,
 ) : EventListener, IteratingSystem() {
     private val tileLayers = GdxArray<TiledMapTileLayer>()

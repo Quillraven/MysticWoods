@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.quillraven.fleks.World
@@ -40,6 +41,13 @@ class GameScreen : KtxScreen {
         system<AnimationSystem>()
         system<MoveSystem>()
         system<AttackSystem>()
+        // DeadSystem must come before LifeSystem
+        // because LifeSystem will add DeadComponent to an entity but the death animation itself
+        // is set in the StateSystem afterwards.
+        // Since the DeadSystem is checking if the animation is done it needs to be called after
+        // the death animation is set which will be in the next frame.
+        system<DeadSystem>()
+        system<LifeSystem>()
         system<StateSystem>()
         system<CameraSystem>()
         system<RenderSystem>()
