@@ -33,10 +33,6 @@ class CollisionSpawnSystem(
     private val tileLayers = GdxArray<TiledMapTileLayer>()
     private val processedCells = mutableSetOf<TiledMapTileLayer.Cell>()
 
-    init {
-        stage.addListener(this)
-    }
-
     private fun TiledMapTileLayer.forEachCell(
         startX: Int,
         startY: Int,

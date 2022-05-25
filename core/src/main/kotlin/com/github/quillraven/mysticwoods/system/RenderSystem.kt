@@ -27,10 +27,6 @@ class RenderSystem(
     private var bgdLayers = mutableListOf<TiledMapTileLayer>()
     private var fgdLayers = mutableListOf<TiledMapTileLayer>()
 
-    init {
-        stage.addListener(this)
-    }
-
     override fun onTick() {
         super.onTick()
         with(stage) {

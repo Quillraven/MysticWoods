@@ -47,6 +47,14 @@ class GameScreen : KtxScreen {
     }
     private var currentMap: TiledMap? = null
 
+    init {
+        eWorld.systems.forEach { sys ->
+            if (sys is EventListener) {
+                gameStage.addListener(sys)
+            }
+        }
+    }
+
     override fun show() {
         // TODO update Fleks to have access to systems and check for EventListener systems and add them to the stage
         setMap("maps/demo.tmx")

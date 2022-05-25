@@ -31,10 +31,6 @@ class EntitySpawnSystem(
     private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
     private val cachedSizes = mutableMapOf<String, Vector2>()
 
-    init {
-        stage.addListener(this)
-    }
-
     override fun onTickEntity(entity: Entity) {
         with(spawnCmps[entity]) {
             val cfg = spawnCfg(type)

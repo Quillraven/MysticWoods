@@ -20,10 +20,6 @@ class CameraSystem(
     private var maxW = 0f
     private var maxH = 0f
 
-    init {
-        stage.addListener(this)
-    }
-
     override fun onTickEntity(entity: Entity) {
         // we center on the image because it has an
         // interpolated position for rendering which makes
