@@ -39,6 +39,8 @@ class DebugSystem(
     }
 
     override fun onDispose() {
-        physicRenderer.dispose()
+        if (enabled) {
+            physicRenderer.dispose()
+        }
     }
 }
