@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.quillraven.fleks.World
+import com.github.quillraven.mysticwoods.component.AIComponent.Companion.AIComponentListener
 import com.github.quillraven.mysticwoods.component.ImageComponent.Companion.ImageComponentListener
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.PhysicComponentListener
 import com.github.quillraven.mysticwoods.component.StateComponent.Companion.StateComponentListener
@@ -32,11 +33,13 @@ class GameScreen : KtxScreen {
         componentListener<PhysicComponentListener>()
         componentListener<ImageComponentListener>()
         componentListener<StateComponentListener>()
+        componentListener<AIComponentListener>()
 
         system<PlayerInputSystem>()
         system<EntitySpawnSystem>()
         system<CollisionSpawnSystem>()
         system<CollisionDespawnSystem>()
+        system<AISystem>()
         system<PhysicSystem>()
         system<AnimationSystem>()
         system<MoveSystem>()

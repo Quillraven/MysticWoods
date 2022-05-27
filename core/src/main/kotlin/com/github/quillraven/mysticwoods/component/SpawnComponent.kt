@@ -13,6 +13,7 @@ data class SpawnCfg(
     val bodyType: BodyType = BodyType.DynamicBody,
     val scalePhysic: Vector2 = vec2(1f, 1f),
     val physicOffset: Vector2 = vec2(0f, 0f),
+    val aiTreePath: String = "",
 ) {
     companion object {
         const val DEFAULT_SPEED = 2f

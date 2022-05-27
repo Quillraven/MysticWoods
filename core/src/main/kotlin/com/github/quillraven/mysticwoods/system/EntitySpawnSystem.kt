@@ -17,6 +17,7 @@ import com.github.quillraven.mysticwoods.component.SpawnCfg.Companion.DEFAULT_SP
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import ktx.app.gdxError
 import ktx.box2d.box
+import ktx.box2d.circle
 import ktx.log.logger
 import ktx.math.vec2
 import ktx.tiled.*
@@ -49,7 +50,7 @@ class EntitySpawnSystem(
                     nextAnimation(cfg.atlasKey, AnimationType.IDLE)
                 }
 
-                this.physicCmpFromImage(physicWorld, imageCmp.image, cfg.bodyType) { width, height ->
+                val physicCmp = this.physicCmpFromImage(physicWorld, imageCmp.image, cfg.bodyType) { width, height ->
                     val w = width * cfg.scalePhysic.x
                     val h = height * cfg.scalePhysic.y
 
@@ -90,6 +91,22 @@ class EntitySpawnSystem(
 
                 if (type == PLAYER_TYPE) {
                     add<PlayerComponent>()
+                } else {
+                    // any other entity gets an AIComponent to potentially
+                    // use a behavior tree for its behavior.
+                    // AIComponent entities also have a list of nearby other entities
+                    // that they can interact with
+                    add<AIComponent> {
+                        if (cfg.aiTreePath.isNotBlank()) {
+                            treePath = cfg.aiTreePath
+                        }
+                    }
+                    // such entities also get an "action sensor"
+                    // entities who are within that sensor get added to the nearby entities list
+                    physicCmp.body.circle(5f) {
+                        isSensor = true
+                        userData = ACTION_SENSOR
+                    }
                 }
 
                 // add state component at the end since its ComponentListener initialization logic
@@ -123,7 +140,8 @@ class EntitySpawnSystem(
                 "slime",
                 lifeScale = 0.25f,
                 scalePhysic = vec2(0.3f, 0.3f),
-                physicOffset = vec2(0f, -2f * UNIT_SCALE)
+                physicOffset = vec2(0f, -2f * UNIT_SCALE),
+                aiTreePath = "ai/slime.tree"
             )
             type.isNotBlank() -> SpawnCfg(type.lowercase())
             else -> gdxError("SpawnType must be specified")
@@ -164,5 +182,6 @@ class EntitySpawnSystem(
         private val LOG = logger<EntitySpawnSystem>()
         private val COLLISION_OFFSET = vec2()
         private const val PLAYER_TYPE = "PLAYER"
+        const val ACTION_SENSOR = "ActionSensor"
     }
 }
