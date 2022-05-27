@@ -11,18 +11,29 @@ import com.github.quillraven.fleks.Qualifier
 class DebugSystem(
     private val physicWorld: World,
     @Qualifier("GameStage") stage: Stage,
-) : IntervalSystem() {
-    private val physicRenderer = Box2DDebugRenderer()
-    private val profiler = GLProfiler(Gdx.graphics)
+) : IntervalSystem(enabled = false) {
+    private lateinit var physicRenderer: Box2DDebugRenderer
+    private lateinit var profiler: GLProfiler
     private val camera = stage.camera
 
     init {
-        stage.isDebugAll = true
-        profiler.enable()
+        if (enabled) {
+            physicRenderer = Box2DDebugRenderer()
+            profiler = GLProfiler(Gdx.graphics)
+            stage.isDebugAll = true
+            profiler.enable()
+        }
     }
 
     override fun onTick() {
-        Gdx.graphics.setTitle("FPS:${Gdx.graphics.framesPerSecond}, DrawCalls:${profiler.drawCalls}, Binds:${profiler.textureBindings}")
+        Gdx.graphics.setTitle(
+            buildString {
+                append("FPS:${Gdx.graphics.framesPerSecond},")
+                append("DrawCalls:${profiler.drawCalls},")
+                append("Binds:${profiler.textureBindings},")
+                append("Entities:${world.numEntities}")
+            }
+        )
         physicRenderer.render(physicWorld, camera.combined)
         profiler.reset()
     }
