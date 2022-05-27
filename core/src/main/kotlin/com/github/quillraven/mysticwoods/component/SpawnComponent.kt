@@ -9,6 +9,9 @@ data class SpawnCfg(
     val scaleSize: Float = 1f,
     val scaleSpeed: Float = 1f,
     val canAttack: Boolean = true,
+    val scaleAttackDamage: Float = 1f,
+    val attackDelay: Float = 0.2f,
+    val attackExtraRange: Float = 0f,
     val lifeScale: Float = 1f,
     val bodyType: BodyType = BodyType.DynamicBody,
     val scalePhysic: Vector2 = vec2(1f, 1f),
@@ -18,6 +21,7 @@ data class SpawnCfg(
     companion object {
         const val DEFAULT_SPEED = 2f
         const val DEFAULT_LIFE = 30
+        const val DEFAULT_ATTACK_DAMAGE = 5
     }
 }
 

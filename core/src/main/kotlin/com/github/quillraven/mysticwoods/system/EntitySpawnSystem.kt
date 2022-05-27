@@ -12,6 +12,7 @@ import com.github.quillraven.mysticwoods.MysticWoods.Companion.UNIT_SCALE
 import com.github.quillraven.mysticwoods.actor.FlipImage
 import com.github.quillraven.mysticwoods.component.*
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.physicCmpFromImage
+import com.github.quillraven.mysticwoods.component.SpawnCfg.Companion.DEFAULT_ATTACK_DAMAGE
 import com.github.quillraven.mysticwoods.component.SpawnCfg.Companion.DEFAULT_LIFE
 import com.github.quillraven.mysticwoods.component.SpawnCfg.Companion.DEFAULT_SPEED
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
@@ -21,6 +22,7 @@ import ktx.box2d.circle
 import ktx.log.logger
 import ktx.math.vec2
 import ktx.tiled.*
+import kotlin.math.roundToInt
 
 @AllOf([SpawnComponent::class])
 class EntitySpawnSystem(
@@ -50,19 +52,22 @@ class EntitySpawnSystem(
                     nextAnimation(cfg.atlasKey, AnimationType.IDLE)
                 }
 
-                val physicCmp = this.physicCmpFromImage(physicWorld, imageCmp.image, cfg.bodyType) { width, height ->
+                val physicCmp = physicCmpFromImage(physicWorld, imageCmp.image, cfg.bodyType) { cmp, width, height ->
                     val w = width * cfg.scalePhysic.x
                     val h = height * cfg.scalePhysic.y
+                    cmp.size.set(w, h)
+                    cmp.offset.set(cfg.physicOffset)
 
                     // hit box
-                    box(w, h, cfg.physicOffset) {
+                    box(w, h, cmp.offset) {
                         isSensor = cfg.bodyType != BodyDef.BodyType.StaticBody
+                        userData = HIT_BOX_SENSOR
                     }
 
                     if (cfg.bodyType != BodyDef.BodyType.StaticBody) {
                         // collision box
                         val collH = h * 0.4f
-                        COLLISION_OFFSET.set(cfg.physicOffset)
+                        COLLISION_OFFSET.set(cmp.offset)
                         COLLISION_OFFSET.y -= h * 0.5f - collH * 0.5f
                         box(w, collH, COLLISION_OFFSET)
                     }
@@ -73,7 +78,11 @@ class EntitySpawnSystem(
                 }
 
                 if (cfg.canAttack) {
-                    add<AttackComponent>()
+                    add<AttackComponent> {
+                        maxDelay = cfg.attackDelay
+                        damage = (DEFAULT_ATTACK_DAMAGE * cfg.attackDelay).roundToInt()
+                        extraRange = cfg.attackExtraRange
+                    }
                 }
 
                 if (cfg.lifeScale > 0) {
@@ -110,7 +119,7 @@ class EntitySpawnSystem(
                 }
 
                 // add state component at the end since its ComponentListener initialization logic
-                // depends on some of the components added above
+                // depends on some components added above
                 add<StateComponent>()
             }
         }
@@ -125,7 +134,9 @@ class EntitySpawnSystem(
                 "player",
                 scaleSpeed = 3f,
                 scalePhysic = vec2(0.3f, 0.3f),
-                physicOffset = vec2(0f, -10f * UNIT_SCALE)
+                physicOffset = vec2(0f, -10f * UNIT_SCALE),
+                scaleAttackDamage = 3f,
+                attackExtraRange = 0.75f,
             )
             // chest gets a StaticBody so that entities cannot walk through it
             // because DynamicBody entities do not collide with each other
@@ -183,5 +194,6 @@ class EntitySpawnSystem(
         private val COLLISION_OFFSET = vec2()
         private const val PLAYER_TYPE = "PLAYER"
         const val ACTION_SENSOR = "ActionSensor"
+        const val HIT_BOX_SENSOR = "HitBoxSensor"
     }
 }

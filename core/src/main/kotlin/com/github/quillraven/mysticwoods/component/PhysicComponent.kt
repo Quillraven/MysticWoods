@@ -21,7 +21,9 @@ import ktx.box2d.loop
 import ktx.math.vec2
 
 class PhysicComponent(
-    val impulse: Vector2 = vec2()
+    val impulse: Vector2 = vec2(),
+    val size: Vector2 = vec2(),
+    val offset: Vector2 = vec2(),
 ) {
     lateinit var body: Body
     val prevPos = vec2()
@@ -31,7 +33,7 @@ class PhysicComponent(
             world: World,
             image: Image,
             bodyType: BodyType,
-            fixtureAction: BodyDefinition.(Float, Float) -> Unit
+            fixtureAction: BodyDefinition.(PhysicComponent, Float, Float) -> Unit
         ): PhysicComponent {
             val x = image.x
             val y = image.y
@@ -43,7 +45,7 @@ class PhysicComponent(
                     position.set(x + width * 0.5f, y + height * 0.5f)
                     fixedRotation = true
                     allowSleep = false
-                    this.fixtureAction(width, height)
+                    this.fixtureAction(this@add, width, height)
                 }
                 prevPos.set(body.position)
             }
