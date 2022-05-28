@@ -36,9 +36,10 @@ class MoveSystem(
 
         val mass = physicCmp.body.mass
         val (velX, velY) = physicCmp.body.linearVelocity
+        val slowFactor = if (moveCmp.slow) 0.2f else 1f
         physicCmp.impulse.set(
-            mass * (moveCmp.speed * moveCmp.cos - velX),
-            mass * (moveCmp.speed * moveCmp.sin - velY)
+            mass * (moveCmp.speed * slowFactor * moveCmp.cos - velX),
+            mass * (moveCmp.speed * slowFactor * moveCmp.sin - velY)
         )
 
         // flip image if entity moves left/right

@@ -1,6 +1,5 @@
 package com.github.quillraven.mysticwoods.system
 
-import com.badlogic.gdx.ai.GdxAI
 import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
@@ -11,11 +10,6 @@ import com.github.quillraven.mysticwoods.component.StateComponent
 class StateSystem(
     private val stateCmps: ComponentMapper<StateComponent>
 ) : IteratingSystem() {
-    override fun onUpdate() {
-        GdxAI.getTimepiece().update(deltaTime)
-        super.onUpdate()
-    }
-
     override fun onTickEntity(entity: Entity) {
         val stateCmp = stateCmps[entity]
 

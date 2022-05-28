@@ -100,6 +100,9 @@ class EntitySpawnSystem(
 
                 if (type == PLAYER_TYPE) {
                     add<PlayerComponent>()
+                    // add state component at the end since its ComponentListener initialization logic
+                    // depends on some components added above
+                    add<StateComponent>()
                 } else {
                     // any other entity gets an AIComponent to potentially
                     // use a behavior tree for its behavior.
@@ -112,15 +115,11 @@ class EntitySpawnSystem(
                     }
                     // such entities also get an "action sensor"
                     // entities who are within that sensor get added to the nearby entities list
-                    physicCmp.body.circle(5f) {
+                    physicCmp.body.circle(4f) {
                         isSensor = true
                         userData = ACTION_SENSOR
                     }
                 }
-
-                // add state component at the end since its ComponentListener initialization logic
-                // depends on some components added above
-                add<StateComponent>()
             }
         }
 
@@ -136,7 +135,7 @@ class EntitySpawnSystem(
                 scalePhysic = vec2(0.3f, 0.3f),
                 physicOffset = vec2(0f, -10f * UNIT_SCALE),
                 scaleAttackDamage = 3f,
-                attackExtraRange = 0.75f,
+                attackExtraRange = 0.6f,
             )
             // chest gets a StaticBody so that entities cannot walk through it
             // because DynamicBody entities do not collide with each other

@@ -1,12 +1,28 @@
+# Actions
 import attack:"com.github.quillraven.mysticwoods.ai.task.AttackTask"
+import move:"com.github.quillraven.mysticwoods.ai.task.MoveTask"
 import die:"com.github.quillraven.mysticwoods.ai.task.DieTask"
 import wander:"com.github.quillraven.mysticwoods.ai.task.WanderTask"
+import idle:"com.github.quillraven.mysticwoods.ai.task.IdleTask"
+
+# Conditions
 import isEnemyNearby?:"com.github.quillraven.mysticwoods.ai.task.IsEnemyNearby"
 import canAttack?:"com.github.quillraven.mysticwoods.ai.task.CanAttack"
 import isDead?:"com.github.quillraven.mysticwoods.ai.task.IsDead"
 
+subtree name:"attack"
+  sequence
+    (isEnemyNearby?) (canAttack? range:1.0) attack
+    wait seconds:"uniform,1.25,2.1"
+
+subtree name:"move"
+  sequence
+    (isEnemyNearby?) move range:0.75
+
 root
   selector
     (isDead?) die
-    (isEnemyNearby?) (canAttack?) attack
-    wander
+    $attack
+    $move
+    (random success:0.25) idle duration:"uniform,2.0,3.5"
+    wander range:6.0

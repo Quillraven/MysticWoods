@@ -1,5 +1,6 @@
 package com.github.quillraven.mysticwoods.screen
 
+import com.badlogic.gdx.ai.GdxAI
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
@@ -83,7 +84,9 @@ class GameScreen : KtxScreen {
     }
 
     override fun render(delta: Float) {
-        eWorld.update(delta)
+        val dt = delta.coerceAtMost(0.25f)
+        GdxAI.getTimepiece().update(dt)
+        eWorld.update(dt)
     }
 
     override fun dispose() {
