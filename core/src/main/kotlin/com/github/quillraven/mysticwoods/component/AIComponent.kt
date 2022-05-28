@@ -23,6 +23,7 @@ class AIEntity(
     private val playerCmps: ComponentMapper<PlayerComponent> = world.mapper(),
     private val attackCmps: ComponentMapper<AttackComponent> = world.mapper(),
     private val animationCmps: ComponentMapper<AnimationComponent> = world.mapper(),
+    private val imageCmps: ComponentMapper<ImageComponent> = world.mapper(),
     private val physicCmps: ComponentMapper<PhysicComponent> = world.mapper(),
     private val moveCmps: ComponentMapper<MoveComponent> = world.mapper(),
 ) {
@@ -31,6 +32,9 @@ class AIEntity(
 
     val isDead: Boolean
         get() = lifeCmps[entity].isDead()
+
+    private val target: Entity
+        get() = aiCmps[entity].target
 
     fun inTargetRange(range: Float): Boolean {
         val aiCmp = aiCmps[entity]
@@ -107,7 +111,13 @@ class AIEntity(
     }
 
     fun attack() {
-        attackCmps[entity].doAttack = true
+        with(attackCmps[entity]) {
+            doAttack = true
+            startAttack()
+        }
+        val x = physicCmps[entity].body.position.x
+        val targetX = physicCmps[target].body.position.x
+        imageCmps[entity].image.flipX = targetX < x
     }
 
     fun moveToTarget() {

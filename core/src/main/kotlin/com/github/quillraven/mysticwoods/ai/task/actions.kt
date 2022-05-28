@@ -28,6 +28,7 @@ class AttackTask : Action() {
 
         if (aiEntity.isAnimationDone()) {
             aiEntity.animation(AnimationType.IDLE)
+            aiEntity.stopMovement()
             return Status.SUCCEEDED
         }
 
@@ -49,7 +50,6 @@ class MoveTask(
         aiEntity.checkTargetStillNearby()
         aiEntity.moveToTarget()
         if (aiEntity.inTargetRange(range)) {
-            aiEntity.stopMovement()
             return Status.SUCCEEDED
         }
 
