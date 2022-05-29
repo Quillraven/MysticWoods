@@ -10,7 +10,7 @@ import canAttack?:"com.github.quillraven.mysticwoods.behavior.CanAttack"
 
 subtree name:"attack"
   sequence
-    (isEnemyNearby?) (canAttack? range:0.5) attack
+    (isEnemyNearby?) (canAttack? range:1.0) attack
     wait seconds:"uniform,1.25,2.1"
 
 subtree name:"move"
