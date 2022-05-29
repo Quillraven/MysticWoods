@@ -7,3 +7,5 @@ This project was generated with a Kotlin project template that includes Kotlin a
 ## Credits
 
 - [MysticWoods assets](https://game-endeavor.itch.io/mystic-woods)
+- [Map music](https://opengameart.org/content/adventure-begins)
+- [Sound effects](https://opengameart.org/content/rpg-sound-pack)

@@ -46,15 +46,15 @@ class GameScreen : KtxScreen {
         system<MoveSystem>()
         system<AttackSystem>()
         // DeadSystem must come before LifeSystem
-        // because LifeSystem will add DeadComponent to an entity but the death animation itself
-        // is set in the StateSystem afterwards.
+        // because LifeSystem will add DeadComponent to an entity and sets its death animation.
         // Since the DeadSystem is checking if the animation is done it needs to be called after
-        // the death animation is set which will be in the next frame.
+        // the death animation is set which will be in the next frame in the AnimationSystem above.
         system<DeadSystem>()
         system<LifeSystem>()
         system<StateSystem>()
         system<CameraSystem>()
         system<RenderSystem>()
+        system<AudioSystem>()
         system<DebugSystem>()
     }
     private var currentMap: TiledMap? = null

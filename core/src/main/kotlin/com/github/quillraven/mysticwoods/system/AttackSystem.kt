@@ -1,12 +1,13 @@
 package com.github.quillraven.mysticwoods.system
 
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.physics.box2d.World
-import com.github.quillraven.fleks.AllOf
-import com.github.quillraven.fleks.ComponentMapper
-import com.github.quillraven.fleks.Entity
-import com.github.quillraven.fleks.IteratingSystem
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.github.quillraven.fleks.*
 import com.github.quillraven.mysticwoods.component.*
+import com.github.quillraven.mysticwoods.event.EntityAttackEvent
+import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.system.EntitySpawnSystem.Companion.HIT_BOX_SENSOR
 import ktx.box2d.query
 import ktx.math.component1
@@ -18,7 +19,9 @@ class AttackSystem(
     private val animationCmps: ComponentMapper<AnimationComponent>,
     private val imgCmps: ComponentMapper<ImageComponent>,
     private val physicCmps: ComponentMapper<PhysicComponent>,
+    private val lifeCmps: ComponentMapper<LifeComponent>,
     private val phWorld: World,
+    @Qualifier("GameStage") private val stage: Stage,
 ) : IteratingSystem() {
     override fun onTickEntity(entity: Entity) {
         val attackCmp = attackCmps[entity]
@@ -40,6 +43,10 @@ class AttackSystem(
         if (attackCmp.delay <= 0f && attackCmp.state == AttackState.ATTACKING) {
             // deal damage to nearby enemies
             attackCmp.state = AttackState.DEAL_DAMAGE
+
+            animationCmps.getOrNull(entity)?.let { aniCmp ->
+                stage.fire(EntityAttackEvent(aniCmp.atlasKey))
+            }
 
             val image = imgCmps[entity].image
             val physicCmp = physicCmps[entity]
@@ -73,15 +80,18 @@ class AttackSystem(
                     return@query true
                 }
 
-                val fixtureEntity = fixture.body.userData
+                val fixtureEntity = fixture.body.userData as Entity
                 if (fixtureEntity == entity) {
                     // ignore the entity itself that is attacking
                     return@query true
                 }
 
                 // fixtureEntity refers to another entity that gets hit by the attack
-                // TODO
-                println("DEAL DAMAGE")
+                configureEntity(fixtureEntity) {
+                    lifeCmps.getOrNull(it)?.let { lifeCmp ->
+                        lifeCmp.takeDamage += attackCmp.damage * MathUtils.random(0.9f, 1.1f)
+                    }
+                }
                 return@query true
             }
         }

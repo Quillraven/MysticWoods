@@ -1,14 +1,12 @@
 # Actions
-import attack:"com.github.quillraven.mysticwoods.ai.task.AttackTask"
-import move:"com.github.quillraven.mysticwoods.ai.task.MoveTask"
-import die:"com.github.quillraven.mysticwoods.ai.task.DieTask"
-import wander:"com.github.quillraven.mysticwoods.ai.task.WanderTask"
-import idle:"com.github.quillraven.mysticwoods.ai.task.IdleTask"
+import attack:"com.github.quillraven.mysticwoods.behavior.slime.AttackTask"
+import move:"com.github.quillraven.mysticwoods.behavior.slime.MoveTask"
+import wander:"com.github.quillraven.mysticwoods.behavior.slime.WanderTask"
+import idle:"com.github.quillraven.mysticwoods.behavior.slime.IdleTask"
 
 # Conditions
-import isEnemyNearby?:"com.github.quillraven.mysticwoods.ai.task.IsEnemyNearby"
-import canAttack?:"com.github.quillraven.mysticwoods.ai.task.CanAttack"
-import isDead?:"com.github.quillraven.mysticwoods.ai.task.IsDead"
+import isEnemyNearby?:"com.github.quillraven.mysticwoods.behavior.IsEnemyNearby"
+import canAttack?:"com.github.quillraven.mysticwoods.behavior.CanAttack"
 
 subtree name:"attack"
   sequence
@@ -17,11 +15,10 @@ subtree name:"attack"
 
 subtree name:"move"
   sequence
-    (isEnemyNearby?) move range:1.5
+    (isEnemyNearby?) move range:2.0
 
 root
   selector
-    (isDead?) die
     $attack
     $move
     (random success:0.25) idle duration:"uniform,2.0,3.5"

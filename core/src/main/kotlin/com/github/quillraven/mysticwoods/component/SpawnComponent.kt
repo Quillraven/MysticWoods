@@ -20,7 +20,7 @@ data class SpawnCfg(
 ) {
     companion object {
         const val DEFAULT_SPEED = 2f
-        const val DEFAULT_LIFE = 30
+        const val DEFAULT_LIFE = 15
         const val DEFAULT_ATTACK_DAMAGE = 5
     }
 }

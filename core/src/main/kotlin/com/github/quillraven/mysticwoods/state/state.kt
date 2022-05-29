@@ -57,7 +57,8 @@ enum class DefaultState : EntityState {
     },
     DEAD {
         override fun enter(stateEntity: StateEntity) {
-            stateEntity.animation(AnimationType.DEATH, Animation.PlayMode.NORMAL)
+            // no need to set the DEATH animation because this is done
+            // for any entity in the LifeSystem
             stateEntity.moveCmp.root = true
         }
     },

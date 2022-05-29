@@ -80,7 +80,7 @@ class EntitySpawnSystem(
                 if (cfg.canAttack) {
                     add<AttackComponent> {
                         maxDelay = cfg.attackDelay
-                        damage = (DEFAULT_ATTACK_DAMAGE * cfg.attackDelay).roundToInt()
+                        damage = (DEFAULT_ATTACK_DAMAGE * cfg.scaleAttackDamage).roundToInt()
                         extraRange = cfg.attackExtraRange
                     }
                 }
@@ -134,7 +134,7 @@ class EntitySpawnSystem(
                 scaleSpeed = 3f,
                 scalePhysic = vec2(0.3f, 0.3f),
                 physicOffset = vec2(0f, -10f * UNIT_SCALE),
-                scaleAttackDamage = 3f,
+                scaleAttackDamage = 1.25f,
                 attackExtraRange = 0.6f,
             )
             // chest gets a StaticBody so that entities cannot walk through it
@@ -148,7 +148,7 @@ class EntitySpawnSystem(
             // slim is a 32x32 graphic -> scale down physic body to match 16x16 world
             type == "SLIME" -> SpawnCfg(
                 "slime",
-                lifeScale = 0.25f,
+                lifeScale = 0.75f,
                 scalePhysic = vec2(0.3f, 0.3f),
                 physicOffset = vec2(0f, -2f * UNIT_SCALE),
                 aiTreePath = "ai/slime.tree"

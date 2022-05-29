@@ -30,9 +30,6 @@ class AIEntity(
     val location: Vector2
         get() = physicCmps[entity].body.position
 
-    val isDead: Boolean
-        get() = lifeCmps[entity].isDead()
-
     private val target: Entity
         get() = aiCmps[entity].target
 
@@ -97,7 +94,9 @@ class AIEntity(
 
     fun findNearbyEnemy(): Boolean {
         with(aiCmps[entity]) {
-            target = nearbyEntities.firstOrNull { it in playerCmps } ?: NO_TARGET
+            target = nearbyEntities.firstOrNull {
+                it in playerCmps && !lifeCmps[it].isDead()
+            } ?: NO_TARGET
             return target != NO_TARGET
         }
     }

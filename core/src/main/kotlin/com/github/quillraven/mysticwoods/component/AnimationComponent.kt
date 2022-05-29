@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 
 enum class AnimationType {
-    IDLE, RUN, ATTACK, DEATH, FEAR;
+    IDLE, RUN, ATTACK, DEATH;
 
     val atlasKey: String = this.toString().lowercase()
 }
