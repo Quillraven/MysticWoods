@@ -17,37 +17,45 @@ import ktx.tiled.forEachLayer
 
 @AllOf(components = [ImageComponent::class])
 class RenderSystem(
-    @Qualifier("GameStage") private val stage: Stage,
+    @Qualifier("GameStage") private val gameStage: Stage,
+    @Qualifier("UiStage") private val uiStage: Stage,
     private val imageCmps: ComponentMapper<ImageComponent>
 ) : EventListener, IteratingSystem(
     comparator = compareEntity { e1, e2 -> imageCmps[e1].compareTo(imageCmps[e2]) }
 ) {
-    private val orthoCam: OrthographicCamera = stage.camera as OrthographicCamera
-    private val mapRenderer = OrthogonalTiledMapRenderer(null, UNIT_SCALE, stage.batch)
+    private val orthoCam: OrthographicCamera = gameStage.camera as OrthographicCamera
+    private val mapRenderer = OrthogonalTiledMapRenderer(null, UNIT_SCALE, gameStage.batch)
     private var bgdLayers = mutableListOf<TiledMapTileLayer>()
     private var fgdLayers = mutableListOf<TiledMapTileLayer>()
 
     override fun onTick() {
         super.onTick()
-        with(stage) {
-            viewport.apply()
+        gameStage.viewport.apply()
 
-            AnimatedTiledMapTile.updateAnimationBaseTime()
-            mapRenderer.setView(orthoCam)
-            if (bgdLayers.isNotEmpty()) {
-                stage.batch.use(orthoCam.combined) {
-                    bgdLayers.forEach { mapRenderer.renderTileLayer(it) }
-                }
+        AnimatedTiledMapTile.updateAnimationBaseTime()
+        mapRenderer.setView(orthoCam)
+        if (bgdLayers.isNotEmpty()) {
+            gameStage.batch.use(orthoCam.combined) {
+                bgdLayers.forEach { mapRenderer.renderTileLayer(it) }
             }
+        }
 
+        gameStage.run {
             act(deltaTime)
             draw()
+        }
 
-            if (fgdLayers.isNotEmpty()) {
-                stage.batch.use(orthoCam.combined) {
-                    fgdLayers.forEach { mapRenderer.renderTileLayer(it) }
-                }
+        if (fgdLayers.isNotEmpty()) {
+            gameStage.batch.use(orthoCam.combined) {
+                fgdLayers.forEach { mapRenderer.renderTileLayer(it) }
             }
+        }
+
+        // render UI
+        uiStage.run {
+            viewport.apply()
+            act(deltaTime)
+            draw()
         }
     }
 
