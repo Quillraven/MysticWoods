@@ -103,6 +103,8 @@ class EntitySpawnSystem(
                     // add state component at the end since its ComponentListener initialization logic
                     // depends on some components added above
                     add<StateComponent>()
+                } else if (type == CHEST_TYPE) {
+                    add<LootComponent>()
                 } else {
                     // any other entity gets an AIComponent to potentially
                     // use a behavior tree for its behavior.
@@ -139,7 +141,7 @@ class EntitySpawnSystem(
             )
             // chest gets a StaticBody so that entities cannot walk through it
             // because DynamicBody entities do not collide with each other
-            type == "CHEST" -> SpawnCfg(
+            type == CHEST_TYPE -> SpawnCfg(
                 "chest",
                 bodyType = BodyDef.BodyType.StaticBody,
                 canAttack = false,
@@ -192,6 +194,7 @@ class EntitySpawnSystem(
         private val LOG = logger<EntitySpawnSystem>()
         private val COLLISION_OFFSET = vec2()
         private const val PLAYER_TYPE = "PLAYER"
+        private const val CHEST_TYPE = "CHEST"
         const val ACTION_SENSOR = "ActionSensor"
         const val HIT_BOX_SENSOR = "HitBoxSensor"
     }

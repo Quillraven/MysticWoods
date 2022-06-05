@@ -49,6 +49,7 @@ class GameScreen : KtxScreen {
         system<AnimationSystem>()
         system<MoveSystem>()
         system<AttackSystem>()
+        system<LootSystem>()
         // DeadSystem must come before LifeSystem
         // because LifeSystem will add DeadComponent to an entity and sets its death animation.
         // Since the DeadSystem is checking if the animation is done it needs to be called after

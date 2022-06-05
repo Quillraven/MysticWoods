@@ -14,3 +14,5 @@ data class CollisionDespawnEvent(val cell: Cell) : Event()
 data class EntityAttackEvent(val atlasKey: String) : Event()
 
 data class EntityDeathEvent(val atlasKey: String) : Event()
+
+class EntityLootEvent : Event()

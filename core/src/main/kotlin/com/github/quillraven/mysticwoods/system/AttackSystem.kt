@@ -20,6 +20,8 @@ class AttackSystem(
     private val imgCmps: ComponentMapper<ImageComponent>,
     private val physicCmps: ComponentMapper<PhysicComponent>,
     private val lifeCmps: ComponentMapper<LifeComponent>,
+    private val lootCmps: ComponentMapper<LootComponent>,
+    private val playerCmps: ComponentMapper<PlayerComponent>,
     private val phWorld: World,
     @Qualifier("GameStage") private val stage: Stage,
 ) : IteratingSystem() {
@@ -90,6 +92,12 @@ class AttackSystem(
                 configureEntity(fixtureEntity) {
                     lifeCmps.getOrNull(it)?.let { lifeCmp ->
                         lifeCmp.takeDamage += attackCmp.damage * MathUtils.random(0.9f, 1.1f)
+                    }
+                    if (entity in playerCmps) {
+                        // player can open chests
+                        lootCmps.getOrNull(it)?.let { lootCmp ->
+                            lootCmp.interactEntity = entity
+                        }
                     }
                 }
                 return@query true

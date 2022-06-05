@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.github.quillraven.fleks.IntervalSystem
 import com.github.quillraven.mysticwoods.event.EntityAttackEvent
 import com.github.quillraven.mysticwoods.event.EntityDeathEvent
+import com.github.quillraven.mysticwoods.event.EntityLootEvent
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import ktx.assets.disposeSafely
 import ktx.log.logger
@@ -42,6 +43,7 @@ class AudioSystem : EventListener, IntervalSystem() {
             }
             is EntityAttackEvent -> queueSound("audio/${event.atlasKey}_attack.wav")
             is EntityDeathEvent -> queueSound("audio/${event.atlasKey}_death.wav")
+            is EntityLootEvent -> queueSound("audio/chest_open.wav")
             else -> return false
         }
         return true
