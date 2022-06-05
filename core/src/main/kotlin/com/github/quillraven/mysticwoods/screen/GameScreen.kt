@@ -16,6 +16,7 @@ import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.Phy
 import com.github.quillraven.mysticwoods.component.StateComponent.Companion.StateComponentListener
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
+import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
 import com.github.quillraven.mysticwoods.system.*
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
@@ -40,7 +41,6 @@ class GameScreen : KtxScreen {
         componentListener<AIComponentListener>()
         componentListener<FloatingTextComponentListener>()
 
-        system<PlayerInputSystem>()
         system<EntitySpawnSystem>()
         system<CollisionSpawnSystem>()
         system<CollisionDespawnSystem>()
@@ -71,6 +71,7 @@ class GameScreen : KtxScreen {
                 gameStage.addListener(sys)
             }
         }
+        PlayerInputProcessor(eWorld)
     }
 
     override fun show() {

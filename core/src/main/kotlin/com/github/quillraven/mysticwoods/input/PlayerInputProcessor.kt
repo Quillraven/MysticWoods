@@ -1,23 +1,20 @@
-package com.github.quillraven.mysticwoods.system
+package com.github.quillraven.mysticwoods.input
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys.*
-import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
-import com.github.quillraven.fleks.Entity
-import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.component.AttackComponent
 import com.github.quillraven.mysticwoods.component.MoveComponent
 import com.github.quillraven.mysticwoods.component.PlayerComponent
 import ktx.app.KtxInputAdapter
 
-@AllOf([PlayerComponent::class])
-class PlayerInputSystem(
-    private val moveCmps: ComponentMapper<MoveComponent>,
-    private val attackCmps: ComponentMapper<AttackComponent>
-) : IteratingSystem(), KtxInputAdapter {
-    private var updateMovement = false
-    private var triggerAttack = false
+class PlayerInputProcessor(
+    world: World,
+    private val moveCmps: ComponentMapper<MoveComponent> = world.mapper(),
+    private val attackCmps: ComponentMapper<AttackComponent> = world.mapper()
+) : KtxInputAdapter {
+    private val playerEntities = world.family(allOf = arrayOf(PlayerComponent::class))
     private var playerCos = 0f
     private var playerSin = 0f
     private val pressedKeys = mutableSetOf<Int>()
@@ -32,19 +29,28 @@ class PlayerInputSystem(
 
     private fun isPressed(keycode: Int): Boolean = keycode in pressedKeys
 
+    private fun updatePlayerMovement() {
+        playerEntities.forEach { player ->
+            with(moveCmps[player]) {
+                cos = playerCos
+                sin = playerSin
+            }
+        }
+    }
+
     override fun keyDown(keycode: Int): Boolean {
         pressedKeys += keycode
         if (keycode.isMovementKey()) {
-            updateMovement = true
             when (keycode) {
                 UP -> playerSin = 1f
                 DOWN -> playerSin = -1f
                 RIGHT -> playerCos = 1f
                 LEFT -> playerCos = -1f
             }
+            updatePlayerMovement()
             return true
         } else if (keycode == SPACE) {
-            triggerAttack = true
+            playerEntities.forEach { attackCmps[it].doAttack = true }
             return true
         }
         return false
@@ -53,29 +59,15 @@ class PlayerInputSystem(
     override fun keyUp(keycode: Int): Boolean {
         pressedKeys -= keycode
         if (keycode.isMovementKey()) {
-            updateMovement = true
             when (keycode) {
                 UP -> playerSin = if (isPressed(DOWN)) -1f else 0f
                 DOWN -> playerSin = if (isPressed(UP)) 1f else 0f
                 RIGHT -> playerCos = if (isPressed(LEFT)) -1f else 0f
                 LEFT -> playerCos = if (isPressed(RIGHT)) 1f else 0f
             }
+            updatePlayerMovement()
             return true
         }
         return false
-    }
-
-    override fun onTickEntity(entity: Entity) {
-        if (updateMovement) {
-            updateMovement = false
-            with(moveCmps[entity]) {
-                cos = playerCos
-                sin = playerSin
-            }
-        }
-        if (triggerAttack) {
-            triggerAttack = false
-            attackCmps[entity].doAttack = true
-        }
     }
 }
