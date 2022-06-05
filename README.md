@@ -2,7 +2,7 @@
 
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Quillraven/Fleks/blob/master/LICENSE)
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.6.21-red.svg)](http://kotlinlang.org/)
-[![Fleks](https://img.shields.io/badge/Maven-1.3--JVM-success.svg)](https://github.com/Quillraven/Fleks)
+[![Fleks](https://img.shields.io/badge/Fleks-1.3--JVM-success.svg)](https://github.com/Quillraven/Fleks)
 
 [![LibGDX](https://img.shields.io/badge/LibGDX-1.11-blue.svg)](https://github.com/libgdx/libgdx)
 [![LibKTX](https://img.shields.io/badge/LibKTX-1.11.0--rc1-blue.svg)](https://libktx.github.io/)
@@ -20,6 +20,7 @@ that will teach you some recipes about how to create your own 2D adventure game 
 
 It uses [Box2D](https://box2d.org/) as a physic system for collision handling and movement. It
 also uses [Gdx-AI](https://github.com/libgdx/gdx-ai) for player states and enemy slime AI.
+Mystic Woods uses the [Fleks](https://github.com/Quillraven/Fleks) entity component system.
 
 The controls are:
 - Arrows keys to move around
