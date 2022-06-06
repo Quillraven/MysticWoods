@@ -14,7 +14,7 @@ This project was generated with a Kotlin project template that includes Kotlin a
 
 ## About
 
-Mystic Woods is an example project for a [YouTube tutorial series](https://www.youtube.com/channel/UCe02AjMmzRwrChKaQ7mkv8g)
+Mystic Woods is an example project for a [YouTube tutorial series](https://www.youtube.com/playlist?list=PLTKHCDn5RKK-_mX0s8BJNz7pQecR25689)
 that will teach you some recipes about how to create your own 2D adventure game using
 [Kotlin](http://kotlinlang.org/) and [LibGDX](https://github.com/libgdx/libgdx).
 
