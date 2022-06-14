@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="9">
+<map version="1.8" tiledversion="1.8.5" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="9">
  <properties>
   <property name="music" value="fields.ogg"/>
  </properties>
@@ -209,13 +209,13 @@
  <tileset firstgid="122" name="entities" tilewidth="48" tileheight="48" tilecount="3" columns="0">
   <grid orientation="orthogonal" width="1" height="1"/>
   <tile id="1">
-   <image width="48" height="48" source="../../assets_raw/game/player/idle_00.png"/>
+   <image width="48" height="48" source="images/player.png"/>
   </tile>
   <tile id="2">
-   <image width="32" height="32" source="../../assets_raw/game/slime/idle_00.png"/>
+   <image width="32" height="32" source="images/slime.png"/>
   </tile>
   <tile id="3">
-   <image width="16" height="16" source="../../assets_raw/game/chest/idle_00.png"/>
+   <image width="16" height="16" source="images/chest.png"/>
   </tile>
  </tileset>
  <layer id="1" name="ground" width="32" height="18">
