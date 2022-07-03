@@ -61,6 +61,12 @@ enum class DefaultState : EntityState {
             // for any entity in the LifeSystem
             stateEntity.moveCmp.root = true
         }
+
+        override fun update(stateEntity: StateEntity) {
+            if (!stateEntity.isDead()) {
+                stateEntity.state(RESURRECT)
+            }
+        }
     },
     RESURRECT {
         override fun enter(stateEntity: StateEntity) {

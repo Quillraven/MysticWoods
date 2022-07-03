@@ -7,15 +7,12 @@ import com.github.quillraven.fleks.IteratingSystem
 import com.github.quillraven.mysticwoods.component.AnimationComponent
 import com.github.quillraven.mysticwoods.component.DeadComponent
 import com.github.quillraven.mysticwoods.component.LifeComponent
-import com.github.quillraven.mysticwoods.component.StateComponent
-import com.github.quillraven.mysticwoods.state.DefaultState
 import ktx.log.logger
 
 @AllOf([DeadComponent::class])
 class DeadSystem(
     private val deadCmps: ComponentMapper<DeadComponent>,
     private val aniCmps: ComponentMapper<AnimationComponent>,
-    private val stateCmps: ComponentMapper<StateComponent>,
     private val lifeCmps: ComponentMapper<LifeComponent>,
 ) : IteratingSystem() {
     override fun onTickEntity(entity: Entity) {
@@ -42,7 +39,6 @@ class DeadSystem(
                 // animation done and revival time passed
                 // -> revive entity
                 log.debug { "Entity $entity gets resurrected" }
-                stateCmps[entity].nextState = DefaultState.RESURRECT
                 with(lifeCmps[entity]) { life = max }
                 configureEntity(entity) { deadCmps.remove(it) }
             }
