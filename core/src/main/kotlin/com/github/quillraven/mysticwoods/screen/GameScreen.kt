@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.github.quillraven.fleks.World
+import com.github.quillraven.fleks.world
 import com.github.quillraven.mysticwoods.component.AIComponent.Companion.AIComponentListener
 import com.github.quillraven.mysticwoods.component.FloatingTextComponent.Companion.FloatingTextComponentListener
 import com.github.quillraven.mysticwoods.component.ImageComponent.Companion.ImageComponentListener
@@ -29,39 +29,45 @@ class GameScreen : KtxScreen {
     private val phWorld = createWorld(gravity = Vector2.Zero).apply {
         autoClearForces = false
     }
-    private val eWorld = World {
-        inject(phWorld)
-        inject("GameStage", gameStage)
-        inject("UiStage", uiStage)
-        inject("GameAtlas", gameAtlas)
+    private val eWorld = world {
+        injectables {
+            add(phWorld)
+            add("GameStage", gameStage)
+            add("UiStage", uiStage)
+            add("GameAtlas", gameAtlas)
+        }
 
-        componentListener<PhysicComponentListener>()
-        componentListener<ImageComponentListener>()
-        componentListener<StateComponentListener>()
-        componentListener<AIComponentListener>()
-        componentListener<FloatingTextComponentListener>()
+        components {
+            add<PhysicComponentListener>()
+            add<ImageComponentListener>()
+            add<StateComponentListener>()
+            add<AIComponentListener>()
+            add<FloatingTextComponentListener>()
+        }
 
-        system<EntitySpawnSystem>()
-        system<CollisionSpawnSystem>()
-        system<CollisionDespawnSystem>()
-        system<AISystem>()
-        system<PhysicSystem>()
-        system<AnimationSystem>()
-        system<MoveSystem>()
-        system<AttackSystem>()
-        system<LootSystem>()
-        // DeadSystem must come before LifeSystem
-        // because LifeSystem will add DeadComponent to an entity and sets its death animation.
-        // Since the DeadSystem is checking if the animation is done it needs to be called after
-        // the death animation is set which will be in the next frame in the AnimationSystem above.
-        system<DeadSystem>()
-        system<LifeSystem>()
-        system<StateSystem>()
-        system<CameraSystem>()
-        system<FloatingTextSystem>()
-        system<RenderSystem>()
-        system<AudioSystem>()
-        system<DebugSystem>()
+        systems {
+            add<EntitySpawnSystem>()
+            add<CollisionSpawnSystem>()
+            add<CollisionDespawnSystem>()
+            add<AISystem>()
+            add<PhysicSystem>()
+            add<AnimationSystem>()
+            add<MoveSystem>()
+            add<AttackSystem>()
+            add<LootSystem>()
+            // DeadSystem must come before LifeSystem
+            // because LifeSystem will add DeadComponent to an entity and sets its death animation.
+            // Since the DeadSystem is checking if the animation is done it needs to be called after
+            // the death animation is set which will be in the next frame in the AnimationSystem above.
+            add<DeadSystem>()
+            add<LifeSystem>()
+            add<StateSystem>()
+            add<CameraSystem>()
+            add<FloatingTextSystem>()
+            add<RenderSystem>()
+            add<AudioSystem>()
+            add<DebugSystem>()
+        }
     }
     private var currentMap: TiledMap? = null
 
@@ -75,7 +81,6 @@ class GameScreen : KtxScreen {
     }
 
     override fun show() {
-        // TODO update Fleks to have access to systems and check for EventListener systems and add them to the stage
         setMap("maps/demo.tmx")
     }
 
