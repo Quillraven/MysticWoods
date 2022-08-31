@@ -88,12 +88,21 @@ class AttackSystem(
                     return@query true
                 }
 
+                val isAttackerPlayer = entity in playerCmps
+                if (isAttackerPlayer && fixtureEntity in playerCmps) {
+                    // player does not damage other player entities
+                    return@query true
+                } else if (!isAttackerPlayer && fixtureEntity !in playerCmps) {
+                    // non-player entities do not damage other non-player entities
+                    return@query true
+                }
+
                 // fixtureEntity refers to another entity that gets hit by the attack
                 configureEntity(fixtureEntity) {
                     lifeCmps.getOrNull(it)?.let { lifeCmp ->
                         lifeCmp.takeDamage += attackCmp.damage * MathUtils.random(0.9f, 1.1f)
                     }
-                    if (entity in playerCmps) {
+                    if (isAttackerPlayer) {
                         // player can open chests
                         lootCmps.getOrNull(it)?.let { lootCmp ->
                             lootCmp.interactEntity = entity
