@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.5" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="9">
+<map version="1.9" tiledversion="1.9.1" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="9">
  <properties>
   <property name="music" value="fields.ogg"/>
  </properties>
@@ -234,13 +234,13 @@
   </data>
  </layer>
  <objectgroup id="4" name="entities">
-  <object id="1" type="PLAYER" gid="123" x="22.75" y="270" width="48" height="48"/>
-  <object id="2" type="CHEST" gid="125" x="400" y="80" width="16" height="16"/>
-  <object id="3" type="SLIME" gid="124" x="379" y="99.75" width="32" height="32"/>
-  <object id="4" type="SLIME" gid="124" x="409.5" y="112.25" width="32" height="32"/>
-  <object id="5" type="SLIME" gid="124" x="139.5" y="210" width="32" height="32"/>
-  <object id="6" type="SLIME" gid="124" x="127.5" y="91" width="32" height="32"/>
-  <object id="7" type="SLIME" gid="124" x="335" y="229.5" width="32" height="32"/>
-  <object id="8" type="CHEST" gid="125" x="432" y="16" width="16" height="16"/>
+  <object id="1" name="PLAYER" gid="123" x="22.75" y="270" width="48" height="48"/>
+  <object id="2" name="CHEST" gid="125" x="400" y="80" width="16" height="16"/>
+  <object id="3" name="SLIME" gid="124" x="379" y="99.75" width="32" height="32"/>
+  <object id="4" name="SLIME" gid="124" x="409.5" y="112.25" width="32" height="32"/>
+  <object id="5" name="SLIME" gid="124" x="139.5" y="210" width="32" height="32"/>
+  <object id="6" name="SLIME" gid="124" x="127.5" y="91" width="32" height="32"/>
+  <object id="7" name="SLIME" gid="124" x="335" y="229.5" width="32" height="32"/>
+  <object id="8" name="CHEST" gid="125" x="432" y="16" width="16" height="16"/>
  </objectgroup>
 </map>

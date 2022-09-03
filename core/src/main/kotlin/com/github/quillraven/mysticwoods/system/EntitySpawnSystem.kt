@@ -21,7 +21,10 @@ import ktx.box2d.box
 import ktx.box2d.circle
 import ktx.log.logger
 import ktx.math.vec2
-import ktx.tiled.*
+import ktx.tiled.id
+import ktx.tiled.layer
+import ktx.tiled.x
+import ktx.tiled.y
 import kotlin.math.roundToInt
 
 @AllOf([SpawnComponent::class])
@@ -155,6 +158,7 @@ class EntitySpawnSystem(
                 physicOffset = vec2(0f, -2f * UNIT_SCALE),
                 aiTreePath = "ai/slime.tree"
             )
+
             type.isNotBlank() -> SpawnCfg(type.lowercase())
             else -> gdxError("SpawnType must be specified")
         }
@@ -176,7 +180,7 @@ class EntitySpawnSystem(
         if (event is MapChangeEvent) {
             val entityLayer = event.map.layer("entities")
             entityLayer.objects.forEach { mapObj ->
-                val typeStr = mapObj.type ?: gdxError("MapObject ${mapObj.id} of 'entities' layer does not have a TYPE")
+                val typeStr = mapObj.name ?: gdxError("MapObject ${mapObj.id} of 'entities' layer does not have a NAME")
 
                 world.entity {
                     add<SpawnComponent> {
