@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="9">
+<map version="1.9" tiledversion="1.9.1" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="10">
  <tileset firstgid="1" name="map" tilewidth="16" tileheight="16" spacing="6" margin="3" tilecount="121" columns="11">
-  <image source="../graphics/map.png" width="242" height="242"/>
+  <image source="../../../../assets/graphics/map.png" width="242" height="242"/>
   <tile id="3">
    <objectgroup draworder="index" id="2">
     <object id="1" x="0" y="10.125" width="16" height="5.875"/>
@@ -206,13 +206,13 @@
  <tileset firstgid="122" name="entities" tilewidth="48" tileheight="48" tilecount="3" columns="0">
   <grid orientation="orthogonal" width="1" height="1"/>
   <tile id="1">
-   <image width="48" height="48" source="../../assets_raw/game/player/idle_00.png"/>
+   <image width="48" height="48" source="../../../../assets/maps/images/player.png"/>
   </tile>
   <tile id="2">
-   <image width="32" height="32" source="../../assets_raw/game/slime/idle_00.png"/>
+   <image width="32" height="32" source="../../../../assets/maps/images/slime.png"/>
   </tile>
   <tile id="3">
-   <image width="16" height="16" source="../../assets_raw/game/chest/idle_00.png"/>
+   <image width="16" height="16" source="../../../../assets/maps/images/chest.png"/>
   </tile>
  </tileset>
  <layer id="1" name="ground" width="32" height="18">
@@ -222,7 +222,7 @@
  </layer>
  <layer id="2" name="bgd_1" width="32" height="18">
   <data encoding="base64" compression="zlib">
-   eJxjYKAvKANiISR+GJXMZSNSXSkQCwKxCZRvjUOdCQ7xPCjtCcS6QCxApL24AC77qQHSgdgCCcvQ2X45JHYeGp+a9tsAcREDIi3B4g7dPmz2O2MRSwbibBLsDwDiSAZMvxCyH+TuPAZMYEukGAz4ALEHA8QvkiTYH4DHTGIBPndFAbE0lF0BxEoU2A/yF648SQxQwSJGDf9TAnDZT62yhRDwQeNTEr7E5BlYGU2MPfjSFTUBen1Eb/2w+mig9JMS57jSJbIZxNbDuAByOsJWNpICYPUCOkZucwAAy0AX3Q==
+   eJxjYKAvKANiISR+GJXMZSNSXSkQCwKxCZRvjUOdCQ7xPCjtCcS6QCxApL24AC77qQHSgdgCCYvT2X45JHYeGp+a9tsAcREDIi3B4g7dPmz2O2MRSwbibBLsDwDiSAZMvxCyH+TuPAZMYEukGAz4ALEHA8QvkiTYH4DHTGIBPndFAbE0lF0BxEoU2A/yF648SQxQwSJGDf9TAnDZT62yhRDwQeNTEr7E5BlYGU2MPfjSFTUBen1Eb/2w+mig9JMS57jSJbIZxNbDuAByOsJWNpICYPUCOkZucwAAp9wX2A==
   </data>
  </layer>
  <layer id="3" name="fgd_1" width="32" height="18">
@@ -231,6 +231,8 @@
   </data>
  </layer>
  <objectgroup id="4" name="entities">
-  <object id="1" type="PLAYER" gid="123" x="185.75" y="160.5" width="48" height="48"/>
+  <object id="1" name="PLAYER" gid="123" x="134.917" y="235.417" width="48" height="48"/>
+  <object id="3" name="SLIME" gid="124" x="231.417" y="167.833" width="32" height="32"/>
+  <object id="9" name="CHEST" gid="125" x="272" y="144" width="16" height="16"/>
  </objectgroup>
 </map>
