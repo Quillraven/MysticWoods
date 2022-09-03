@@ -16,24 +16,15 @@ import ktx.graphics.use
 
 class DebugSystem(
     private val physicWorld: World,
-    @Qualifier("GameStage") stage: Stage,
+    @Qualifier("GameStage") private val stage: Stage,
 ) : IntervalSystem(enabled = false) {
-    private lateinit var physicRenderer: Box2DDebugRenderer
-    private lateinit var profiler: GLProfiler
-    private lateinit var shapeRenderer: ShapeRenderer
+    private val physicRenderer by lazy { Box2DDebugRenderer() }
+    private val profiler by lazy { GLProfiler(Gdx.graphics).apply { enable() } }
+    private val shapeRenderer by lazy { ShapeRenderer() }
     private val camera = stage.camera
 
-    init {
-        if (enabled) {
-            physicRenderer = Box2DDebugRenderer()
-            shapeRenderer = ShapeRenderer()
-            profiler = GLProfiler(Gdx.graphics)
-            stage.isDebugAll = true
-            profiler.enable()
-        }
-    }
-
     override fun onTick() {
+        stage.isDebugAll = true
         Gdx.graphics.setTitle(
             buildString {
                 append("FPS:${Gdx.graphics.framesPerSecond},")
