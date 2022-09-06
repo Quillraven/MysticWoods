@@ -24,7 +24,7 @@ class LifeSystem(
     private val physicCmps: ComponentMapper<PhysicComponent>,
     @Qualifier("GameStage") private val gameStage: Stage,
 ) : IteratingSystem() {
-    private val damFont = BitmapFont(Gdx.files.internal("damage.fnt"))
+    private val damFont = BitmapFont(Gdx.files.internal("damage.fnt")).apply { data.setScale(0.33f) }
     private val damFntStyle = LabelStyle(damFont, Color.WHITE)
 
     override fun onTickEntity(entity: Entity) {
