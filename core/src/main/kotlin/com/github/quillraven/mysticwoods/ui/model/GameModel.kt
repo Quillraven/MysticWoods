@@ -1,9 +1,10 @@
-package com.github.quillraven.mysticwoods.ui
+package com.github.quillraven.mysticwoods.ui.model
 
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.quillraven.fleks.ComponentMapper
+import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.component.AnimationComponent
 import com.github.quillraven.mysticwoods.component.LifeComponent
@@ -12,24 +13,8 @@ import com.github.quillraven.mysticwoods.event.EntityAggroEvent
 import com.github.quillraven.mysticwoods.event.EntityLootEvent
 import com.github.quillraven.mysticwoods.event.EntityReviveEvent
 import com.github.quillraven.mysticwoods.event.EntityTakeDamageEvent
-import kotlin.reflect.KProperty
 
-abstract class PropertyChangeSource {
-    @PublishedApi
-    internal val listenersMap = mutableMapOf<KProperty<*>, MutableList<(Any) -> Unit>>()
-
-    @Suppress("UNCHECKED_CAST")
-    inline fun <reified T> onPropertyChange(property: KProperty<T>, noinline action: (T) -> Unit) {
-        val actions = listenersMap.getOrPut(property) { mutableListOf() } as MutableList<(T) -> Unit>
-        actions += action
-    }
-
-    fun notify(property: KProperty<*>, value: Any) {
-        listenersMap[property]?.forEach { it(value) }
-    }
-}
-
-class GameOverlayModel(
+class GameModel(
     world: World,
     stage: Stage,
 ) : PropertyChangeSource(), EventListener {
@@ -44,6 +29,7 @@ class GameOverlayModel(
             field = value
         }
 
+    private var lastEnemy = Entity(-1)
     var enemyType: String = ""
         private set(value) {
             notify(::enemyType, value)
@@ -68,6 +54,18 @@ class GameOverlayModel(
         stage.addListener(this)
     }
 
+    private fun updateEnemy(enemy: Entity) {
+        val lifeCmp = lifeCmps[enemy]
+        enemyLife = lifeCmp.life / lifeCmp.max
+        if (lastEnemy != enemy) {
+            // update enemy type
+            lastEnemy = enemy
+            aniCmps.getOrNull(enemy)?.atlasKey?.let { enemyType ->
+                this.enemyType = enemyType
+            }
+        }
+    }
+
     override fun handle(event: Event): Boolean {
         when (event) {
             is EntityTakeDamageEvent -> {
@@ -76,10 +74,7 @@ class GameOverlayModel(
                 if (isPlayer) {
                     playerLife = lifeCmp.life / lifeCmp.max
                 } else {
-                    enemyLife = lifeCmp.life / lifeCmp.max
-                    aniCmps.getOrNull(event.entity)?.atlasKey?.let { enemyType ->
-                        this.enemyType = enemyType
-                    }
+                    updateEnemy(event.entity)
                 }
             }
 
@@ -101,9 +96,7 @@ class GameOverlayModel(
                 val target = event.target
                 val isTargetPlayer = target in playerCmps
                 if (isTargetPlayer && sourceType != null) {
-                    val sourceLifeCmp = lifeCmps[source]
-                    enemyLife = sourceLifeCmp.life / sourceLifeCmp.max
-                    enemyType = sourceType
+                    updateEnemy(source)
                 }
             }
 

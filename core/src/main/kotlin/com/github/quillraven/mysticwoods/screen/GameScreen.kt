@@ -18,10 +18,10 @@ import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
 import com.github.quillraven.mysticwoods.system.*
-import com.github.quillraven.mysticwoods.ui.GameOverlayModel
 import com.github.quillraven.mysticwoods.ui.disposeSkin
-import com.github.quillraven.mysticwoods.ui.gameOverlay
 import com.github.quillraven.mysticwoods.ui.loadSkin
+import com.github.quillraven.mysticwoods.ui.model.GameModel
+import com.github.quillraven.mysticwoods.ui.view.gameOverlay
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 import ktx.box2d.createWorld
@@ -87,7 +87,7 @@ class GameScreen : KtxScreen {
 
         // UI
         uiStage.actors {
-            gameOverlay(GameOverlayModel(eWorld, gameStage))
+            gameOverlay(GameModel(eWorld, gameStage))
         }
     }
 

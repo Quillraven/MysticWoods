@@ -1,4 +1,4 @@
-package com.github.quillraven.mysticwoods.ui
+package com.github.quillraven.mysticwoods.ui.view
 
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.Actor
@@ -9,6 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
+import com.github.quillraven.mysticwoods.ui.Drawables
+import com.github.quillraven.mysticwoods.ui.Labels
+import com.github.quillraven.mysticwoods.ui.get
+import com.github.quillraven.mysticwoods.ui.model.GameModel
 import com.github.quillraven.mysticwoods.ui.widget.CharacterInfo
 import com.github.quillraven.mysticwoods.ui.widget.characterInfo
 import ktx.actors.alpha
@@ -16,8 +20,8 @@ import ktx.actors.plusAssign
 import ktx.actors.txt
 import ktx.scene2d.*
 
-class GameOverlay(
-    private val model: GameOverlayModel,
+class GameView(
+    private val model: GameModel,
     skin: Skin
 ) : Table(skin), KTable {
 
@@ -37,7 +41,7 @@ class GameOverlay(
         table {
             background = skin[Drawables.FRAME_BGD]
 
-            this@GameOverlay.popupLabel = label(text = "", style = Labels.FRAME.skinKey) { lblCell ->
+            this@GameView.popupLabel = label(text = "", style = Labels.FRAME.skinKey) { lblCell ->
                 this.setAlignment(Align.topLeft)
                 this.wrap = true
                 lblCell.expand().fill().pad(14f)
@@ -112,7 +116,7 @@ class GameOverlay(
 
 @Scene2dDsl
 fun <S> KWidget<S>.gameOverlay(
-    model: GameOverlayModel,
+    model: GameModel,
     skin: Skin = Scene2DSkin.defaultSkin,
-    init: GameOverlay.(S) -> Unit = {}
-): GameOverlay = actor(GameOverlay(model, skin), init)
+    init: GameView.(S) -> Unit = {}
+): GameView = actor(GameView(model, skin), init)

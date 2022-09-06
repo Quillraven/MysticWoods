@@ -3,14 +3,14 @@ package com.github.quillraven.mysticwoods.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
 import com.github.quillraven.mysticwoods.ui.Drawables
-import com.github.quillraven.mysticwoods.ui.GameOverlay
-import com.github.quillraven.mysticwoods.ui.GameOverlayModel
-import com.github.quillraven.mysticwoods.ui.gameOverlay
+import com.github.quillraven.mysticwoods.ui.model.GameModel
+import com.github.quillraven.mysticwoods.ui.view.GameView
+import com.github.quillraven.mysticwoods.ui.view.gameOverlay
 import ktx.scene2d.actors
 
 class UiTestScreen : TestScreen() {
-    private val model = GameOverlayModel(eWorld, uiStage)
-    private lateinit var overlay: GameOverlay
+    private val model = GameModel(eWorld, uiStage)
+    private lateinit var overlay: GameView
 
     override fun show() {
         super.show()
