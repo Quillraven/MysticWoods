@@ -26,8 +26,8 @@ The controls are:
 - Arrows keys to move around
 - Space to attack which is also used to interact with chests
 
-![image](https://user-images.githubusercontent.com/93260/172045125-dae01a2a-4224-4e1d-aa8e-d7527b20b7f1.png)
-![image](https://user-images.githubusercontent.com/93260/172045227-1f3dcccc-41ac-46cb-8e37-3f061391bcc5.png)
+![image](https://user-images.githubusercontent.com/93260/188718920-86c86b88-1ccb-4034-bd58-2fbbcee5cf78.png)
+![image](https://user-images.githubusercontent.com/93260/188719043-2e4b731f-3792-47b8-808e-c0f8361afa93.png)
 
 ## Credits
 
