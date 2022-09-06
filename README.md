@@ -35,3 +35,6 @@ The controls are:
 - [Map music](https://opengameart.org/content/adventure-begins)
 - [Sound effects](https://opengameart.org/content/rpg-sound-pack)
 - [Tile extruder](https://github.com/sporadic-labs/tile-extruder)
+- [Soup of Justice font](https://www.dafont.com/soup-of-justice.font)
+- [Immortal font](https://www.1001freefonts.com/immortal.font)
+- [UI assets](https://mounirtohami.itch.io/pixel-art-gui-elements)
