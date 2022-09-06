@@ -31,7 +31,7 @@ abstract class TestScreen(private var testMapPath: String = "") : KtxScreen {
     private val phWorld = createWorld(gravity = Vector2.Zero).apply {
         autoClearForces = false
     }
-    private val eWorld = world {
+    val eWorld = world {
         injectables {
             add(phWorld)
             add("GameStage", gameStage)

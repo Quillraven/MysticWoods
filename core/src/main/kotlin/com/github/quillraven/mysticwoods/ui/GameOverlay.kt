@@ -16,15 +16,17 @@ import ktx.actors.plusAssign
 import ktx.actors.txt
 import ktx.scene2d.*
 
-private val testStr = """This is some [#FF0000]super[] long text to
-    |verify that the label wrapping is working properly.""".trimMargin()
+class GameOverlay(
+    private val model: GameOverlayModel,
+    skin: Skin
+) : Table(skin), KTable {
 
-class GameOverlay(skin: Skin) : Table(skin), KTable {
     private val enemyInfo: CharacterInfo
     private val playerInfo: CharacterInfo
     private val popupLabel: Label
 
     init {
+        // UI
         setFillParent(true)
 
         enemyInfo = characterInfo(null, skin) {
@@ -35,7 +37,7 @@ class GameOverlay(skin: Skin) : Table(skin), KTable {
         table {
             background = skin[Drawables.FRAME_BGD]
 
-            this@GameOverlay.popupLabel = label(text = testStr, style = Labels.FRAME.skinKey) { lblCell ->
+            this@GameOverlay.popupLabel = label(text = "", style = Labels.FRAME.skinKey) { lblCell ->
                 this.setAlignment(Align.topLeft)
                 this.wrap = true
                 lblCell.expand().fill().pad(14f)
@@ -46,6 +48,14 @@ class GameOverlay(skin: Skin) : Table(skin), KTable {
         }
 
         playerInfo = characterInfo(Drawables.PLAYER, skin)
+
+        // data binding
+        model.onPropertyChange(model::playerLife) { lifePercentage ->
+            playerLife(lifePercentage)
+        }
+        model.onPropertyChange(model::enemyLife) { lifePercentage ->
+            enemyLife(lifePercentage)
+        }
     }
 
     fun playerLife(percentage: Float) = playerInfo.life(percentage)
@@ -94,6 +104,7 @@ class GameOverlay(skin: Skin) : Table(skin), KTable {
 
 @Scene2dDsl
 fun <S> KWidget<S>.gameOverlay(
+    model: GameOverlayModel,
     skin: Skin = Scene2DSkin.defaultSkin,
     init: GameOverlay.(S) -> Unit = {}
-): GameOverlay = actor(GameOverlay(skin), init)
+): GameOverlay = actor(GameOverlay(model, skin), init)

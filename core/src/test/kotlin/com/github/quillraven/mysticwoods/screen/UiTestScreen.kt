@@ -4,17 +4,19 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
 import com.github.quillraven.mysticwoods.ui.Drawables
 import com.github.quillraven.mysticwoods.ui.GameOverlay
+import com.github.quillraven.mysticwoods.ui.GameOverlayModel
 import com.github.quillraven.mysticwoods.ui.gameOverlay
 import ktx.scene2d.actors
 
 class UiTestScreen : TestScreen() {
+    private val model = GameOverlayModel(eWorld, uiStage)
     private lateinit var overlay: GameOverlay
 
     override fun show() {
         super.show()
         uiStage.clear()
         uiStage.actors {
-            overlay = gameOverlay()
+            overlay = gameOverlay(model)
         }
         uiStage.isDebugAll = true
     }

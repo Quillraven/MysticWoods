@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.github.quillraven.fleks.*
 import com.github.quillraven.mysticwoods.component.*
 import com.github.quillraven.mysticwoods.event.EntityDeathEvent
+import com.github.quillraven.mysticwoods.event.EntityTakeDamageEvent
 import com.github.quillraven.mysticwoods.event.fire
 import ktx.assets.disposeSafely
 
@@ -34,6 +35,7 @@ class LifeSystem(
         if (lifeCmp.takeDamage > 0f) {
             val physicCmp = physicCmps[entity]
             lifeCmp.life -= lifeCmp.takeDamage
+            gameStage.fire(EntityTakeDamageEvent(entity, lifeCmp.takeDamage))
             damageFloatingText(lifeCmp.takeDamage, physicCmp.body.position, physicCmp.size)
             lifeCmp.takeDamage = 0f
         }
