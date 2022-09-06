@@ -19,6 +19,8 @@ data class EntityDeathEvent(val atlasKey: String) : Event()
 class EntityLootEvent : Event()
 
 // damage is not used at the moment but might be useful in the future ;)
-class EntityTakeDamageEvent(val entity: Entity, val damage: Float) : Event()
+data class EntityTakeDamageEvent(val entity: Entity, val damage: Float) : Event()
 
-class EntityReviveEvent(val entity: Entity) : Event()
+data class EntityReviveEvent(val entity: Entity) : Event()
+
+data class EntityAggroEvent(val aiEntity: Entity, val target: Entity) : Event()

@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.github.quillraven.mysticwoods.behavior.Action
 import com.github.quillraven.mysticwoods.component.AIEntity
 import com.github.quillraven.mysticwoods.component.AnimationType
+import com.github.quillraven.mysticwoods.event.EntityAggroEvent
 import ktx.math.vec2
 
 class AttackTask : Action() {
@@ -37,6 +38,7 @@ class MoveTask(
     override fun execute(): Status {
         if (status != Status.RUNNING) {
             aiEntity.animation(AnimationType.RUN)
+            aiEntity.fireEvent(EntityAggroEvent(aiEntity.entity, aiEntity.target))
             return Status.RUNNING
         }
 

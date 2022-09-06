@@ -59,6 +59,11 @@ class GameOverlay(
         model.onPropertyChange(model::lootText) { lootInfo ->
             popup(lootInfo)
         }
+        model.onPropertyChange(model::enemyType) { type ->
+            when (type) {
+                "slime" -> showEnemyInfo(Drawables.SLIME, model.enemyLife, 0f)
+            }
+        }
     }
 
     fun playerLife(percentage: Float) = playerInfo.life(percentage)

@@ -7,30 +7,33 @@ import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
-import com.github.quillraven.fleks.ComponentListener
-import com.github.quillraven.fleks.ComponentMapper
-import com.github.quillraven.fleks.Entity
-import com.github.quillraven.fleks.World
+import com.badlogic.gdx.scenes.scene2d.Event
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.github.quillraven.fleks.*
 import com.github.quillraven.mysticwoods.component.AIComponent.Companion.NO_TARGET
+import com.github.quillraven.mysticwoods.event.fire
 import ktx.math.component1
 import ktx.math.component2
 
 class AIEntity(
     val entity: Entity,
     world: World,
-    private val aiCmps: ComponentMapper<AIComponent> = world.mapper(),
-    private val lifeCmps: ComponentMapper<LifeComponent> = world.mapper(),
-    private val playerCmps: ComponentMapper<PlayerComponent> = world.mapper(),
-    private val attackCmps: ComponentMapper<AttackComponent> = world.mapper(),
-    private val animationCmps: ComponentMapper<AnimationComponent> = world.mapper(),
-    private val imageCmps: ComponentMapper<ImageComponent> = world.mapper(),
-    private val physicCmps: ComponentMapper<PhysicComponent> = world.mapper(),
-    private val moveCmps: ComponentMapper<MoveComponent> = world.mapper(),
+    private val stage: Stage,
 ) {
+
+    private val aiCmps: ComponentMapper<AIComponent> = world.mapper()
+    private val lifeCmps: ComponentMapper<LifeComponent> = world.mapper()
+    private val playerCmps: ComponentMapper<PlayerComponent> = world.mapper()
+    private val attackCmps: ComponentMapper<AttackComponent> = world.mapper()
+    private val animationCmps: ComponentMapper<AnimationComponent> = world.mapper()
+    private val imageCmps: ComponentMapper<ImageComponent> = world.mapper()
+    private val physicCmps: ComponentMapper<PhysicComponent> = world.mapper()
+    private val moveCmps: ComponentMapper<MoveComponent> = world.mapper()
+
     val location: Vector2
         get() = physicCmps[entity].body.position
 
-    private val target: Entity
+    val target: Entity
         get() = aiCmps[entity].target
 
     fun inTargetRange(range: Float): Boolean {
@@ -171,6 +174,10 @@ class AIEntity(
 
     fun isAnimationDone() = animationCmps[entity].isAnimationFinished()
 
+    fun fireEvent(event: Event) {
+        stage.fire(event)
+    }
+
     companion object {
         val TMP_RECT1 = Rectangle()
         val TMP_RECT2 = Rectangle()
@@ -188,7 +195,8 @@ data class AIComponent(
         val NO_TARGET = Entity(-1)
 
         class AIComponentListener(
-            private val world: World
+            private val world: World,
+            @Qualifier("GameStage") private val stage: Stage,
         ) : ComponentListener<AIComponent> {
             private val bTreeParser = BehaviorTreeParser<AIEntity>()
 
@@ -196,7 +204,7 @@ data class AIComponent(
                 if (component.treePath.isNotBlank()) {
                     component.behaviorTree = bTreeParser.parse(
                         Gdx.files.internal(component.treePath),
-                        AIEntity(entity, world)
+                        AIEntity(entity, world, stage)
                     )
                 }
             }
