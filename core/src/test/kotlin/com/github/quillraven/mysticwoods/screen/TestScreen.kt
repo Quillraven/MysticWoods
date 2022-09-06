@@ -25,7 +25,7 @@ import ktx.box2d.createWorld
 abstract class TestScreen(private var testMapPath: String = "") : KtxScreen {
     private val gameAtlas = TextureAtlas("graphics/game.atlas")
     private val gameStage = Stage(ExtendViewport(16f, 9f))
-    private val uiStage = Stage(ExtendViewport(1280f, 720f))
+    val uiStage = Stage(ExtendViewport(320f, 180f))
     private val phWorld = createWorld(gravity = Vector2.Zero).apply {
         autoClearForces = false
     }
