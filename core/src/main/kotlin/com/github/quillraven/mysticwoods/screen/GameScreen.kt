@@ -74,6 +74,7 @@ class GameScreen : KtxScreen {
     private var currentMap: TiledMap? = null
 
     init {
+        loadSkin()
         eWorld.systems.forEach { sys ->
             if (sys is EventListener) {
                 gameStage.addListener(sys)
@@ -111,5 +112,6 @@ class GameScreen : KtxScreen {
         uiStage.disposeSafely()
         gameAtlas.disposeSafely()
         currentMap?.disposeSafely()
+        disposeSkin()
     }
 }

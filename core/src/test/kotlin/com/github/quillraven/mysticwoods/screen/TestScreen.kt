@@ -18,6 +18,8 @@ import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
 import com.github.quillraven.mysticwoods.system.*
+import com.github.quillraven.mysticwoods.ui.disposeSkin
+import com.github.quillraven.mysticwoods.ui.loadSkin
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 import ktx.box2d.createWorld
@@ -67,6 +69,7 @@ abstract class TestScreen(private var testMapPath: String = "") : KtxScreen {
     private var tiledMap: TiledMap? = null
 
     init {
+        loadSkin()
         eWorld.system<DebugSystem>().enabled = true
         eWorld.systems.forEach { sys ->
             if (sys is EventListener) {
@@ -102,5 +105,6 @@ abstract class TestScreen(private var testMapPath: String = "") : KtxScreen {
         uiStage.disposeSafely()
         gameAtlas.disposeSafely()
         tiledMap?.disposeSafely()
+        disposeSkin()
     }
 }
