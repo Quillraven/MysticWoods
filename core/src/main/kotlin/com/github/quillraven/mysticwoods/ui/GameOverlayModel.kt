@@ -7,6 +7,7 @@ import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.component.LifeComponent
 import com.github.quillraven.mysticwoods.component.PlayerComponent
+import com.github.quillraven.mysticwoods.event.EntityLootEvent
 import com.github.quillraven.mysticwoods.event.EntityReviveEvent
 import com.github.quillraven.mysticwoods.event.EntityTakeDamageEvent
 import kotlin.reflect.KProperty
@@ -44,6 +45,14 @@ class GameOverlayModel(
             field = value
         }
 
+    var lootText = ""
+        private set(value) {
+            if (value.isNotBlank()) {
+                notify(::lootText, value)
+            }
+            field = value
+        }
+
     init {
         stage.addListener(this)
     }
@@ -66,6 +75,10 @@ class GameOverlayModel(
                 if (isPlayer) {
                     playerLife = lifeCmp.life / lifeCmp.max
                 }
+            }
+
+            is EntityLootEvent -> {
+                lootText = "You found some [#ff0000]incredible[] stuff!"
             }
 
             else -> return false

@@ -56,6 +56,9 @@ class GameOverlay(
         model.onPropertyChange(model::enemyLife) { lifePercentage ->
             enemyLife(lifePercentage)
         }
+        model.onPropertyChange(model::lootText) { lootInfo ->
+            popup(lootInfo)
+        }
     }
 
     fun playerLife(percentage: Float) = playerInfo.life(percentage)
