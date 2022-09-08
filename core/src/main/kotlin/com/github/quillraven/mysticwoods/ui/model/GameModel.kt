@@ -23,32 +23,14 @@ class GameModel(
     private val lifeCmps: ComponentMapper<LifeComponent> = world.mapper()
     private val aniCmps: ComponentMapper<AnimationComponent> = world.mapper()
 
-    var playerLife = 1f
-        private set(value) {
-            notify(::playerLife, value)
-            field = value
-        }
+    var playerLife by propertyNotify(1f)
 
     private var lastEnemy = Entity(-1)
-    var enemyType: String = ""
-        private set(value) {
-            notify(::enemyType, value)
-            field = value
-        }
+    var enemyType by propertyNotify("")
 
-    var enemyLife = 1f
-        private set(value) {
-            notify(::enemyLife, value)
-            field = value
-        }
+    var enemyLife by propertyNotify(1f)
 
-    var lootText = ""
-        private set(value) {
-            if (value.isNotBlank()) {
-                notify(::lootText, value)
-            }
-            field = value
-        }
+    var lootText by propertyNotify("")
 
     init {
         stage.addListener(this)

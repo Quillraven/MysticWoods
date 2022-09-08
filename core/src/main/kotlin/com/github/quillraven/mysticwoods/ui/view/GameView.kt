@@ -54,16 +54,16 @@ class GameView(
         playerInfo = characterInfo(Drawables.PLAYER, skin)
 
         // data binding
-        model.onPropertyChange(model::playerLife) { lifePercentage ->
+        model.onPropertyChange(GameModel::playerLife) { lifePercentage ->
             playerLife(lifePercentage)
         }
-        model.onPropertyChange(model::enemyLife) { lifePercentage ->
+        model.onPropertyChange(GameModel::enemyLife) { lifePercentage ->
             enemyLife(lifePercentage)
         }
-        model.onPropertyChange(model::lootText) { lootInfo ->
+        model.onPropertyChange(GameModel::lootText) { lootInfo ->
             popup(lootInfo)
         }
-        model.onPropertyChange(model::enemyType) { type ->
+        model.onPropertyChange(GameModel::enemyType) { type ->
             when (type) {
                 "slime" -> showEnemyInfo(Drawables.SLIME, model.enemyLife, 0f)
             }

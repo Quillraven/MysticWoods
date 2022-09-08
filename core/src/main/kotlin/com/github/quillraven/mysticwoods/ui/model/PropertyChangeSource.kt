@@ -16,3 +16,16 @@ abstract class PropertyChangeSource {
         listenersMap[property]?.forEach { it(value) }
     }
 }
+
+class PropertyNotifier<T : Any>(initialValue: T) {
+    private var _value: T = initialValue
+
+    operator fun getValue(thisRef: PropertyChangeSource, property: KProperty<*>): T = _value
+
+    operator fun setValue(thisRef: PropertyChangeSource, property: KProperty<*>, value: T) {
+        _value = value
+        thisRef.notify(property, value)
+    }
+}
+
+inline fun <reified T : Any> propertyNotify(initialValue: T): PropertyNotifier<T> = PropertyNotifier(initialValue)
