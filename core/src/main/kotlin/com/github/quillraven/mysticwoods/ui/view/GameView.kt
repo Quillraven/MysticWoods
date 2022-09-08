@@ -115,7 +115,7 @@ class GameView(
 }
 
 @Scene2dDsl
-fun <S> KWidget<S>.gameOverlay(
+fun <S> KWidget<S>.gameView(
     model: GameModel,
     skin: Skin = Scene2DSkin.defaultSkin,
     init: GameView.(S) -> Unit = {}

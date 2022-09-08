@@ -5,7 +5,7 @@ import com.badlogic.gdx.Input.Keys
 import com.github.quillraven.mysticwoods.ui.Drawables
 import com.github.quillraven.mysticwoods.ui.model.GameModel
 import com.github.quillraven.mysticwoods.ui.view.GameView
-import com.github.quillraven.mysticwoods.ui.view.gameOverlay
+import com.github.quillraven.mysticwoods.ui.view.gameView
 import ktx.scene2d.actors
 
 class UiTestScreen : TestScreen() {
@@ -16,7 +16,7 @@ class UiTestScreen : TestScreen() {
         super.show()
         uiStage.clear()
         uiStage.actors {
-            overlay = gameOverlay(model)
+            overlay = gameView(model)
         }
         uiStage.isDebugAll = true
     }

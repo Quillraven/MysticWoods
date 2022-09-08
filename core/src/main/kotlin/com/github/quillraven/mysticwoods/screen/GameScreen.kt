@@ -21,7 +21,7 @@ import com.github.quillraven.mysticwoods.system.*
 import com.github.quillraven.mysticwoods.ui.disposeSkin
 import com.github.quillraven.mysticwoods.ui.loadSkin
 import com.github.quillraven.mysticwoods.ui.model.GameModel
-import com.github.quillraven.mysticwoods.ui.view.gameOverlay
+import com.github.quillraven.mysticwoods.ui.view.gameView
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 import ktx.box2d.createWorld
@@ -87,7 +87,7 @@ class GameScreen : KtxScreen {
 
         // UI
         uiStage.actors {
-            gameOverlay(GameModel(eWorld, gameStage))
+            gameView(GameModel(eWorld, gameStage))
         }
     }
 
