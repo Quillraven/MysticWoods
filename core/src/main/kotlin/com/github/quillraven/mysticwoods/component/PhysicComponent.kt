@@ -78,7 +78,7 @@ class PhysicComponent(
                                 vec2(0f, bodyH),
                             )
                             TMP_VEC.set(bodyW * 0.5f, bodyH * 0.5f)
-                            box(SPAWN_AREA_SIZE + 2f, SPAWN_AREA_SIZE + 2f, TMP_VEC) {
+                            box(SPAWN_AREA_SIZE + 4f, SPAWN_AREA_SIZE + 4f, TMP_VEC) {
                                 isSensor = true
                             }
                         }
