@@ -9,11 +9,15 @@ import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.quillraven.fleks.world
-import com.github.quillraven.mysticwoods.component.AIComponent.Companion.AIComponentListener
-import com.github.quillraven.mysticwoods.component.FloatingTextComponent.Companion.FloatingTextComponentListener
-import com.github.quillraven.mysticwoods.component.ImageComponent.Companion.ImageComponentListener
-import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.PhysicComponentListener
-import com.github.quillraven.mysticwoods.component.StateComponent.Companion.StateComponentListener
+import com.github.quillraven.mysticwoods.component.*
+import com.github.quillraven.mysticwoods.component.AIComponent.Companion.onAiAdd
+import com.github.quillraven.mysticwoods.component.FloatingTextComponent.Companion.onFloatingAdd
+import com.github.quillraven.mysticwoods.component.FloatingTextComponent.Companion.onFloatingRemove
+import com.github.quillraven.mysticwoods.component.ImageComponent.Companion.onImageAdd
+import com.github.quillraven.mysticwoods.component.ImageComponent.Companion.onImageRemove
+import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.onPhysicAdd
+import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.onPhysicRemove
+import com.github.quillraven.mysticwoods.component.StateComponent.Companion.onStateAdd
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
@@ -43,35 +47,42 @@ class GameScreen : KtxScreen {
         }
 
         components {
-            add<PhysicComponentListener>()
-            add<ImageComponentListener>()
-            add<StateComponentListener>()
-            add<AIComponentListener>()
-            add<FloatingTextComponentListener>()
+            onAdd(PhysicComponent, onPhysicAdd)
+            onRemove(PhysicComponent, onPhysicRemove)
+
+            onAdd(ImageComponent, onImageAdd)
+            onRemove(ImageComponent, onImageRemove)
+
+            onAdd(StateComponent, onStateAdd)
+
+            onAdd(AIComponent, onAiAdd)
+
+            onAdd(FloatingTextComponent, onFloatingAdd)
+            onRemove(FloatingTextComponent, onFloatingRemove)
         }
 
         systems {
-            add<EntitySpawnSystem>()
-            add<CollisionSpawnSystem>()
-            add<CollisionDespawnSystem>()
-            add<AISystem>()
-            add<PhysicSystem>()
-            add<AnimationSystem>()
-            add<MoveSystem>()
-            add<AttackSystem>()
-            add<LootSystem>()
+            add(EntitySpawnSystem())
+            add(CollisionSpawnSystem())
+            add(CollisionDespawnSystem())
+            add(AISystem())
+            add(PhysicSystem())
+            add(AnimationSystem())
+            add(MoveSystem())
+            add(AttackSystem())
+            add(LootSystem())
             // DeadSystem must come before LifeSystem
             // because LifeSystem will add DeadComponent to an entity and sets its death animation.
             // Since the DeadSystem is checking if the animation is done it needs to be called after
             // the death animation is set which will be in the next frame in the AnimationSystem above.
-            add<DeadSystem>()
-            add<LifeSystem>()
-            add<StateSystem>()
-            add<CameraSystem>()
-            add<FloatingTextSystem>()
-            add<RenderSystem>()
-            add<AudioSystem>()
-            add<DebugSystem>()
+            add(DeadSystem())
+            add(LifeSystem())
+            add(StateSystem())
+            add(CameraSystem())
+            add(FloatingTextSystem())
+            add(RenderSystem())
+            add(AudioSystem())
+            add(DebugSystem())
         }
     }
     private var currentMap: TiledMap? = null

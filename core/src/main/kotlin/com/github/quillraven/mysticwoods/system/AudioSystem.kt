@@ -41,6 +41,7 @@ class AudioSystem : EventListener, IntervalSystem() {
                     music.play()
                 }
             }
+
             is EntityAttackEvent -> queueSound("audio/${event.atlasKey}_attack.wav")
             is EntityDeathEvent -> queueSound("audio/${event.atlasKey}_death.wav")
             is EntityLootEvent -> queueSound("audio/chest_open.wav")

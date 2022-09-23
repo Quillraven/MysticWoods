@@ -1,24 +1,18 @@
 package com.github.quillraven.mysticwoods.system
 
-import com.github.quillraven.fleks.AllOf
-import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.fleks.World.Companion.family
 import com.github.quillraven.mysticwoods.component.ImageComponent
 import com.github.quillraven.mysticwoods.component.MoveComponent
 import com.github.quillraven.mysticwoods.component.PhysicComponent
 import ktx.math.component1
 import ktx.math.component2
 
-@AllOf([MoveComponent::class, PhysicComponent::class])
-class MoveSystem(
-    private val moveCmps: ComponentMapper<MoveComponent>,
-    private val physicCmps: ComponentMapper<PhysicComponent>,
-    private val imgCmps: ComponentMapper<ImageComponent>,
-) : IteratingSystem() {
+class MoveSystem : IteratingSystem(family { all(MoveComponent, PhysicComponent) }) {
     override fun onTickEntity(entity: Entity) {
-        val moveCmp = moveCmps[entity]
-        val physicCmp = physicCmps[entity]
+        val moveCmp = entity[MoveComponent]
+        val physicCmp = entity[PhysicComponent]
 
         if (moveCmp.cos == 0f && moveCmp.sin == 0f || moveCmp.root) {
             // no direction for movement or entity is rooted
@@ -43,7 +37,7 @@ class MoveSystem(
         )
 
         // flip image if entity moves left/right
-        imgCmps.getOrNull(entity)?.let { imgCmp ->
+        entity.getOrNull(ImageComponent)?.let { imgCmp ->
             if (moveCmp.cos != 0f) {
                 imgCmp.image.flipX = moveCmp.cos < 0
             }

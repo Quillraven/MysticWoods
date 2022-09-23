@@ -7,7 +7,10 @@ import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.utils.Scaling
-import com.github.quillraven.fleks.*
+import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.fleks.World.Companion.family
+import com.github.quillraven.fleks.World.Companion.inject
 import com.github.quillraven.mysticwoods.MysticWoods.Companion.UNIT_SCALE
 import com.github.quillraven.mysticwoods.actor.FlipImage
 import com.github.quillraven.mysticwoods.component.*
@@ -27,23 +30,21 @@ import ktx.tiled.x
 import ktx.tiled.y
 import kotlin.math.roundToInt
 
-@AllOf([SpawnComponent::class])
 class EntitySpawnSystem(
-    @Qualifier("GameAtlas") private val atlas: TextureAtlas,
-    private val physicWorld: World,
-    private val spawnCmps: ComponentMapper<SpawnComponent>,
-) : EventListener, IteratingSystem() {
+    private val atlas: TextureAtlas = inject("GameAtlas"),
+    private val physicWorld: World = inject(),
+) : EventListener, IteratingSystem(family { all(SpawnComponent) }) {
     private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
     private val cachedSizes = mutableMapOf<String, Vector2>()
 
     override fun onTickEntity(entity: Entity) {
-        with(spawnCmps[entity]) {
+        with(entity[SpawnComponent]) {
             val cfg = spawnCfg(type)
             val relativeSize = size(cfg.atlasKey)
             LOG.debug { "Spawning entity of type $type with size $relativeSize" }
 
             world.entity {
-                val imageCmp = add<ImageComponent> {
+                it += ImageComponent().apply {
                     image = FlipImage().apply {
                         setScaling(Scaling.fill)
                         setPosition(location.x, location.y)
@@ -51,11 +52,11 @@ class EntitySpawnSystem(
                     }
                 }
 
-                add<AnimationComponent> {
+                it += AnimationComponent().apply {
                     nextAnimation(cfg.atlasKey, AnimationType.IDLE)
                 }
 
-                val physicCmp = physicCmpFromImage(physicWorld, imageCmp.image, cfg.bodyType) { cmp, width, height ->
+                it += physicCmpFromImage(physicWorld, it[ImageComponent].image, cfg.bodyType) { cmp, width, height ->
                     val w = width * cfg.scalePhysic.x
                     val h = height * cfg.scalePhysic.y
                     cmp.size.set(w, h)
@@ -77,52 +78,55 @@ class EntitySpawnSystem(
                 }
 
                 if (cfg.scaleSpeed != 0f) {
-                    add<MoveComponent> { speed = DEFAULT_SPEED * cfg.scaleSpeed }
+                    it += MoveComponent(DEFAULT_SPEED * cfg.scaleSpeed)
                 }
 
                 if (cfg.canAttack) {
-                    add<AttackComponent> {
-                        maxDelay = cfg.attackDelay
-                        damage = (DEFAULT_ATTACK_DAMAGE * cfg.scaleAttackDamage).roundToInt()
+                    it += AttackComponent(
+                        damage = (DEFAULT_ATTACK_DAMAGE * cfg.scaleAttackDamage).roundToInt(),
+                        maxDelay = cfg.attackDelay,
                         extraRange = cfg.attackExtraRange
-                    }
+                    )
                 }
 
                 if (cfg.lifeScale > 0) {
-                    add<LifeComponent> {
-                        max = DEFAULT_LIFE * cfg.lifeScale
-                        life = max
-                    }
+                    it += LifeComponent(life = DEFAULT_LIFE * cfg.lifeScale, max = DEFAULT_LIFE * cfg.lifeScale)
                 }
 
                 if (cfg.bodyType != BodyDef.BodyType.StaticBody) {
                     // entity is not static -> add collision component to spawn
                     // collision entities around it
-                    add<CollisionComponent>()
+                    it += CollisionComponent()
                 }
 
-                if (type == PLAYER_TYPE) {
-                    add<PlayerComponent>()
-                    // add state component at the end since its ComponentListener initialization logic
-                    // depends on some components added above
-                    add<StateComponent>()
-                } else if (type == CHEST_TYPE) {
-                    add<LootComponent>()
-                } else {
-                    // any other entity gets an AIComponent to potentially
-                    // use a behavior tree for its behavior.
-                    // AIComponent entities also have a list of nearby other entities
-                    // that they can interact with
-                    add<AIComponent> {
-                        if (cfg.aiTreePath.isNotBlank()) {
-                            treePath = cfg.aiTreePath
-                        }
+                when (type) {
+                    PLAYER_TYPE -> {
+                        it += PlayerComponent()
+                        // add state component at the end since its ComponentListener initialization logic
+                        // depends on some components added above
+                        it += StateComponent()
                     }
-                    // such entities also get an "action sensor"
-                    // entities who are within that sensor get added to the nearby entities list
-                    physicCmp.body.circle(4f) {
-                        isSensor = true
-                        userData = ACTION_SENSOR
+
+                    CHEST_TYPE -> {
+                        it += LootComponent()
+                    }
+
+                    else -> {
+                        // any other entity gets an AIComponent to potentially
+                        // use a behavior tree for its behavior.
+                        // AIComponent entities also have a list of nearby other entities
+                        // that they can interact with
+                        it += AIComponent().apply {
+                            if (cfg.aiTreePath.isNotBlank()) {
+                                treePath = cfg.aiTreePath
+                            }
+                        }
+                        // such entities also get an "action sensor"
+                        // entities who are within that sensor get added to the nearby entities list
+                        it[PhysicComponent].body.circle(4f) {
+                            isSensor = true
+                            userData = ACTION_SENSOR
+                        }
                     }
                 }
             }
@@ -183,10 +187,7 @@ class EntitySpawnSystem(
                 val typeStr = mapObj.name ?: gdxError("MapObject ${mapObj.id} of 'entities' layer does not have a NAME")
 
                 world.entity {
-                    add<SpawnComponent> {
-                        type = typeStr
-                        location.set(mapObj.x * UNIT_SCALE, mapObj.y * UNIT_SCALE)
-                    }
+                    it += SpawnComponent(typeStr, vec2(mapObj.x * UNIT_SCALE, mapObj.y * UNIT_SCALE))
                 }
             }
             return true

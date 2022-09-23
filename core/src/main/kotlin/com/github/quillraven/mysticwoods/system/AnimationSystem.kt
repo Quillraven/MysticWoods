@@ -4,7 +4,10 @@ package com.github.quillraven.mysticwoods.system
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import com.github.quillraven.fleks.*
+import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.fleks.World.Companion.family
+import com.github.quillraven.fleks.World.Companion.inject
 import com.github.quillraven.mysticwoods.component.AnimationComponent
 import com.github.quillraven.mysticwoods.component.AnimationComponent.Companion.NO_ANIMATION
 import com.github.quillraven.mysticwoods.component.ImageComponent
@@ -12,18 +15,15 @@ import ktx.app.gdxError
 import ktx.collections.map
 import ktx.log.logger
 
-@AllOf(components = [AnimationComponent::class, ImageComponent::class])
 class AnimationSystem(
-    @Qualifier("GameAtlas") private val atlas: TextureAtlas,
-    private val animationCmps: ComponentMapper<AnimationComponent>,
-    private val imageCmps: ComponentMapper<ImageComponent>,
-) : IteratingSystem() {
+    private val atlas: TextureAtlas = inject("GameAtlas"),
+) : IteratingSystem(family { all(AnimationComponent, ImageComponent) }) {
     private val cachedAnimations = mutableMapOf<String, Animation<TextureRegionDrawable>>()
 
     override fun onTickEntity(entity: Entity) {
-        val aniCmp = animationCmps[entity]
+        val aniCmp = entity[AnimationComponent]
 
-        with(imageCmps[entity]) {
+        with(entity[ImageComponent]) {
             image.drawable = if (aniCmp.nextAnimation != NO_ANIMATION) {
                 aniCmp.run {
                     animation = animation(aniCmp.nextAnimation)

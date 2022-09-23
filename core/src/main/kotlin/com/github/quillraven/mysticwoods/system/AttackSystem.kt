@@ -4,7 +4,10 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.quillraven.fleks.*
+import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.fleks.World.Companion.family
+import com.github.quillraven.fleks.World.Companion.inject
 import com.github.quillraven.mysticwoods.component.*
 import com.github.quillraven.mysticwoods.event.EntityAttackEvent
 import com.github.quillraven.mysticwoods.event.fire
@@ -13,20 +16,12 @@ import ktx.box2d.query
 import ktx.math.component1
 import ktx.math.component2
 
-@AllOf([AttackComponent::class, PhysicComponent::class, ImageComponent::class])
 class AttackSystem(
-    private val attackCmps: ComponentMapper<AttackComponent>,
-    private val animationCmps: ComponentMapper<AnimationComponent>,
-    private val imgCmps: ComponentMapper<ImageComponent>,
-    private val physicCmps: ComponentMapper<PhysicComponent>,
-    private val lifeCmps: ComponentMapper<LifeComponent>,
-    private val lootCmps: ComponentMapper<LootComponent>,
-    private val playerCmps: ComponentMapper<PlayerComponent>,
-    private val phWorld: World,
-    @Qualifier("GameStage") private val stage: Stage,
-) : IteratingSystem() {
+    private val phWorld: World = inject(),
+    private val stage: Stage = inject("GameStage"),
+) : IteratingSystem(family { all(AttackComponent, PhysicComponent, ImageComponent) }) {
     override fun onTickEntity(entity: Entity) {
-        val attackCmp = attackCmps[entity]
+        val attackCmp = entity[AttackComponent]
 
         if (attackCmp.state == AttackState.READY && !attackCmp.doAttack) {
             // no intention to attack -> do nothing
@@ -46,12 +41,12 @@ class AttackSystem(
             // deal damage to nearby enemies
             attackCmp.state = AttackState.DEAL_DAMAGE
 
-            animationCmps.getOrNull(entity)?.let { aniCmp ->
+            entity.getOrNull(AnimationComponent)?.let { aniCmp ->
                 stage.fire(EntityAttackEvent(aniCmp.atlasKey))
             }
 
-            val image = imgCmps[entity].image
-            val physicCmp = physicCmps[entity]
+            val image = entity[ImageComponent].image
+            val physicCmp = entity[PhysicComponent]
 
             val attackLeft = image.flipX
             val (x, y) = physicCmp.body.position
@@ -88,23 +83,23 @@ class AttackSystem(
                     return@query true
                 }
 
-                val isAttackerPlayer = entity in playerCmps
-                if (isAttackerPlayer && fixtureEntity in playerCmps) {
+                val isAttackerPlayer = entity has PlayerComponent
+                if (isAttackerPlayer && fixtureEntity has PlayerComponent) {
                     // player does not damage other player entities
                     return@query true
-                } else if (!isAttackerPlayer && fixtureEntity !in playerCmps) {
+                } else if (!isAttackerPlayer && fixtureEntity hasNo PlayerComponent) {
                     // non-player entities do not damage other non-player entities
                     return@query true
                 }
 
                 // fixtureEntity refers to another entity that gets hit by the attack
-                configureEntity(fixtureEntity) {
-                    lifeCmps.getOrNull(it)?.let { lifeCmp ->
+                fixtureEntity.configure {
+                    it.getOrNull(LifeComponent)?.let { lifeCmp ->
                         lifeCmp.takeDamage += attackCmp.damage * MathUtils.random(0.9f, 1.1f)
                     }
                     if (isAttackerPlayer) {
                         // player can open chests
-                        lootCmps.getOrNull(it)?.let { lootCmp ->
+                        it.getOrNull(LootComponent)?.let { lootCmp ->
                             lootCmp.interactEntity = entity
                         }
                     }
@@ -113,7 +108,7 @@ class AttackSystem(
             }
         }
 
-        val isDone = animationCmps.getOrNull(entity)?.isAnimationFinished() ?: true
+        val isDone = entity.getOrNull(AnimationComponent)?.isAnimationFinished() ?: true
         if (isDone) {
             attackCmp.state = AttackState.READY
         }

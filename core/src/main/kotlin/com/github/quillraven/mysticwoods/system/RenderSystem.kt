@@ -7,21 +7,23 @@ import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.quillraven.fleks.*
-import com.github.quillraven.fleks.collection.compareEntity
+import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.fleks.World.Companion.family
+import com.github.quillraven.fleks.World.Companion.inject
+import com.github.quillraven.fleks.collection.compareEntityBy
 import com.github.quillraven.mysticwoods.MysticWoods.Companion.UNIT_SCALE
 import com.github.quillraven.mysticwoods.component.ImageComponent
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import ktx.graphics.use
 import ktx.tiled.forEachLayer
 
-@AllOf(components = [ImageComponent::class])
 class RenderSystem(
-    @Qualifier("GameStage") private val gameStage: Stage,
-    @Qualifier("UiStage") private val uiStage: Stage,
-    private val imageCmps: ComponentMapper<ImageComponent>
+    private val gameStage: Stage = inject("GameStage"),
+    private val uiStage: Stage = inject("UiStage"),
 ) : EventListener, IteratingSystem(
-    comparator = compareEntity { e1, e2 -> imageCmps[e1].compareTo(imageCmps[e2]) }
+    family = family { all(ImageComponent) },
+    comparator = compareEntityBy(ImageComponent)
 ) {
     private val orthoCam: OrthographicCamera = gameStage.camera as OrthographicCamera
     private val mapRenderer = OrthogonalTiledMapRenderer(null, UNIT_SCALE, gameStage.batch)
@@ -77,7 +79,7 @@ class RenderSystem(
     }
 
     override fun onTickEntity(entity: Entity) {
-        imageCmps[entity].image.toFront()
+        entity[ImageComponent].image.toFront()
     }
 
     override fun onDispose() {

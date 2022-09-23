@@ -4,23 +4,23 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType.DynamicBody
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType.StaticBody
-import com.badlogic.gdx.physics.box2d.World
-import com.github.quillraven.fleks.*
+import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.Fixed
+import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.fleks.World.Companion.family
+import com.github.quillraven.fleks.World.Companion.inject
 import com.github.quillraven.mysticwoods.component.*
 import com.github.quillraven.mysticwoods.system.EntitySpawnSystem.Companion.ACTION_SENSOR
 import ktx.log.logger
 import ktx.math.component1
 import ktx.math.component2
 
-@AllOf(components = [PhysicComponent::class, ImageComponent::class])
 class PhysicSystem(
-    private val physicWorld: World,
-    private val imageCmps: ComponentMapper<ImageComponent>,
-    private val physicCmps: ComponentMapper<PhysicComponent>,
-    private val tiledCmps: ComponentMapper<TiledComponent>,
-    private val collisionCmps: ComponentMapper<CollisionComponent>,
-    private val aiCmps: ComponentMapper<AIComponent>,
-) : IteratingSystem(interval = Fixed(1 / 60f)), ContactListener {
+    private val physicWorld: World = inject(),
+) : IteratingSystem(
+    family = family { all(PhysicComponent, ImageComponent) },
+    interval = Fixed(1 / 60f)
+), ContactListener {
     init {
         physicWorld.setContactListener(this)
     }
@@ -41,7 +41,7 @@ class PhysicSystem(
 
     // store position before world update for smooth interpolated rendering
     override fun onTickEntity(entity: Entity) {
-        val physicCmp = physicCmps[entity]
+        val physicCmp = entity[PhysicComponent]
         physicCmp.prevPos.set(physicCmp.body.position)
 
         if (!physicCmp.impulse.isZero) {
@@ -52,8 +52,8 @@ class PhysicSystem(
 
     // interpolate between position before world step and real position after world step for smooth rendering
     override fun onAlphaEntity(entity: Entity, alpha: Float) {
-        val imageCmp = imageCmps[entity]
-        val physicCmp = physicCmps[entity]
+        val imageCmp = entity[ImageComponent]
+        val physicCmp = entity[PhysicComponent]
 
         imageCmp.image.run {
             val (prevX, prevY) = physicCmp.prevPos
@@ -82,19 +82,21 @@ class PhysicSystem(
         when {
             // keep track of nearby entities for tiled collision entities.
             // when there are no nearby entities then the collision object will be removed
-            entityA in tiledCmps && entityB in collisionCmps && contact.isSensorA && !contact.isSensorB -> {
-                tiledCmps[entityA].nearbyEntities += entityB
+            entityA has TiledComponent && entityB has CollisionComponent && contact.isSensorA && !contact.isSensorB -> {
+                entityA[TiledComponent].nearbyEntities += entityB
             }
-            entityB in tiledCmps && entityA in collisionCmps && contact.isSensorB && !contact.isSensorA -> {
-                tiledCmps[entityB].nearbyEntities += entityA
+
+            entityB has TiledComponent && entityA has CollisionComponent && contact.isSensorB && !contact.isSensorA -> {
+                entityB[TiledComponent].nearbyEntities += entityA
             }
             // AI entities keep track of their nearby entities to have this information available
             // for their behavior. E.g. a slime entity will attack a player if he comes close
-            entityA in aiCmps && entityB in collisionCmps && contact.fixtureA.userData == ACTION_SENSOR -> {
-                aiCmps[entityA].nearbyEntities += entityB
+            entityA has AIComponent && entityB has CollisionComponent && contact.fixtureA.userData == ACTION_SENSOR -> {
+                entityA[AIComponent].nearbyEntities += entityB
             }
-            entityB in aiCmps && entityA in collisionCmps && contact.fixtureB.userData == ACTION_SENSOR -> {
-                aiCmps[entityB].nearbyEntities += entityA
+
+            entityB has AIComponent && entityA has CollisionComponent && contact.fixtureB.userData == ACTION_SENSOR -> {
+                entityB[AIComponent].nearbyEntities += entityA
             }
         }
     }
@@ -109,17 +111,20 @@ class PhysicSystem(
         // nearbyEntities set.
         // -> simply remove entities all the time because the set will take care of correct removal calls
         when {
-            entityA in tiledCmps && contact.isSensorA && !contact.isSensorB -> {
-                tiledCmps[entityA].nearbyEntities -= entityB
+            entityA has TiledComponent && contact.isSensorA && !contact.isSensorB -> {
+                entityA[TiledComponent].nearbyEntities -= entityB
             }
-            entityB in tiledCmps && contact.isSensorB && !contact.isSensorA -> {
-                tiledCmps[entityB].nearbyEntities -= entityA
+
+            entityB has TiledComponent && contact.isSensorB && !contact.isSensorA -> {
+                entityB[TiledComponent].nearbyEntities -= entityA
             }
-            entityA in aiCmps && contact.fixtureA.userData == ACTION_SENSOR -> {
-                aiCmps[entityA].nearbyEntities - entityB
+
+            entityA has AIComponent && contact.fixtureA.userData == ACTION_SENSOR -> {
+                entityA[AIComponent].nearbyEntities - entityB
             }
-            entityB in aiCmps && contact.fixtureB.userData == ACTION_SENSOR -> {
-                aiCmps[entityB].nearbyEntities -= entityA
+
+            entityB has AIComponent && contact.fixtureB.userData == ACTION_SENSOR -> {
+                entityB[AIComponent].nearbyEntities -= entityA
             }
         }
     }

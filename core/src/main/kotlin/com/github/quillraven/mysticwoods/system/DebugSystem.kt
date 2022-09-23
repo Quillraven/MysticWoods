@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.quillraven.fleks.IntervalSystem
-import com.github.quillraven.fleks.Qualifier
+import com.github.quillraven.fleks.World.Companion.inject
 import com.github.quillraven.mysticwoods.component.AIEntity.Companion.TMP_RECT1
 import com.github.quillraven.mysticwoods.component.AIEntity.Companion.TMP_RECT2
 import com.github.quillraven.mysticwoods.system.AttackSystem.Companion.AABB_RECT
@@ -15,9 +15,9 @@ import ktx.assets.disposeSafely
 import ktx.graphics.use
 
 class DebugSystem(
-    private val physicWorld: World,
-    @Qualifier("GameStage") private val stage: Stage,
-) : IntervalSystem(enabled = false) {
+    private val physicWorld: World = inject(),
+    private val stage: Stage = inject("GameStage"),
+) : IntervalSystem(enabled = true) {
     private val physicRenderer by lazy { Box2DDebugRenderer() }
     private val profiler by lazy { GLProfiler(Gdx.graphics).apply { enable() } }
     private val shapeRenderer by lazy { ShapeRenderer() }

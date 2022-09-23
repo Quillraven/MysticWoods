@@ -4,18 +4,19 @@ import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.quillraven.fleks.*
+import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.fleks.World.Companion.family
+import com.github.quillraven.fleks.World.Companion.inject
 import com.github.quillraven.mysticwoods.component.ImageComponent
 import com.github.quillraven.mysticwoods.component.PlayerComponent
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import ktx.tiled.height
 import ktx.tiled.width
 
-@AllOf([PlayerComponent::class, ImageComponent::class])
 class CameraSystem(
-    @Qualifier("GameStage") stage: Stage,
-    private val imageCmps: ComponentMapper<ImageComponent>,
-) : EventListener, IteratingSystem() {
+    stage: Stage = inject("GameStage")
+) : EventListener, IteratingSystem(family { all(PlayerComponent, ImageComponent) }) {
     private val camera: Camera = stage.camera
     private var maxW = 0f
     private var maxH = 0f
@@ -24,7 +25,7 @@ class CameraSystem(
         // we center on the image because it has an
         // interpolated position for rendering which makes
         // the game smoother
-        with(imageCmps[entity]) {
+        with(entity[ImageComponent]) {
             val viewW = camera.viewportWidth * 0.5f
             val viewH = camera.viewportHeight * 0.5f
             camera.position.set(

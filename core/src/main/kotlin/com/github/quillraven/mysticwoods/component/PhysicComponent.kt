@@ -8,9 +8,9 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType.StaticBody
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.github.quillraven.fleks.ComponentListener
-import com.github.quillraven.fleks.Entity
-import com.github.quillraven.fleks.EntityCreateCfg
+import com.github.quillraven.fleks.Component
+import com.github.quillraven.fleks.ComponentHook
+import com.github.quillraven.fleks.ComponentType
 import com.github.quillraven.mysticwoods.MysticWoods.Companion.UNIT_SCALE
 import com.github.quillraven.mysticwoods.system.CollisionSpawnSystem.Companion.SPAWN_AREA_SIZE
 import ktx.app.gdxError
@@ -24,14 +24,26 @@ class PhysicComponent(
     val impulse: Vector2 = vec2(),
     val size: Vector2 = vec2(),
     val offset: Vector2 = vec2(),
-) {
+) : Component<PhysicComponent> {
     lateinit var body: Body
     val prevPos = vec2()
 
-    companion object {
+    override fun type() = PhysicComponent
+
+    companion object : ComponentType<PhysicComponent>() {
         private val TMP_VEC = vec2()
 
-        fun EntityCreateCfg.physicCmpFromImage(
+        val onPhysicAdd: ComponentHook<PhysicComponent> = { entity, component ->
+            component.body.userData = entity
+        }
+
+        val onPhysicRemove: ComponentHook<PhysicComponent> = { _, component ->
+            val body = component.body
+            body.world.destroyBody(body)
+            body.userData = null
+        }
+
+        fun physicCmpFromImage(
             world: World,
             image: Image,
             bodyType: BodyType,
@@ -42,18 +54,18 @@ class PhysicComponent(
             val width = image.width
             val height = image.height
 
-            return add {
+            return PhysicComponent().apply {
                 body = world.body(bodyType) {
                     position.set(x + width * 0.5f, y + height * 0.5f)
                     fixedRotation = true
                     allowSleep = false
-                    this.fixtureAction(this@add, width, height)
+                    this.fixtureAction(this@apply, width, height)
                 }
                 prevPos.set(body.position)
             }
         }
 
-        fun EntityCreateCfg.physicCmpFromShape2D(
+        fun physicCmpFromShape2D(
             world: World,
             x: Int,
             y: Int,
@@ -66,7 +78,7 @@ class PhysicComponent(
                     val bodyW = shape.width * UNIT_SCALE
                     val bodyH = shape.height * UNIT_SCALE
 
-                    return add {
+                    return PhysicComponent().apply {
                         body = world.body(StaticBody) {
                             position.set(bodyX, bodyY)
                             fixedRotation = true
@@ -86,18 +98,6 @@ class PhysicComponent(
                 }
 
                 else -> gdxError("Shape $shape not supported")
-            }
-        }
-
-        class PhysicComponentListener : ComponentListener<PhysicComponent> {
-            override fun onComponentAdded(entity: Entity, component: PhysicComponent) {
-                component.body.userData = entity
-            }
-
-            override fun onComponentRemoved(entity: Entity, component: PhysicComponent) {
-                val body = component.body
-                body.world.destroyBody(body)
-                body.userData = null
             }
         }
     }

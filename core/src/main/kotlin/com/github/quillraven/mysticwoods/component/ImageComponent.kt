@@ -1,14 +1,16 @@
 package com.github.quillraven.mysticwoods.component
 
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.quillraven.fleks.ComponentListener
-import com.github.quillraven.fleks.Entity
-import com.github.quillraven.fleks.Qualifier
+import com.github.quillraven.fleks.Component
+import com.github.quillraven.fleks.ComponentHook
+import com.github.quillraven.fleks.ComponentType
 import com.github.quillraven.mysticwoods.actor.FlipImage
 
-class ImageComponent : Comparable<ImageComponent> {
+class ImageComponent : Component<ImageComponent>, Comparable<ImageComponent> {
     lateinit var image: FlipImage
     var layer = 0
+
+    override fun type() = ImageComponent
 
     override fun compareTo(other: ImageComponent): Int {
         val layerDiff = layer.compareTo(other.layer)
@@ -24,17 +26,14 @@ class ImageComponent : Comparable<ImageComponent> {
         }
     }
 
-    companion object {
-        class ImageComponentListener(
-            @Qualifier("GameStage") private val stage: Stage,
-        ) : ComponentListener<ImageComponent> {
-            override fun onComponentAdded(entity: Entity, component: ImageComponent) {
-                stage.addActor(component.image)
-            }
+    companion object : ComponentType<ImageComponent>() {
+        val onImageAdd: ComponentHook<ImageComponent> = { _, component ->
+            inject<Stage>("GameStage").addActor(component.image)
 
-            override fun onComponentRemoved(entity: Entity, component: ImageComponent) {
-                stage.root.removeActor(component.image)
-            }
+        }
+
+        val onImageRemove: ComponentHook<ImageComponent> = { _, component ->
+            inject<Stage>("GameStage").root.removeActor(component.image)
         }
     }
 }

@@ -17,33 +17,23 @@ import ktx.math.component2
 
 class AIEntity(
     val entity: Entity,
-    world: World,
+    private val world: World,
     private val stage: Stage,
 ) {
-
-    private val aiCmps: ComponentMapper<AIComponent> = world.mapper()
-    private val lifeCmps: ComponentMapper<LifeComponent> = world.mapper()
-    private val playerCmps: ComponentMapper<PlayerComponent> = world.mapper()
-    private val attackCmps: ComponentMapper<AttackComponent> = world.mapper()
-    private val animationCmps: ComponentMapper<AnimationComponent> = world.mapper()
-    private val imageCmps: ComponentMapper<ImageComponent> = world.mapper()
-    private val physicCmps: ComponentMapper<PhysicComponent> = world.mapper()
-    private val moveCmps: ComponentMapper<MoveComponent> = world.mapper()
-
     val location: Vector2
-        get() = physicCmps[entity].body.position
+        get() = with(world) { entity[PhysicComponent].body.position }
 
     val target: Entity
-        get() = aiCmps[entity].target
+        get() = with(world) { entity[AIComponent].target }
 
-    fun inTargetRange(range: Float): Boolean {
-        val aiCmp = aiCmps[entity]
+    fun inTargetRange(range: Float): Boolean = with(world) {
+        val aiCmp = entity[AIComponent]
         if (aiCmp.target == NO_TARGET) {
             return true
         }
 
-        val physicCmp = physicCmps[entity]
-        val targetPhysicCmp = physicCmps[aiCmp.target]
+        val physicCmp = entity[PhysicComponent]
+        val targetPhysicCmp = aiCmp.target[PhysicComponent]
         val (sourceX, sourceY) = physicCmp.body.position
         val (sourceOffX, sourceOffY) = physicCmp.offset
         var (sourceSizeX, sourceSizeY) = physicCmp.size
@@ -68,8 +58,8 @@ class AIEntity(
         return TMP_RECT1.overlaps(TMP_RECT2)
     }
 
-    fun inRange(range: Float, target: Vector2): Boolean {
-        val physicCmp = physicCmps[entity]
+    fun inRange(range: Float, target: Vector2): Boolean = with(world) {
+        val physicCmp = entity[PhysicComponent]
         val (sourceX, sourceY) = physicCmp.body.position
         val (sourceOffX, sourceOffY) = physicCmp.offset
         var (sourceSizeX, sourceSizeY) = physicCmp.size
@@ -85,85 +75,83 @@ class AIEntity(
         return TMP_RECT1.contains(target)
     }
 
-    fun canAttack(extraRange: Float): Boolean {
-        val aiCmp = aiCmps[entity]
+    fun canAttack(extraRange: Float): Boolean = with(world) {
+        val aiCmp = entity[AIComponent]
         if (aiCmp.target == NO_TARGET) {
             return false
         }
 
-        val attackCmp = attackCmps[entity]
+        val attackCmp = entity[AttackComponent]
         return attackCmp.isReady() && inTargetRange(extraRange)
     }
 
-    fun findNearbyEnemy(): Boolean {
-        with(aiCmps[entity]) {
-            target = nearbyEntities.firstOrNull {
-                it in playerCmps && !lifeCmps[it].isDead()
-            } ?: NO_TARGET
-            return target != NO_TARGET
+    fun findNearbyEnemy(): Boolean = with(world) {
+        val aiCmp = entity[AIComponent]
+        aiCmp.target = aiCmp.nearbyEntities.firstOrNull {
+            it has PlayerComponent && !it[LifeComponent].isDead()
+        } ?: NO_TARGET
+        return aiCmp.target != NO_TARGET
+    }
+
+    fun checkTargetStillNearby() = with(world) {
+        val aiCmp = entity[AIComponent]
+        if (aiCmp.target !in aiCmp.nearbyEntities) {
+            aiCmp.target = NO_TARGET
         }
     }
 
-    fun checkTargetStillNearby() {
-        with(aiCmps[entity]) {
-            if (target !in nearbyEntities) {
-                target = NO_TARGET
-            }
-        }
-    }
-
-    fun attack() {
-        with(attackCmps[entity]) {
+    fun attack() = with(world) {
+        with(entity[AttackComponent]) {
             doAttack = true
             startAttack()
         }
-        val x = physicCmps[entity].body.position.x
-        val targetX = physicCmps[target].body.position.x
-        imageCmps[entity].image.flipX = targetX < x
+        val x = entity[PhysicComponent].body.position.x
+        val targetX = target[PhysicComponent].body.position.x
+        entity[ImageComponent].image.flipX = targetX < x
     }
 
-    fun moveToTarget() {
-        val aiCmp = aiCmps[entity]
+    fun moveToTarget() = with(world) {
+        val aiCmp = entity[AIComponent]
         if (aiCmp.target == NO_TARGET) {
-            with(moveCmps[entity]) {
+            with(entity[MoveComponent]) {
                 cos = 0f
                 sin = 0f
             }
             return
         }
 
-        val targetPhysicCmp = physicCmps[aiCmp.target]
+        val targetPhysicCmp = aiCmp.target[PhysicComponent]
         moveToLocation(targetPhysicCmp.body.position)
     }
 
-    fun moveToLocation(target: Vector2) {
+    fun moveToLocation(target: Vector2) = with(world) {
         val (targetX, targetY) = target
-        val physicCmp = physicCmps[entity]
+        val physicCmp = entity[PhysicComponent]
         val (sourceX, sourceY) = physicCmp.body.position
-        with(moveCmps[entity]) {
+        with(entity[MoveComponent]) {
             val angleRad = MathUtils.atan2(targetY - sourceY, targetX - sourceX)
             cos = MathUtils.cos(angleRad)
             sin = MathUtils.sin(angleRad)
         }
     }
 
-    fun stopMovement() {
-        with(moveCmps[entity]) {
+    fun stopMovement() = with(world) {
+        with(entity[MoveComponent]) {
             cos = 0f
             sin = 0f
         }
     }
 
-    fun moveSlow(slowed: Boolean) {
-        moveCmps[entity].slow = slowed
+    fun moveSlow(slowed: Boolean) = with(world) {
+        entity[MoveComponent].slow = slowed
     }
 
     fun animation(
         type: AnimationType,
         mode: Animation.PlayMode = Animation.PlayMode.LOOP,
         resetAnimation: Boolean = false
-    ) {
-        with(animationCmps[entity]) {
+    ) = with(world) {
+        with(entity[AnimationComponent]) {
             nextAnimation(type)
             this.mode = mode
             if (resetAnimation) {
@@ -172,7 +160,7 @@ class AIEntity(
         }
     }
 
-    fun isAnimationDone() = animationCmps[entity].isAnimationFinished()
+    fun isAnimationDone() = with(world) { entity[AnimationComponent].isAnimationFinished() }
 
     fun fireEvent(event: Event) {
         stage.fire(event)
@@ -187,29 +175,23 @@ class AIEntity(
 data class AIComponent(
     val nearbyEntities: MutableSet<Entity> = mutableSetOf(),
     var treePath: String = "",
-) {
+) : Component<AIComponent> {
     lateinit var behaviorTree: BehaviorTree<AIEntity>
     var target: Entity = NO_TARGET
 
-    companion object {
+    override fun type() = AIComponent
+
+    companion object : ComponentType<AIComponent>() {
+        private val bTreeParser = BehaviorTreeParser<AIEntity>()
         val NO_TARGET = Entity(-1)
 
-        class AIComponentListener(
-            private val world: World,
-            @Qualifier("GameStage") private val stage: Stage,
-        ) : ComponentListener<AIComponent> {
-            private val bTreeParser = BehaviorTreeParser<AIEntity>()
-
-            override fun onComponentAdded(entity: Entity, component: AIComponent) {
-                if (component.treePath.isNotBlank()) {
-                    component.behaviorTree = bTreeParser.parse(
-                        Gdx.files.internal(component.treePath),
-                        AIEntity(entity, world, stage)
-                    )
-                }
+        val onAiAdd: ComponentHook<AIComponent> = { entity, component ->
+            if (component.treePath.isNotBlank()) {
+                component.behaviorTree = bTreeParser.parse(
+                    Gdx.files.internal(component.treePath),
+                    AIEntity(entity, this, inject("GameStage"))
+                )
             }
-
-            override fun onComponentRemoved(entity: Entity, component: AIComponent) = Unit
         }
     }
 }

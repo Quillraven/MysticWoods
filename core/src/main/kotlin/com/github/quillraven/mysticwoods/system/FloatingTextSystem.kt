@@ -2,21 +2,22 @@ package com.github.quillraven.mysticwoods.system
 
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.quillraven.fleks.*
+import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.fleks.World.Companion.family
+import com.github.quillraven.fleks.World.Companion.inject
 import com.github.quillraven.mysticwoods.component.FloatingTextComponent
 import ktx.math.vec2
 
-@AllOf([FloatingTextComponent::class])
 class FloatingTextSystem(
-    private val textCmps: ComponentMapper<FloatingTextComponent>,
-    @Qualifier("GameStage") private val gameStage: Stage,
-    @Qualifier("UiStage") private val uiStage: Stage,
-) : IteratingSystem() {
+    private val gameStage: Stage = inject("GameStage"),
+    private val uiStage: Stage = inject("UiStage"),
+) : IteratingSystem(family { all(FloatingTextComponent) }) {
     private val uiLocation = vec2()
     private val uiTarget = vec2()
 
     override fun onTickEntity(entity: Entity) {
-        with(textCmps[entity]) {
+        with(entity[FloatingTextComponent]) {
             if (time >= lifeSpan) {
                 world.remove(entity)
                 return

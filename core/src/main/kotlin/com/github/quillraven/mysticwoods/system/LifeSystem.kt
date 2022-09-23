@@ -8,32 +8,29 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
-import com.github.quillraven.fleks.*
+import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.fleks.World.Companion.family
+import com.github.quillraven.fleks.World.Companion.inject
 import com.github.quillraven.mysticwoods.component.*
 import com.github.quillraven.mysticwoods.event.EntityDeathEvent
 import com.github.quillraven.mysticwoods.event.EntityTakeDamageEvent
 import com.github.quillraven.mysticwoods.event.fire
 import ktx.assets.disposeSafely
+import ktx.math.vec2
 
-@AllOf([LifeComponent::class, PhysicComponent::class])
-@NoneOf([DeadComponent::class])
 class LifeSystem(
-    private val lifeCmps: ComponentMapper<LifeComponent>,
-    private val deadCmps: ComponentMapper<DeadComponent>,
-    private val playerCmps: ComponentMapper<PlayerComponent>,
-    private val animationCmps: ComponentMapper<AnimationComponent>,
-    private val physicCmps: ComponentMapper<PhysicComponent>,
-    @Qualifier("GameStage") private val gameStage: Stage,
-) : IteratingSystem() {
+    private val gameStage: Stage = inject("GameStage"),
+) : IteratingSystem(family { all(LifeComponent, PhysicComponent).none(DeadComponent) }) {
     private val damFont = BitmapFont(Gdx.files.internal("damage.fnt")).apply { data.setScale(0.33f) }
     private val damFntStyle = LabelStyle(damFont, Color.WHITE)
 
     override fun onTickEntity(entity: Entity) {
-        val lifeCmp = lifeCmps[entity]
+        val lifeCmp = entity[LifeComponent]
         lifeCmp.life = (lifeCmp.life + lifeCmp.regeneration * deltaTime).coerceAtMost(lifeCmp.max)
 
         if (lifeCmp.takeDamage > 0f) {
-            val physicCmp = physicCmps[entity]
+            val physicCmp = entity[PhysicComponent]
             lifeCmp.life -= lifeCmp.takeDamage
             gameStage.fire(EntityTakeDamageEvent(entity, lifeCmp.takeDamage))
             damageFloatingText(lifeCmp.takeDamage, physicCmp.body.position, physicCmp.size)
@@ -41,15 +38,15 @@ class LifeSystem(
         }
 
         if (lifeCmp.isDead()) {
-            animationCmps.getOrNull(entity)?.let { aniCmp ->
+            entity.getOrNull(AnimationComponent)?.let { aniCmp ->
                 gameStage.fire(EntityDeathEvent(aniCmp.atlasKey))
                 aniCmp.nextAnimation(AnimationType.DEATH)
                 aniCmp.mode = Animation.PlayMode.NORMAL
             }
 
-            configureEntity(entity) {
-                deadCmps.add(it) {
-                    if (it in playerCmps) {
+            entity.configure {
+                it += DeadComponent().apply {
+                    if (it has PlayerComponent) {
                         // revive player after 7 seconds
                         reviveTime = 7f
                     }
@@ -60,11 +57,11 @@ class LifeSystem(
 
     private fun damageFloatingText(damage: Float, entityPosition: Vector2, entitySize: Vector2) {
         world.entity {
-            add<FloatingTextComponent> {
-                txtLocation.set(entityPosition.x, entityPosition.y - entitySize.y * 0.5f)
-                lifeSpan = 1.5f
-                label = Label(damage.toInt().toString(), damFntStyle)
-            }
+            it += FloatingTextComponent(
+                vec2(entityPosition.x, entityPosition.y - entitySize.y * 0.5f),
+                1.5f,
+                Label(damage.toInt().toString(), damFntStyle)
+            )
         }
     }
 

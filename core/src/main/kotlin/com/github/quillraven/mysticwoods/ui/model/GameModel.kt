@@ -3,7 +3,6 @@ package com.github.quillraven.mysticwoods.ui.model
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.component.AnimationComponent
@@ -15,13 +14,9 @@ import com.github.quillraven.mysticwoods.event.EntityReviveEvent
 import com.github.quillraven.mysticwoods.event.EntityTakeDamageEvent
 
 class GameModel(
-    world: World,
+    private val world: World,
     stage: Stage,
 ) : PropertyChangeSource(), EventListener {
-
-    private val playerCmps: ComponentMapper<PlayerComponent> = world.mapper()
-    private val lifeCmps: ComponentMapper<LifeComponent> = world.mapper()
-    private val aniCmps: ComponentMapper<AnimationComponent> = world.mapper()
 
     var playerLife by propertyNotify(1f)
 
@@ -36,14 +31,14 @@ class GameModel(
         stage.addListener(this)
     }
 
-    private fun updateEnemy(enemy: Entity) {
-        val lifeCmp = lifeCmps[enemy]
+    private fun updateEnemy(enemy: Entity) = with(world) {
+        val lifeCmp = enemy[LifeComponent]
         enemyLife = lifeCmp.life / lifeCmp.max
         if (lastEnemy != enemy) {
             // update enemy type
             lastEnemy = enemy
-            aniCmps.getOrNull(enemy)?.atlasKey?.let { enemyType ->
-                this.enemyType = enemyType
+            enemy.getOrNull(AnimationComponent)?.atlasKey?.let { enemyType ->
+                this@GameModel.enemyType = enemyType
             }
         }
     }
@@ -51,20 +46,24 @@ class GameModel(
     override fun handle(event: Event): Boolean {
         when (event) {
             is EntityTakeDamageEvent -> {
-                val isPlayer = event.entity in playerCmps
-                val lifeCmp = lifeCmps[event.entity]
-                if (isPlayer) {
-                    playerLife = lifeCmp.life / lifeCmp.max
-                } else {
-                    updateEnemy(event.entity)
+                with(world) {
+                    val isPlayer = event.entity has PlayerComponent
+                    val lifeCmp = event.entity[LifeComponent]
+                    if (isPlayer) {
+                        playerLife = lifeCmp.life / lifeCmp.max
+                    } else {
+                        updateEnemy(event.entity)
+                    }
                 }
             }
 
             is EntityReviveEvent -> {
-                val isPlayer = event.entity in playerCmps
-                val lifeCmp = lifeCmps[event.entity]
-                if (isPlayer) {
-                    playerLife = lifeCmp.life / lifeCmp.max
+                with(world) {
+                    val isPlayer = event.entity has PlayerComponent
+                    val lifeCmp = event.entity[LifeComponent]
+                    if (isPlayer) {
+                        playerLife = lifeCmp.life / lifeCmp.max
+                    }
                 }
             }
 
@@ -73,12 +72,14 @@ class GameModel(
             }
 
             is EntityAggroEvent -> {
-                val source = event.aiEntity
-                val sourceType = aniCmps.getOrNull(source)?.atlasKey
-                val target = event.target
-                val isTargetPlayer = target in playerCmps
-                if (isTargetPlayer && sourceType != null) {
-                    updateEnemy(source)
+                with(world) {
+                    val source = event.aiEntity
+                    val sourceType = source.getOrNull(AnimationComponent)?.atlasKey
+                    val target = event.target
+                    val isTargetPlayer = target has PlayerComponent
+                    if (isTargetPlayer && sourceType != null) {
+                        updateEnemy(source)
+                    }
                 }
             }
 

@@ -1,5 +1,7 @@
 package com.github.quillraven.mysticwoods.component
 
+import com.github.quillraven.fleks.Component
+import com.github.quillraven.fleks.ComponentType
 import com.github.quillraven.mysticwoods.system.CollisionDespawnSystem
 import com.github.quillraven.mysticwoods.system.CollisionSpawnSystem
 
@@ -11,4 +13,8 @@ import com.github.quillraven.mysticwoods.system.CollisionSpawnSystem
  *
  * For more details refer to [CollisionSpawnSystem] and [CollisionDespawnSystem].
  */
-class CollisionComponent
+class CollisionComponent : Component<CollisionComponent> {
+    override fun type() = CollisionComponent
+
+    companion object : ComponentType<CollisionComponent>()
+}

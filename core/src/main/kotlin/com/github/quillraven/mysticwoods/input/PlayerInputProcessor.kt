@@ -2,7 +2,6 @@ package com.github.quillraven.mysticwoods.input
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys.*
-import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.component.AttackComponent
 import com.github.quillraven.mysticwoods.component.MoveComponent
@@ -10,11 +9,9 @@ import com.github.quillraven.mysticwoods.component.PlayerComponent
 import ktx.app.KtxInputAdapter
 
 class PlayerInputProcessor(
-    world: World,
-    private val moveCmps: ComponentMapper<MoveComponent> = world.mapper(),
-    private val attackCmps: ComponentMapper<AttackComponent> = world.mapper()
+    private val world: World,
 ) : KtxInputAdapter {
-    private val playerEntities = world.family(allOf = arrayOf(PlayerComponent::class))
+    private val playerEntities = world.family { all(PlayerComponent) }
     private var playerCos = 0f
     private var playerSin = 0f
     private val pressedKeys = mutableSetOf<Int>()
@@ -31,7 +28,7 @@ class PlayerInputProcessor(
 
     private fun updatePlayerMovement() {
         playerEntities.forEach { player ->
-            with(moveCmps[player]) {
+            with(player[MoveComponent]) {
                 cos = playerCos
                 sin = playerSin
             }
@@ -50,7 +47,7 @@ class PlayerInputProcessor(
             updatePlayerMovement()
             return true
         } else if (keycode == SPACE) {
-            playerEntities.forEach { attackCmps[it].doAttack = true }
+            playerEntities.forEach { it[AttackComponent].doAttack = true }
             return true
         }
         return false
