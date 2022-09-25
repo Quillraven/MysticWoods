@@ -18,7 +18,7 @@ class CollisionDespawnSystem(
         val tiledCmp = entity[TiledComponent]
         if (tiledCmp.nearbyEntities.isEmpty()) {
             stage.fire(CollisionDespawnEvent(tiledCmp.cell))
-            world.remove(entity)
+            entity.remove()
         }
     }
 }

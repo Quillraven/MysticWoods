@@ -132,7 +132,7 @@ class EntitySpawnSystem(
             }
         }
 
-        world.remove(entity)
+        entity.remove()
     }
 
     private fun spawnCfg(type: String): SpawnCfg = cachedCfgs.getOrPut(type) {

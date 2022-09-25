@@ -19,7 +19,7 @@ class FloatingTextSystem(
     override fun onTickEntity(entity: Entity) {
         with(entity[FloatingTextComponent]) {
             if (time >= lifeSpan) {
-                world.remove(entity)
+                entity.remove()
                 return
             }
 

@@ -20,7 +20,7 @@ class DeadSystem(
             // entity has no special animation
             // -> remove it
             log.debug { "Entity $entity without animation gets removed" }
-            world.remove(entity)
+            entity.remove()
             return
         }
 
@@ -30,7 +30,7 @@ class DeadSystem(
                 // animation done and no revival planned
                 // -> remove entity
                 log.debug { "Entity $entity with animation gets removed" }
-                world.remove(entity)
+                entity.remove()
                 return
             }
 
