@@ -2,11 +2,15 @@ package com.github.quillraven.mysticwoods.ui.view
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
 import com.badlogic.gdx.utils.Align
 import com.github.quillraven.mysticwoods.ui.Drawables
 import com.github.quillraven.mysticwoods.ui.Labels
 import com.github.quillraven.mysticwoods.ui.get
 import com.github.quillraven.mysticwoods.ui.model.InventoryModel
+import com.github.quillraven.mysticwoods.ui.model.UiItemModel
+import com.github.quillraven.mysticwoods.ui.widget.InventoryDragSource
+import com.github.quillraven.mysticwoods.ui.widget.InventoryDragTarget
 import com.github.quillraven.mysticwoods.ui.widget.InventorySlot
 import com.github.quillraven.mysticwoods.ui.widget.inventorySlot
 import ktx.scene2d.*
@@ -17,6 +21,7 @@ class InventoryView(
 ) : KTable, Table(skin) {
 
     private val invSlots = mutableListOf<InventorySlot>()
+    private val gearSlots = mutableListOf<InventorySlot>()
 
     init {
         // UI
@@ -36,7 +41,7 @@ class InventoryView(
 
             table { invTableCell ->
                 for (i in 1..18) {
-                    this@InventoryView.invSlots += inventorySlot(null, skin) { slotCell ->
+                    this@InventoryView.invSlots += inventorySlot(skin = skin) { slotCell ->
                         slotCell.padBottom(2f)
                         if (i % 6 == 0) {
                             slotCell.row()
@@ -64,25 +69,80 @@ class InventoryView(
             }
 
             table { invTableCell ->
-                inventorySlot(Drawables.INVENTORY_SLOT_HELMET, skin) { it.padBottom(2f).colspan(2).row() }
-                inventorySlot(Drawables.INVENTORY_SLOT_WEAPON, skin) { it.padBottom(2f).padRight(2f) }
-                inventorySlot(Drawables.INVENTORY_SLOT_ARMOR, skin) { it.padBottom(2f).padRight(2f).row() }
-                inventorySlot(Drawables.INVENTORY_SLOT_BOOTS, skin) { it.colspan(2).row() }
+                this@InventoryView.gearSlots += inventorySlot(Drawables.INVENTORY_SLOT_HELMET, skin) {
+                    it.padBottom(2f).colspan(2).row()
+                }
+                this@InventoryView.gearSlots += inventorySlot(Drawables.INVENTORY_SLOT_WEAPON, skin) {
+                    it.padBottom(2f).padRight(2f)
+                }
+                this@InventoryView.gearSlots += inventorySlot(Drawables.INVENTORY_SLOT_ARMOR, skin) {
+                    it.padBottom(2f).padRight(2f).row()
+                }
+                this@InventoryView.gearSlots += inventorySlot(Drawables.INVENTORY_SLOT_BOOTS, skin) {
+                    it.colspan(2).row()
+                }
                 invTableCell.expand().fill()
             }
 
             gearTableCell.expand().width(90f).height(120f).left().center()
         }
 
+        setupDragAndDrop()
+
         // data binding
     }
 
-    fun item(index: Int, itemAtlasKey: String?) {
-        if (itemAtlasKey == null) {
-            invSlots[index].item(null)
-        } else {
-            skin.getDrawable(itemAtlasKey)?.let { invSlots[index].item(it) }
+    private fun setupDragAndDrop() {
+        val dnd = DragAndDrop()
+        // center drag actor on mouse cursor (=set offset)
+        dnd.setDragActorPosition(
+            InventoryDragSource.DRAG_ACTOR_SIZE * 0.5f,
+            -InventoryDragSource.DRAG_ACTOR_SIZE * 0.5f
+        )
+
+        // inventory slots are drag and drop source and target
+        // they allow any item
+        invSlots.forEach { slot ->
+            dnd.addSource(InventoryDragSource(slot))
+            dnd.addTarget(InventoryDragTarget(slot, ::onItemDropped))
         }
+
+        // gear slots are also source and target
+        // they only allow specific item types
+        gearSlots.forEach { slot ->
+            dnd.addSource(InventoryDragSource(slot))
+            dnd.addTarget(InventoryDragTarget(slot, ::onItemDropped, slot.supportedCategory))
+        }
+    }
+
+    private fun onItemDropped(
+        sourceSlot: InventorySlot,
+        targetSlot: InventorySlot,
+        uiItemModel: UiItemModel
+    ) {
+        if (sourceSlot == targetSlot) {
+            // item dropped on same slot -> do nothing
+            return
+        }
+
+        // swap slot items in UI
+        sourceSlot.item(targetSlot.itemModel)
+        targetSlot.item(uiItemModel)
+
+        if (sourceSlot in gearSlots) {
+            // item unequipped
+            println("unequip $uiItemModel")
+        } else if (targetSlot in gearSlots) {
+            // item equipped
+            println("equip")
+        } else {
+            // item moved within inventory (=slot changed)
+            println("slot changed")
+        }
+    }
+
+    fun item(index: Int, itemModel: UiItemModel?) {
+        invSlots[index].item(itemModel)
     }
 }
 
