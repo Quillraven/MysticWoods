@@ -38,3 +38,4 @@ The controls are:
 - [Soup of Justice font](https://www.dafont.com/soup-of-justice.font)
 - [Immortal font](https://www.1001freefonts.com/immortal.font)
 - [UI assets](https://mounirtohami.itch.io/pixel-art-gui-elements)
+- [Item icons](https://alexs-assets.itch.io/16x16-rpg-item-pack)
