@@ -17,6 +17,7 @@ import com.github.quillraven.mysticwoods.component.StateComponent.Companion.Stat
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
+import com.github.quillraven.mysticwoods.input.gdxInputProcessor
 import com.github.quillraven.mysticwoods.system.*
 import com.github.quillraven.mysticwoods.ui.disposeSkin
 import com.github.quillraven.mysticwoods.ui.loadSkin
@@ -77,6 +78,7 @@ abstract class TestScreen(private var testMapPath: String = "") : KtxScreen {
             }
         }
         PlayerInputProcessor(eWorld)
+        gdxInputProcessor(uiStage)
     }
 
     override fun show() {

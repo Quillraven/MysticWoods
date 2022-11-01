@@ -2,12 +2,29 @@ package com.github.quillraven.mysticwoods.input
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys.*
+import com.badlogic.gdx.InputMultiplexer
+import com.badlogic.gdx.InputProcessor
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.component.AttackComponent
 import com.github.quillraven.mysticwoods.component.MoveComponent
 import com.github.quillraven.mysticwoods.component.PlayerComponent
 import ktx.app.KtxInputAdapter
+
+fun gdxInputProcessor(processor: InputProcessor) {
+    val currProcessor = Gdx.input.inputProcessor
+    if (currProcessor == null) {
+        Gdx.input.inputProcessor = processor
+    } else {
+        if (currProcessor is InputMultiplexer) {
+            if (processor !in currProcessor.processors) {
+                currProcessor.addProcessor(processor)
+            }
+        } else {
+            Gdx.input.inputProcessor = InputMultiplexer(currProcessor, processor)
+        }
+    }
+}
 
 class PlayerInputProcessor(
     world: World,
@@ -20,7 +37,7 @@ class PlayerInputProcessor(
     private val pressedKeys = mutableSetOf<Int>()
 
     init {
-        Gdx.input.inputProcessor = this
+        gdxInputProcessor(this)
     }
 
     private fun Int.isMovementKey(): Boolean {
