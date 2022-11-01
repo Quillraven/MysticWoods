@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Scaling
 import com.github.quillraven.mysticwoods.component.ItemCategory
 import com.github.quillraven.mysticwoods.ui.Drawables
 import com.github.quillraven.mysticwoods.ui.get
-import com.github.quillraven.mysticwoods.ui.model.UiItemModel
+import com.github.quillraven.mysticwoods.ui.model.ItemModel
 import ktx.actors.alpha
 import ktx.actors.plusAssign
 import ktx.scene2d.*
@@ -22,7 +22,7 @@ class InventorySlot(
     private val background = Image(skin[Drawables.INVENTORY_SLOT])
     private val slotItemInfo: Image? = if (slotItemBgd == null) null else Image(skin[slotItemBgd])
     private val itemImage = Image()
-    var itemModel: UiItemModel? = null
+    var itemModel: ItemModel? = null
 
     val itemDrawable: Drawable
         get() = itemImage.drawable
@@ -37,6 +37,15 @@ class InventorySlot(
                 else -> ItemCategory.UNDEFINED
             }
         }
+
+    val isEmpty: Boolean
+        get() = itemModel == null
+
+    val itemCategory: ItemCategory
+        get() = itemModel?.category ?: ItemCategory.UNDEFINED
+
+    val isGear: Boolean
+        get() = supportedCategory != ItemCategory.UNDEFINED
 
     init {
         this += background
@@ -59,7 +68,7 @@ class InventorySlot(
 
     override fun getPrefHeight() = background.drawable.minHeight
 
-    fun item(model: UiItemModel?) {
+    fun item(model: ItemModel?) {
         itemModel = model
         if (model == null) {
             itemImage.drawable = null

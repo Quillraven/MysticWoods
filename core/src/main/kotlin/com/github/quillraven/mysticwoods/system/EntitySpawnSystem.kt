@@ -32,6 +32,8 @@ class EntitySpawnSystem(
     @Qualifier("GameAtlas") private val atlas: TextureAtlas,
     private val physicWorld: World,
     private val spawnCmps: ComponentMapper<SpawnComponent>,
+    private val playerCmps: ComponentMapper<PlayerComponent>,
+    private val inventoryCmps: ComponentMapper<InventoryComponent>,
 ) : EventListener, IteratingSystem() {
     private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
     private val cachedSizes = mutableMapOf<String, Vector2>()
@@ -42,7 +44,7 @@ class EntitySpawnSystem(
             val relativeSize = size(cfg.atlasKey)
             LOG.debug { "Spawning entity of type $type with size $relativeSize" }
 
-            world.entity {
+            val spawnedEntity = world.entity {
                 val imageCmp = add<ImageComponent> {
                     image = FlipImage().apply {
                         setScaling(Scaling.fill)
@@ -106,6 +108,7 @@ class EntitySpawnSystem(
                     // add state component at the end since its ComponentListener initialization logic
                     // depends on some components added above
                     add<StateComponent>()
+                    add<InventoryComponent>()
                 } else if (type == CHEST_TYPE) {
                     add<LootComponent>()
                 } else {
@@ -124,6 +127,16 @@ class EntitySpawnSystem(
                         isSensor = true
                         userData = ACTION_SENSOR
                     }
+                }
+            }
+
+            if (spawnedEntity in playerCmps) {
+                with(inventoryCmps[spawnedEntity]) {
+                    itemsToAdd += ItemType.SWORD
+                    itemsToAdd += ItemType.BIG_SWORD
+                    itemsToAdd += ItemType.ARMOR
+                    itemsToAdd += ItemType.HELMET
+                    itemsToAdd += ItemType.BOOTS
                 }
             }
         }

@@ -17,11 +17,14 @@ import com.github.quillraven.mysticwoods.component.StateComponent.Companion.Stat
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
+import com.github.quillraven.mysticwoods.input.gdxInputProcessor
 import com.github.quillraven.mysticwoods.system.*
 import com.github.quillraven.mysticwoods.ui.disposeSkin
 import com.github.quillraven.mysticwoods.ui.loadSkin
 import com.github.quillraven.mysticwoods.ui.model.GameModel
+import com.github.quillraven.mysticwoods.ui.model.InventoryModel
 import com.github.quillraven.mysticwoods.ui.view.gameView
+import com.github.quillraven.mysticwoods.ui.view.inventoryView
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 import ktx.box2d.createWorld
@@ -60,6 +63,7 @@ class GameScreen : KtxScreen {
             add<MoveSystem>()
             add<AttackSystem>()
             add<LootSystem>()
+            add<InventorySystem>()
             // DeadSystem must come before LifeSystem
             // because LifeSystem will add DeadComponent to an entity and sets its death animation.
             // Since the DeadSystem is checking if the animation is done it needs to be called after
@@ -83,11 +87,15 @@ class GameScreen : KtxScreen {
                 gameStage.addListener(sys)
             }
         }
-        PlayerInputProcessor(eWorld)
+        PlayerInputProcessor(eWorld, uiStage)
+        gdxInputProcessor(uiStage)
 
         // UI
         uiStage.actors {
             gameView(GameModel(eWorld, gameStage))
+            inventoryView(InventoryModel(eWorld, gameStage)) {
+                this.isVisible = false
+            }
         }
     }
 

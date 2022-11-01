@@ -8,7 +8,7 @@ import com.github.quillraven.mysticwoods.ui.Drawables
 import com.github.quillraven.mysticwoods.ui.Labels
 import com.github.quillraven.mysticwoods.ui.get
 import com.github.quillraven.mysticwoods.ui.model.InventoryModel
-import com.github.quillraven.mysticwoods.ui.model.UiItemModel
+import com.github.quillraven.mysticwoods.ui.model.ItemModel
 import com.github.quillraven.mysticwoods.ui.widget.InventoryDragSource
 import com.github.quillraven.mysticwoods.ui.widget.InventoryDragTarget
 import com.github.quillraven.mysticwoods.ui.widget.InventorySlot
@@ -90,6 +90,21 @@ class InventoryView(
         setupDragAndDrop()
 
         // data binding
+        model.onPropertyChange(InventoryModel::playerItems) { itemModels ->
+            clearInventoryAndGear()
+            itemModels.forEach {
+                if (it.equipped) {
+                    gear(it)
+                } else {
+                    item(it)
+                }
+            }
+        }
+    }
+
+    fun clearInventoryAndGear() {
+        invSlots.forEach { it.item(null) }
+        gearSlots.forEach { it.item(null) }
     }
 
     private fun setupDragAndDrop() {
@@ -118,7 +133,7 @@ class InventoryView(
     private fun onItemDropped(
         sourceSlot: InventorySlot,
         targetSlot: InventorySlot,
-        uiItemModel: UiItemModel
+        itemModel: ItemModel
     ) {
         if (sourceSlot == targetSlot) {
             // item dropped on same slot -> do nothing
@@ -127,22 +142,32 @@ class InventoryView(
 
         // swap slot items in UI
         sourceSlot.item(targetSlot.itemModel)
-        targetSlot.item(uiItemModel)
+        targetSlot.item(itemModel)
 
-        if (sourceSlot in gearSlots) {
-            // item unequipped
-            println("unequip $uiItemModel")
-        } else if (targetSlot in gearSlots) {
-            // item equipped
-            println("equip")
+        // update model
+        val sourceItem = sourceSlot.itemModel // this can be null if the target slot was empty
+        if (sourceSlot.isGear) {
+            model.equip(itemModel, false)
+            if (sourceItem != null) {
+                model.equip(sourceItem, true)
+            }
+        } else if (sourceItem != null) {
+            model.inventoryItem(invSlots.indexOf(sourceSlot), sourceItem)
+        }
+
+        if (targetSlot.isGear) {
+            model.equip(itemModel, true)
         } else {
-            // item moved within inventory (=slot changed)
-            println("slot changed")
+            model.inventoryItem(invSlots.indexOf(targetSlot), itemModel)
         }
     }
 
-    fun item(index: Int, itemModel: UiItemModel?) {
-        invSlots[index].item(itemModel)
+    fun item(itemModel: ItemModel) {
+        invSlots[itemModel.slotIdx].item(itemModel)
+    }
+
+    fun gear(itemModel: ItemModel) {
+        gearSlots.firstOrNull { it.supportedCategory == itemModel.category }?.item(itemModel)
     }
 }
 

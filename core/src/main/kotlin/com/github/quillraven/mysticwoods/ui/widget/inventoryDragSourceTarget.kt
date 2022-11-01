@@ -7,11 +7,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Source
 import com.github.quillraven.mysticwoods.component.ItemCategory
-import com.github.quillraven.mysticwoods.ui.model.UiItemModel
+import com.github.quillraven.mysticwoods.ui.model.ItemModel
 
 class InventoryDragSource(
     val inventorySlot: InventorySlot
 ) : Source(inventorySlot) {
+
+    val isGear: Boolean
+        get() = inventorySlot.isGear
+
+    val supportedCategory: ItemCategory
+        get() = inventorySlot.supportedCategory
+
     override fun dragStart(
         event: InputEvent,
         x: Float,
@@ -43,7 +50,7 @@ class InventoryDragSource(
     ) {
         if (target == null) {
             // drop on invalid or no target -> reset item on source slot
-            inventorySlot.item(payload.`object` as UiItemModel)
+            inventorySlot.item(payload.`object` as ItemModel)
         }
     }
 
@@ -53,18 +60,30 @@ class InventoryDragSource(
 }
 
 class InventoryDragTarget(
-    inventorySlot: InventorySlot,
-    private val onDrop: (sourceSlot: InventorySlot, targetSlot: InventorySlot, itemModel: UiItemModel) -> Unit,
+    private val inventorySlot: InventorySlot,
+    private val onDrop: (sourceSlot: InventorySlot, targetSlot: InventorySlot, itemModel: ItemModel) -> Unit,
     private val supportedItemCategory: ItemCategory? = null
 ) : DragAndDrop.Target(inventorySlot) {
-    override fun drag(source: Source, payload: Payload, x: Float, y: Float, pointer: Int): Boolean {
-        if (supportedItemCategory == null) {
-            // no check necessary -> drop allowed
-            return true
-        }
 
-        val itemModel = payload.`object` as UiItemModel
-        return if (itemModel.category == supportedItemCategory) {
+    private val isGear: Boolean
+        get() = supportedItemCategory != null
+
+    private fun isSupported(category: ItemCategory) = supportedItemCategory == category
+
+    override fun drag(source: Source, payload: Payload, x: Float, y: Float, pointer: Int): Boolean {
+        val itemModel = payload.`object` as ItemModel
+        val dragSource = source as InventoryDragSource
+        val srcCategory = dragSource.supportedCategory
+
+        return if (isGear && isSupported(itemModel.category)) {
+            // gear slot target that allows the item category of the dragged item
+            true
+        } else if (!isGear && dragSource.isGear && (inventorySlot.isEmpty || inventorySlot.itemCategory == srcCategory)) {
+            // inventory slot target and item gets dragged from gear slot
+            // -> only allowed if inventory slot is empty or contains an item of supported category
+            true
+        } else if (!isGear && !dragSource.isGear) {
+            // drag and drop between inventory slots
             true
         } else {
             payload.dragActor.color = Color.RED
@@ -73,11 +92,6 @@ class InventoryDragTarget(
     }
 
     override fun reset(source: Source, payload: Payload) {
-        if (supportedItemCategory == null) {
-            // nothing to do since nothing happens in drag function
-            return
-        }
-
         payload.dragActor.color = Color.WHITE
     }
 
@@ -85,7 +99,7 @@ class InventoryDragTarget(
         onDrop(
             (source as InventoryDragSource).inventorySlot,
             actor as InventorySlot,
-            payload.`object` as UiItemModel
+            payload.`object` as ItemModel
         )
     }
 }

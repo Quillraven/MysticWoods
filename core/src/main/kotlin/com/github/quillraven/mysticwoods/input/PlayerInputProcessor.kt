@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys.*
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.component.AttackComponent
@@ -28,8 +29,9 @@ fun gdxInputProcessor(processor: InputProcessor) {
 
 class PlayerInputProcessor(
     world: World,
+    private val uiStage: Stage,
     private val moveCmps: ComponentMapper<MoveComponent> = world.mapper(),
-    private val attackCmps: ComponentMapper<AttackComponent> = world.mapper()
+    private val attackCmps: ComponentMapper<AttackComponent> = world.mapper(),
 ) : KtxInputAdapter {
     private val playerEntities = world.family(allOf = arrayOf(PlayerComponent::class))
     private var playerCos = 0f
@@ -69,6 +71,8 @@ class PlayerInputProcessor(
         } else if (keycode == SPACE) {
             playerEntities.forEach { attackCmps[it].doAttack = true }
             return true
+        } else if (keycode == I) {
+            uiStage.actors.get(1).isVisible = !uiStage.actors.get(1).isVisible
         }
         return false
     }

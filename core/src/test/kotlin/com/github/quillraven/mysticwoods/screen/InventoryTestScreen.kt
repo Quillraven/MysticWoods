@@ -2,16 +2,22 @@ package com.github.quillraven.mysticwoods.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
-import com.github.quillraven.mysticwoods.component.ItemCategory
+import com.github.quillraven.mysticwoods.component.InventoryComponent
+import com.github.quillraven.mysticwoods.component.ItemType
+import com.github.quillraven.mysticwoods.component.PlayerComponent
 import com.github.quillraven.mysticwoods.ui.model.InventoryModel
-import com.github.quillraven.mysticwoods.ui.model.UiItemModel
 import com.github.quillraven.mysticwoods.ui.view.InventoryView
 import com.github.quillraven.mysticwoods.ui.view.inventoryView
 import ktx.scene2d.actors
 
 class InventoryTestScreen : TestScreen() {
-    private val model = InventoryModel(eWorld, uiStage)
+    private val model = InventoryModel(eWorld, gameStage)
     private lateinit var overlay: InventoryView
+    private val player = eWorld.entity {
+        add<PlayerComponent>()
+        add<InventoryComponent>()
+    }
+    private val inventoryCmps = eWorld.mapper<InventoryComponent>()
 
     override fun show() {
         super.show()
@@ -31,23 +37,28 @@ class InventoryTestScreen : TestScreen() {
             }
 
             Gdx.input.isKeyJustPressed(Keys.NUM_1) -> {
-                overlay.item(4, UiItemModel(ItemCategory.WEAPON, "sword"))
+                inventoryCmps[player].items.clear()
+                overlay.clearInventoryAndGear()
             }
 
             Gdx.input.isKeyJustPressed(Keys.NUM_2) -> {
-                overlay.item(4, null)
+                inventoryCmps[player].itemsToAdd += ItemType.SWORD
             }
 
             Gdx.input.isKeyJustPressed(Keys.NUM_3) -> {
-                overlay.item(0, UiItemModel(ItemCategory.HELMET, "helmet"))
+                inventoryCmps[player].itemsToAdd += ItemType.HELMET
             }
 
             Gdx.input.isKeyJustPressed(Keys.NUM_4) -> {
-                overlay.item(2, UiItemModel(ItemCategory.ARMOR, "armor"))
+                inventoryCmps[player].itemsToAdd += ItemType.ARMOR
             }
 
             Gdx.input.isKeyJustPressed(Keys.NUM_5) -> {
-                overlay.item(17, UiItemModel(ItemCategory.BOOTS, "boots"))
+                inventoryCmps[player].itemsToAdd += ItemType.BOOTS
+            }
+
+            Gdx.input.isKeyJustPressed(Keys.NUM_6) -> {
+                inventoryCmps[player].itemsToAdd += ItemType.BIG_SWORD
             }
         }
     }

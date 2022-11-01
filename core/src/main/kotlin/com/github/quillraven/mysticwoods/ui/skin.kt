@@ -64,6 +64,7 @@ fun loadSkin() {
     atlas.addRegion("helmet", TextureRegion(Texture("ui/helmet.png")))
     atlas.addRegion("armor", TextureRegion(Texture("ui/armor.png")))
     atlas.addRegion("sword", TextureRegion(Texture("ui/sword.png")))
+    atlas.addRegion("sword2", TextureRegion(Texture("ui/sword2.png")))
     atlas.addRegion("boots", TextureRegion(Texture("ui/boots.png")))
 
     Scene2DSkin.defaultSkin = skin(atlas) { skin ->
