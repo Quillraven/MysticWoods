@@ -156,17 +156,20 @@ class InventoryView(
         }
 
         if (targetSlot.isGear) {
+            if (sourceItem != null) {
+                model.equip(sourceItem, false)
+            }
             model.equip(itemModel, true)
         } else {
             model.inventoryItem(invSlots.indexOf(targetSlot), itemModel)
         }
     }
 
-    fun item(itemModel: ItemModel) {
+    private fun item(itemModel: ItemModel) {
         invSlots[itemModel.slotIdx].item(itemModel)
     }
 
-    fun gear(itemModel: ItemModel) {
+    private fun gear(itemModel: ItemModel) {
         gearSlots.firstOrNull { it.supportedCategory == itemModel.category }?.item(itemModel)
     }
 }
