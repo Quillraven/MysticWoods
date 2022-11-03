@@ -9,11 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.quillraven.fleks.world
-import com.github.quillraven.mysticwoods.component.AIComponent.Companion.AIComponentListener
-import com.github.quillraven.mysticwoods.component.FloatingTextComponent.Companion.FloatingTextComponentListener
-import com.github.quillraven.mysticwoods.component.ImageComponent.Companion.ImageComponentListener
-import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.PhysicComponentListener
-import com.github.quillraven.mysticwoods.component.StateComponent.Companion.StateComponentListener
+import com.github.quillraven.mysticwoods.component.*
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
@@ -41,31 +37,38 @@ abstract class TestScreen(private var testMapPath: String = "") : KtxScreen {
         }
 
         components {
-            add<PhysicComponentListener>()
-            add<ImageComponentListener>()
-            add<StateComponentListener>()
-            add<AIComponentListener>()
-            add<FloatingTextComponentListener>()
+            onAdd(PhysicComponent, PhysicComponent.onPhysicAdd)
+            onRemove(PhysicComponent, PhysicComponent.onPhysicRemove)
+
+            onAdd(ImageComponent, ImageComponent.onImageAdd)
+            onRemove(ImageComponent, ImageComponent.onImageRemove)
+
+            onAdd(StateComponent, StateComponent.onStateAdd)
+
+            onAdd(AIComponent, AIComponent.onAiAdd)
+
+            onAdd(FloatingTextComponent, FloatingTextComponent.onFloatingAdd)
+            onRemove(FloatingTextComponent, FloatingTextComponent.onFloatingRemove)
         }
 
         systems {
-            add<EntitySpawnSystem>()
-            add<CollisionSpawnSystem>()
-            add<CollisionDespawnSystem>()
-            add<AISystem>()
-            add<PhysicSystem>()
-            add<AnimationSystem>()
-            add<MoveSystem>()
-            add<AttackSystem>()
-            add<LootSystem>()
-            add<InventorySystem>()
-            add<DeadSystem>()
-            add<LifeSystem>()
-            add<StateSystem>()
-            add<CameraSystem>()
-            add<FloatingTextSystem>()
-            add<RenderSystem>()
-            add<DebugSystem>()
+            add(EntitySpawnSystem())
+            add(CollisionSpawnSystem())
+            add(CollisionDespawnSystem())
+            add(AISystem())
+            add(PhysicSystem())
+            add(AnimationSystem())
+            add(MoveSystem())
+            add(AttackSystem())
+            add(LootSystem())
+            add(InventorySystem())
+            add(DeadSystem())
+            add(LifeSystem())
+            add(StateSystem())
+            add(CameraSystem())
+            add(FloatingTextSystem())
+            add(RenderSystem())
+            add(DebugSystem())
         }
     }
     private var tiledMap: TiledMap? = null

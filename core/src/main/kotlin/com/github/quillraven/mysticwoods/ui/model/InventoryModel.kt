@@ -13,19 +13,16 @@ import com.github.quillraven.mysticwoods.event.EntityAddItemEvent
 import ktx.log.logger
 
 class InventoryModel(
-    world: World,
+    private val world: World,
     stage: Stage
 ) : PropertyChangeSource(), EventListener {
 
-    private val playerCmps = world.mapper<PlayerComponent>()
-    private val inventoryCmps = world.mapper<InventoryComponent>()
-    private val itemCmps = world.mapper<ItemComponent>()
-    private val playerEntities = world.family(allOf = arrayOf(PlayerComponent::class))
+    private val playerEntities = world.family { all(PlayerComponent) }
 
     var playerItems by propertyNotify(listOf<ItemModel>())
 
     private val playerInventoryCmp: InventoryComponent
-        get() = inventoryCmps[playerEntities.first()]
+        get() = with(world) { return playerEntities.first()[InventoryComponent] }
 
     init {
         stage.addListener(this)
@@ -33,10 +30,10 @@ class InventoryModel(
 
     override fun handle(event: Event): Boolean {
         when (event) {
-            is EntityAddItemEvent -> {
-                if (event.entity in playerCmps) {
-                    playerItems = inventoryCmps[event.entity].items.map {
-                        val itemCmp = itemCmps[it]
+            is EntityAddItemEvent -> with(world) {
+                if (event.entity has PlayerComponent) {
+                    playerItems = event.entity[InventoryComponent].items.map {
+                        val itemCmp = it[ItemComponent]
                         ItemModel(
                             it.id,
                             itemCmp.itemType.category,
@@ -60,13 +57,13 @@ class InventoryModel(
 
         log.debug { "\nInventory:" }
         playerInventoryCmp.items.forEach { item ->
-            log.debug { "${itemCmps[item]}" }
+            log.debug { "${with(world) { item[ItemComponent] }}" }
         }
         log.debug { "\n" }
     }
 
-    private fun playerItemByModel(itemModel: ItemModel): ItemComponent {
-        return itemCmps[playerInventoryCmp.items.first { it.id == itemModel.itemEntityId }]
+    private fun playerItemByModel(itemModel: ItemModel): ItemComponent = with(world) {
+        return playerInventoryCmp.items.first { it.id == itemModel.itemEntityId }[ItemComponent]
     }
 
     fun equip(itemModel: ItemModel, equip: Boolean) {

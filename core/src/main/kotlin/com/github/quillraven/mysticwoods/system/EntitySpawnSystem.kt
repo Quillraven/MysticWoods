@@ -105,7 +105,13 @@ class EntitySpawnSystem(
                         // add state component at the end since its ComponentListener initialization logic
                         // depends on some components added above
                         it += StateComponent()
-                        it += InventoryComponent()
+                        it += InventoryComponent().apply {
+                            itemsToAdd += ItemType.SWORD
+                            itemsToAdd += ItemType.BIG_SWORD
+                            itemsToAdd += ItemType.ARMOR
+                            itemsToAdd += ItemType.HELMET
+                            itemsToAdd += ItemType.BOOTS
+                        }
                     }
 
                     CHEST_TYPE -> {

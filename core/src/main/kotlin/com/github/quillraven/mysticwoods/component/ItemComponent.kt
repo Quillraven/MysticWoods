@@ -1,5 +1,8 @@
 package com.github.quillraven.mysticwoods.component
 
+import com.github.quillraven.fleks.Component
+import com.github.quillraven.fleks.ComponentType
+
 enum class ItemCategory {
     UNDEFINED,
     HELMET,
@@ -25,4 +28,8 @@ data class ItemComponent(
     var itemType: ItemType = ItemType.UNDEFINED,
     var slotIdx: Int = -1,
     var equipped: Boolean = false,
-)
+) : Component<ItemComponent> {
+    override fun type() = ItemComponent
+
+    companion object : ComponentType<ItemComponent>()
+}

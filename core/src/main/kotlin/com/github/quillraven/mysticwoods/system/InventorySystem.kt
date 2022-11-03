@@ -1,22 +1,21 @@
 package com.github.quillraven.mysticwoods.system
 
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.quillraven.fleks.*
+import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.fleks.World
+import com.github.quillraven.fleks.World.Companion.family
 import com.github.quillraven.mysticwoods.component.InventoryComponent
 import com.github.quillraven.mysticwoods.component.ItemComponent
-import com.github.quillraven.mysticwoods.component.ItemType
 import com.github.quillraven.mysticwoods.event.EntityAddItemEvent
 import com.github.quillraven.mysticwoods.event.fire
 
-@AllOf([InventoryComponent::class])
 class InventorySystem(
-    private val inventoryCmps: ComponentMapper<InventoryComponent>,
-    private val itemCmps: ComponentMapper<ItemComponent>,
-    @Qualifier("GameStage") private val gameStage: Stage,
-) : IteratingSystem() {
+    private val gameStage: Stage = World.inject("GameStage"),
+) : IteratingSystem(family = family { all(InventoryComponent) }) {
 
     override fun onTickEntity(entity: Entity) {
-        val inventory = inventoryCmps[entity]
+        val inventory = entity[InventoryComponent]
         if (inventory.itemsToAdd.isEmpty()) {
             return
         }
@@ -28,7 +27,7 @@ class InventorySystem(
                 return
             }
 
-            val newItem = spawnItem(itemType, slotIdx)
+            val newItem = world.entity { it += ItemComponent(itemType, slotIdx) }
             inventory.items += newItem
             gameStage.fire(EntityAddItemEvent(entity, newItem))
         }
@@ -37,20 +36,11 @@ class InventorySystem(
 
     private fun emptySlotIndex(inventory: InventoryComponent): Int {
         for (i in 0 until InventoryComponent.INVENTORY_CAPACITY) {
-            if (inventory.items.none { itemCmps[it].slotIdx == i }) {
+            if (inventory.items.none { it[ItemComponent].slotIdx == i }) {
                 return i
             }
         }
 
         return -1
-    }
-
-    private fun spawnItem(type: ItemType, slotIdx: Int): Entity {
-        return world.entity {
-            add<ItemComponent> {
-                this.itemType = type
-                this.slotIdx = slotIdx
-            }
-        }
     }
 }

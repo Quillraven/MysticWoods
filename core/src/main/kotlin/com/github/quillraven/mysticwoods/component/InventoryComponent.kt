@@ -1,12 +1,16 @@
 package com.github.quillraven.mysticwoods.component
 
-import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.Component
+import com.github.quillraven.fleks.ComponentType
+import com.github.quillraven.fleks.collection.MutableEntityBag
 
-class InventoryComponent {
-    val items = mutableListOf<Entity>()
+class InventoryComponent : Component<InventoryComponent> {
+    val items = MutableEntityBag(INVENTORY_CAPACITY)
     val itemsToAdd = mutableListOf<ItemType>()
 
-    companion object {
+    override fun type() = InventoryComponent
+
+    companion object : ComponentType<InventoryComponent>() {
         const val INVENTORY_CAPACITY = 18
     }
 }

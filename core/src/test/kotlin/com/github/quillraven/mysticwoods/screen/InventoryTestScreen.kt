@@ -14,10 +14,9 @@ class InventoryTestScreen : TestScreen() {
     private val model = InventoryModel(eWorld, gameStage)
     private lateinit var overlay: InventoryView
     private val player = eWorld.entity {
-        add<PlayerComponent>()
-        add<InventoryComponent>()
+        it += PlayerComponent()
+        it += InventoryComponent()
     }
-    private val inventoryCmps = eWorld.mapper<InventoryComponent>()
 
     override fun show() {
         super.show()
@@ -37,28 +36,28 @@ class InventoryTestScreen : TestScreen() {
             }
 
             Gdx.input.isKeyJustPressed(Keys.NUM_1) -> {
-                inventoryCmps[player].items.clear()
+                with(eWorld) { player[InventoryComponent].items.clear() }
                 overlay.clearInventoryAndGear()
             }
 
             Gdx.input.isKeyJustPressed(Keys.NUM_2) -> {
-                inventoryCmps[player].itemsToAdd += ItemType.SWORD
+                with(eWorld) { player[InventoryComponent].itemsToAdd += ItemType.SWORD }
             }
 
             Gdx.input.isKeyJustPressed(Keys.NUM_3) -> {
-                inventoryCmps[player].itemsToAdd += ItemType.HELMET
+                with(eWorld) { player[InventoryComponent].itemsToAdd += ItemType.HELMET }
             }
 
             Gdx.input.isKeyJustPressed(Keys.NUM_4) -> {
-                inventoryCmps[player].itemsToAdd += ItemType.ARMOR
+                with(eWorld) { player[InventoryComponent].itemsToAdd += ItemType.ARMOR }
             }
 
             Gdx.input.isKeyJustPressed(Keys.NUM_5) -> {
-                inventoryCmps[player].itemsToAdd += ItemType.BOOTS
+                with(eWorld) { player[InventoryComponent].itemsToAdd += ItemType.BOOTS }
             }
 
             Gdx.input.isKeyJustPressed(Keys.NUM_6) -> {
-                inventoryCmps[player].itemsToAdd += ItemType.BIG_SWORD
+                with(eWorld) { player[InventoryComponent].itemsToAdd += ItemType.BIG_SWORD }
             }
         }
     }

@@ -2,8 +2,9 @@ package com.github.quillraven.mysticwoods.input
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys.*
+import com.badlogic.gdx.InputMultiplexer
+import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.component.AttackComponent
 import com.github.quillraven.mysticwoods.component.MoveComponent
