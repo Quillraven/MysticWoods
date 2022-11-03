@@ -105,6 +105,7 @@ class EntitySpawnSystem(
                         // add state component at the end since its ComponentListener initialization logic
                         // depends on some components added above
                         it += StateComponent()
+                        it += InventoryComponent()
                     }
 
                     CHEST_TYPE -> {

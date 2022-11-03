@@ -4,23 +4,37 @@ size: 1024, 1024
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
+armor
+  rotate: false
+  xy: 81, 75
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+boots
+  rotate: false
+  xy: 516, 555
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 char_info
   rotate: false
-  xy: 2, 47
+  xy: 2, 72
   size: 77, 24
   orig: 77, 24
   offset: 0, 0
   index: -1
 fnt_white
   rotate: false
-  xy: 2, 73
+  xy: 2, 98
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
 frame_bgd
   rotate: false
-  xy: 516, 553
+  xy: 516, 578
   size: 48, 32
   split: 16, 16, 8, 11
   pad: 0, 0, 0, 0
@@ -29,38 +43,94 @@ frame_bgd
   index: -1
 frame_fgd
   rotate: false
-  xy: 2, 15
+  xy: 2, 40
   size: 30, 30
   split: 10, 10, 10, 10
   pad: 0, 0, 0, 0
   orig: 30, 30
   offset: 0, 0
   index: -1
+helmet
+  rotate: false
+  xy: 534, 555
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+inv_slot
+  rotate: false
+  xy: 566, 590
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+inv_slot_armor
+  rotate: false
+  xy: 588, 594
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+inv_slot_boots
+  rotate: false
+  xy: 2, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+inv_slot_helmet
+  rotate: false
+  xy: 52, 54
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+inv_slot_weapon
+  rotate: false
+  xy: 516, 537
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 life_bar
   rotate: false
-  xy: 81, 68
+  xy: 81, 93
   size: 49, 3
   orig: 49, 3
   offset: 0, 0
   index: -1
 mana_bar
   rotate: false
-  xy: 516, 548
+  xy: 516, 573
   size: 42, 3
   orig: 42, 3
   offset: 0, 0
   index: -1
 player
   rotate: false
-  xy: 566, 567
+  xy: 2, 20
   size: 19, 18
   orig: 19, 18
   offset: 0, 0
   index: -1
 slime
   rotate: false
-  xy: 2, 2
+  xy: 34, 41
   size: 14, 11
   orig: 14, 11
+  offset: 0, 0
+  index: -1
+sword
+  rotate: false
+  xy: 99, 75
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+sword2
+  rotate: false
+  xy: 34, 54
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
   index: -1

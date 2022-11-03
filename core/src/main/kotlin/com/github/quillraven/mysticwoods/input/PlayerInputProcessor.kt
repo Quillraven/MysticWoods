@@ -2,14 +2,32 @@ package com.github.quillraven.mysticwoods.input
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys.*
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.component.AttackComponent
 import com.github.quillraven.mysticwoods.component.MoveComponent
 import com.github.quillraven.mysticwoods.component.PlayerComponent
 import ktx.app.KtxInputAdapter
 
+fun gdxInputProcessor(processor: InputProcessor) {
+    val currProcessor = Gdx.input.inputProcessor
+    if (currProcessor == null) {
+        Gdx.input.inputProcessor = processor
+    } else {
+        if (currProcessor is InputMultiplexer) {
+            if (processor !in currProcessor.processors) {
+                currProcessor.addProcessor(processor)
+            }
+        } else {
+            Gdx.input.inputProcessor = InputMultiplexer(currProcessor, processor)
+        }
+    }
+}
+
 class PlayerInputProcessor(
     world: World,
+    private val uiStage: Stage,
 ) : KtxInputAdapter {
     private val playerEntities = world.family { all(PlayerComponent) }
     private var playerCos = 0f
@@ -17,7 +35,7 @@ class PlayerInputProcessor(
     private val pressedKeys = mutableSetOf<Int>()
 
     init {
-        Gdx.input.inputProcessor = this
+        gdxInputProcessor(this)
     }
 
     private fun Int.isMovementKey(): Boolean {
@@ -49,6 +67,8 @@ class PlayerInputProcessor(
         } else if (keycode == SPACE) {
             playerEntities.forEach { it[AttackComponent].doAttack = true }
             return true
+        } else if (keycode == I) {
+            uiStage.actors.get(1).isVisible = !uiStage.actors.get(1).isVisible
         }
         return false
     }

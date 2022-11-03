@@ -24,3 +24,5 @@ data class EntityTakeDamageEvent(val entity: Entity, val damage: Float) : Event(
 data class EntityReviveEvent(val entity: Entity) : Event()
 
 data class EntityAggroEvent(val aiEntity: Entity, val target: Entity) : Event()
+
+data class EntityAddItemEvent(val entity: Entity, val item: Entity) : Event()

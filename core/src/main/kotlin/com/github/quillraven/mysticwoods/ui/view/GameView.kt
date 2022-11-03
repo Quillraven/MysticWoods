@@ -21,7 +21,7 @@ import ktx.actors.txt
 import ktx.scene2d.*
 
 class GameView(
-    private val model: GameModel,
+    model: GameModel,
     skin: Skin
 ) : Table(skin), KTable {
 
