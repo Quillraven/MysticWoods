@@ -9,7 +9,7 @@ import com.github.quillraven.mysticwoods.component.PlayerComponent
 import ktx.app.KtxInputAdapter
 
 class PlayerInputProcessor(
-    private val world: World,
+    world: World,
 ) : KtxInputAdapter {
     private val playerEntities = world.family { all(PlayerComponent) }
     private var playerCos = 0f
