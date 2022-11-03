@@ -9,7 +9,7 @@ import com.github.quillraven.mysticwoods.ui.view.gameView
 import ktx.scene2d.actors
 
 class UiTestScreen : TestScreen() {
-    private val model = GameModel(eWorld, uiStage)
+    private val model = GameModel(eWorld, gameStage)
     private lateinit var overlay: GameView
 
     override fun show() {

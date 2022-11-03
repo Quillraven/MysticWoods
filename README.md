@@ -1,7 +1,7 @@
 # Mystic Woods
 
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Quillraven/Fleks/blob/master/LICENSE)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.7.10-red.svg)](http://kotlinlang.org/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.7.20-red.svg)](http://kotlinlang.org/)
 [![Fleks](https://img.shields.io/badge/Fleks-1.6--JVM-success.svg)](https://github.com/Quillraven/Fleks)
 
 [![LibGDX](https://img.shields.io/badge/LibGDX-1.11-blue.svg)](https://github.com/libgdx/libgdx)
@@ -25,9 +25,11 @@ Mystic Woods uses the [Fleks](https://github.com/Quillraven/Fleks) entity compon
 The controls are:
 - Arrows keys to move around
 - Space to attack which is also used to interact with chests
+- I to open/close inventory
 
 ![image](https://user-images.githubusercontent.com/93260/188718920-86c86b88-1ccb-4034-bd58-2fbbcee5cf78.png)
 ![image](https://user-images.githubusercontent.com/93260/188719043-2e4b731f-3792-47b8-808e-c0f8361afa93.png)
+![image](https://user-images.githubusercontent.com/93260/199331080-148b98eb-60af-46a5-b635-bb0d84aef0ae.png)
 
 ## Credits
 
@@ -38,3 +40,4 @@ The controls are:
 - [Soup of Justice font](https://www.dafont.com/soup-of-justice.font)
 - [Immortal font](https://www.1001freefonts.com/immortal.font)
 - [UI assets](https://mounirtohami.itch.io/pixel-art-gui-elements)
+- [Item icons](https://alexs-assets.itch.io/16x16-rpg-item-pack)

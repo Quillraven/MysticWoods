@@ -17,6 +17,7 @@ import com.github.quillraven.mysticwoods.component.StateComponent.Companion.Stat
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
+import com.github.quillraven.mysticwoods.input.gdxInputProcessor
 import com.github.quillraven.mysticwoods.system.*
 import com.github.quillraven.mysticwoods.ui.disposeSkin
 import com.github.quillraven.mysticwoods.ui.loadSkin
@@ -26,7 +27,7 @@ import ktx.box2d.createWorld
 
 abstract class TestScreen(private var testMapPath: String = "") : KtxScreen {
     private val gameAtlas = TextureAtlas("graphics/game.atlas")
-    private val gameStage = Stage(ExtendViewport(16f, 9f))
+    val gameStage = Stage(ExtendViewport(16f, 9f))
     val uiStage = Stage(ExtendViewport(320f, 180f))
     private val phWorld = createWorld(gravity = Vector2.Zero).apply {
         autoClearForces = false
@@ -57,6 +58,7 @@ abstract class TestScreen(private var testMapPath: String = "") : KtxScreen {
             add<MoveSystem>()
             add<AttackSystem>()
             add<LootSystem>()
+            add<InventorySystem>()
             add<DeadSystem>()
             add<LifeSystem>()
             add<StateSystem>()
@@ -76,7 +78,8 @@ abstract class TestScreen(private var testMapPath: String = "") : KtxScreen {
                 gameStage.addListener(sys)
             }
         }
-        PlayerInputProcessor(eWorld)
+        PlayerInputProcessor(eWorld, uiStage)
+        gdxInputProcessor(uiStage)
     }
 
     override fun show() {

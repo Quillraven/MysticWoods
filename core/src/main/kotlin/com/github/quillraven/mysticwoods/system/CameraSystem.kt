@@ -10,6 +10,8 @@ import com.github.quillraven.mysticwoods.component.PlayerComponent
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import ktx.tiled.height
 import ktx.tiled.width
+import kotlin.math.max
+import kotlin.math.min
 
 @AllOf([PlayerComponent::class, ImageComponent::class])
 class CameraSystem(
@@ -27,9 +29,13 @@ class CameraSystem(
         with(imageCmps[entity]) {
             val viewW = camera.viewportWidth * 0.5f
             val viewH = camera.viewportHeight * 0.5f
+            val camMinW = min(viewW, maxW - viewW)
+            val camMaxW = max(viewW, maxW - viewW)
+            val camMinH = min(viewH, maxH - viewH)
+            val camMaxH = max(viewH, maxH - viewH)
             camera.position.set(
-                image.x.coerceIn(viewW, maxW - viewW),
-                image.y.coerceIn(viewH, maxH - viewH),
+                image.x.coerceIn(camMinW, camMaxW),
+                image.y.coerceIn(camMinH, camMaxH),
                 camera.position.z
             )
         }
