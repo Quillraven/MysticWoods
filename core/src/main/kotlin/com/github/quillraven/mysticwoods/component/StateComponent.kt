@@ -22,7 +22,7 @@ data class StateEntity(
     val wantsToMove: Boolean
         get() = with(world) {
             val moveCmp = entity[MoveComponent]
-            return moveCmp.cos != 0f || moveCmp.sin != 0f
+            return !moveCmp.cosSin.isZero
         }
 
     val wantsToAttack: Boolean
