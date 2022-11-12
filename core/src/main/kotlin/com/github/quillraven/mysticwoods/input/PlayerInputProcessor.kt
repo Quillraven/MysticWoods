@@ -52,7 +52,6 @@ class PlayerInputProcessor(
         playerEntities.forEach { player ->
             with(moveCmps[player]) {
                 cosSin.set(playerCos, playerSin).nor()
-                println(cosSin)
             }
         }
     }
