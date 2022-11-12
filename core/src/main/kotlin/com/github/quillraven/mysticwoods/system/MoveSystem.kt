@@ -20,7 +20,7 @@ class MoveSystem(
         val moveCmp = moveCmps[entity]
         val physicCmp = physicCmps[entity]
 
-        if (moveCmp.cos == 0f && moveCmp.sin == 0f || moveCmp.root) {
+        if (moveCmp.cosSin.isZero || moveCmp.root) {
             // no direction for movement or entity is rooted
             if (!physicCmp.body.linearVelocity.isZero) {
                 // entity is moving -> stop it
@@ -37,15 +37,16 @@ class MoveSystem(
         val mass = physicCmp.body.mass
         val (velX, velY) = physicCmp.body.linearVelocity
         val slowFactor = if (moveCmp.slow) 0.2f else 1f
+        val (cos, sin) = moveCmp.cosSin
         physicCmp.impulse.set(
-            mass * (moveCmp.speed * slowFactor * moveCmp.cos - velX),
-            mass * (moveCmp.speed * slowFactor * moveCmp.sin - velY)
+            mass * (moveCmp.speed * slowFactor * cos - velX),
+            mass * (moveCmp.speed * slowFactor * sin - velY)
         )
 
         // flip image if entity moves left/right
         imgCmps.getOrNull(entity)?.let { imgCmp ->
-            if (moveCmp.cos != 0f) {
-                imgCmp.image.flipX = moveCmp.cos < 0
+            if (cos != 0f) {
+                imgCmp.image.flipX = cos < 0
             }
         }
     }

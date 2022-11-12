@@ -51,8 +51,8 @@ class PlayerInputProcessor(
     private fun updatePlayerMovement() {
         playerEntities.forEach { player ->
             with(moveCmps[player]) {
-                cos = playerCos
-                sin = playerSin
+                cosSin.set(playerCos, playerSin).nor()
+                println(cosSin)
             }
         }
     }

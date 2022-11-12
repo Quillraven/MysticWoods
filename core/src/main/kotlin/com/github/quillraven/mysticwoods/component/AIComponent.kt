@@ -125,10 +125,7 @@ class AIEntity(
     fun moveToTarget() {
         val aiCmp = aiCmps[entity]
         if (aiCmp.target == NO_TARGET) {
-            with(moveCmps[entity]) {
-                cos = 0f
-                sin = 0f
-            }
+            with(moveCmps[entity]) { cosSin.setZero() }
             return
         }
 
@@ -142,16 +139,12 @@ class AIEntity(
         val (sourceX, sourceY) = physicCmp.body.position
         with(moveCmps[entity]) {
             val angleRad = MathUtils.atan2(targetY - sourceY, targetX - sourceX)
-            cos = MathUtils.cos(angleRad)
-            sin = MathUtils.sin(angleRad)
+            cosSin.set(MathUtils.cos(angleRad), MathUtils.sin(angleRad))
         }
     }
 
     fun stopMovement() {
-        with(moveCmps[entity]) {
-            cos = 0f
-            sin = 0f
-        }
+        with(moveCmps[entity]) { cosSin.setZero() }
     }
 
     fun moveSlow(slowed: Boolean) {

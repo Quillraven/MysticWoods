@@ -27,7 +27,7 @@ data class StateEntity(
     val wantsToMove: Boolean
         get() {
             val moveCmp = moveCmps[entity]
-            return moveCmp.cos != 0f || moveCmp.sin != 0f
+            return !moveCmp.cosSin.isZero
         }
 
     val wantsToAttack: Boolean
