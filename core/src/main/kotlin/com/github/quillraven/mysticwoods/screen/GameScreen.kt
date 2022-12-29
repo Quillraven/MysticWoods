@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
@@ -14,6 +15,8 @@ import com.github.quillraven.mysticwoods.component.FloatingTextComponent.Compani
 import com.github.quillraven.mysticwoods.component.ImageComponent.Companion.ImageComponentListener
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.PhysicComponentListener
 import com.github.quillraven.mysticwoods.component.StateComponent.Companion.StateComponentListener
+import com.github.quillraven.mysticwoods.event.GamePauseEvent
+import com.github.quillraven.mysticwoods.event.GameResumeEvent
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
@@ -23,14 +26,16 @@ import com.github.quillraven.mysticwoods.ui.disposeSkin
 import com.github.quillraven.mysticwoods.ui.loadSkin
 import com.github.quillraven.mysticwoods.ui.model.GameModel
 import com.github.quillraven.mysticwoods.ui.model.InventoryModel
+import com.github.quillraven.mysticwoods.ui.view.PauseView
 import com.github.quillraven.mysticwoods.ui.view.gameView
 import com.github.quillraven.mysticwoods.ui.view.inventoryView
+import com.github.quillraven.mysticwoods.ui.view.pauseView
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 import ktx.box2d.createWorld
 import ktx.scene2d.actors
 
-class GameScreen : KtxScreen {
+class GameScreen : KtxScreen, EventListener {
     private val gameAtlas = TextureAtlas("graphics/game.atlas")
     private val gameStage = Stage(ExtendViewport(16f, 9f))
     private val uiStage = Stage(ExtendViewport(320f, 180f))
@@ -79,6 +84,7 @@ class GameScreen : KtxScreen {
         }
     }
     private var currentMap: TiledMap? = null
+    private var paused = false
 
     init {
         loadSkin()
@@ -87,8 +93,9 @@ class GameScreen : KtxScreen {
                 gameStage.addListener(sys)
             }
         }
-        PlayerInputProcessor(eWorld, uiStage)
+        PlayerInputProcessor(eWorld, gameStage, uiStage)
         gdxInputProcessor(uiStage)
+        gameStage.addListener(this)
 
         // UI
         uiStage.actors {
@@ -96,6 +103,7 @@ class GameScreen : KtxScreen {
             inventoryView(InventoryModel(eWorld, gameStage)) {
                 this.isVisible = false
             }
+            pauseView { this.isVisible = false }
         }
     }
 
@@ -116,9 +124,33 @@ class GameScreen : KtxScreen {
     }
 
     override fun render(delta: Float) {
-        val dt = delta.coerceAtMost(0.25f)
+        // dt is set to zero during pause to
+        // stop animations
+        val dt = if (paused) 0f else delta.coerceAtMost(0.25f)
         GdxAI.getTimepiece().update(dt)
         eWorld.update(dt)
+    }
+
+    override fun handle(event: Event): Boolean {
+        when (event) {
+            is GamePauseEvent -> paused = true
+            is GameResumeEvent -> paused = false
+            else -> return false
+        }
+
+        val mandatorySystems = setOf(
+            AnimationSystem::class,
+            CameraSystem::class,
+            RenderSystem::class,
+            DebugSystem::class
+        )
+        eWorld.systems
+            .filter { it::class !in mandatorySystems }
+            .forEach { it.enabled = !paused }
+
+        uiStage.actors.filterIsInstance<PauseView>().first().isVisible = paused
+
+        return true
     }
 
     override fun dispose() {

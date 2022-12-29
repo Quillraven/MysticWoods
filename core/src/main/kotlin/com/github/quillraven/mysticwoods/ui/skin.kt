@@ -36,7 +36,8 @@ enum class Fonts(
     val scaling: Float
 ) {
     DEFAULT("fnt_white", 0.25f),
-    BIG("fnt_white", 0.5f);
+    BIG("fnt_white", 0.5f),
+    BIGGER("fnt_white", 0.75f);
 
     val skinKey = "Font_${this.name.lowercase()}"
     val fontPath = "ui/${this.atlasRegionKey}.fnt"
@@ -46,7 +47,8 @@ operator fun Skin.get(font: Fonts): BitmapFont = this.getFont(font.skinKey)
 
 enum class Labels {
     FRAME,
-    TITLE;
+    TITLE,
+    LARGE;
 
     val skinKey = this.name.lowercase()
 }
@@ -77,6 +79,9 @@ fun loadSkin() {
                 rightWidth = 2f
                 topHeight = 1f
             }
+        }
+        label(Labels.LARGE.skinKey) {
+            font = skin[Fonts.BIGGER]
         }
     }
 }
