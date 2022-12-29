@@ -6,10 +6,7 @@ import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.github.quillraven.fleks.IntervalSystem
-import com.github.quillraven.mysticwoods.event.EntityAttackEvent
-import com.github.quillraven.mysticwoods.event.EntityDeathEvent
-import com.github.quillraven.mysticwoods.event.EntityLootEvent
-import com.github.quillraven.mysticwoods.event.MapChangeEvent
+import com.github.quillraven.mysticwoods.event.*
 import ktx.assets.disposeSafely
 import ktx.log.logger
 import ktx.tiled.propertyOrNull
@@ -18,6 +15,7 @@ class AudioSystem : EventListener, IntervalSystem() {
     private val soundCache = mutableMapOf<String, Sound>()
     private val musicCache = mutableMapOf<String, Music>()
     private val soundRequests = mutableMapOf<String, Sound>()
+    private var music: Music? = null
 
     override fun onTick() {
         if (soundRequests.isEmpty()) {
@@ -33,18 +31,28 @@ class AudioSystem : EventListener, IntervalSystem() {
             is MapChangeEvent -> {
                 event.map.propertyOrNull<String>("music")?.let { path ->
                     log.debug { "Changing music to '$path'" }
-                    val music = musicCache.getOrPut(path) {
+                    music = musicCache.getOrPut(path) {
                         Gdx.audio.newMusic(Gdx.files.internal("audio/$path")).apply {
                             isLooping = true
                         }
                     }
-                    music.play()
+                    music?.play()
                 }
             }
 
             is EntityAttackEvent -> queueSound("audio/${event.atlasKey}_attack.wav")
             is EntityDeathEvent -> queueSound("audio/${event.atlasKey}_death.wav")
             is EntityLootEvent -> queueSound("audio/chest_open.wav")
+            is GamePauseEvent -> {
+                music?.pause()
+                soundCache.values.forEach { it.pause() }
+            }
+
+            is GameResumeEvent -> {
+                music?.play()
+                soundCache.values.forEach { it.resume() }
+            }
+
             else -> return false
         }
         return true

@@ -9,6 +9,9 @@ import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.component.AttackComponent
 import com.github.quillraven.mysticwoods.component.MoveComponent
 import com.github.quillraven.mysticwoods.component.PlayerComponent
+import com.github.quillraven.mysticwoods.event.GamePauseEvent
+import com.github.quillraven.mysticwoods.event.GameResumeEvent
+import com.github.quillraven.mysticwoods.event.fire
 import ktx.app.KtxInputAdapter
 
 fun gdxInputProcessor(processor: InputProcessor) {
@@ -28,11 +31,13 @@ fun gdxInputProcessor(processor: InputProcessor) {
 
 class PlayerInputProcessor(
     world: World,
+    private val gameStage: Stage,
     private val uiStage: Stage,
 ) : KtxInputAdapter {
     private val playerEntities = world.family { all(PlayerComponent) }
     private var playerCos = 0f
     private var playerSin = 0f
+    private var paused = false
     private val pressedKeys = mutableSetOf<Int>()
 
     init {
@@ -69,6 +74,9 @@ class PlayerInputProcessor(
             return true
         } else if (keycode == I) {
             uiStage.actors.get(1).isVisible = !uiStage.actors.get(1).isVisible
+        } else if (keycode == P) {
+            paused = !paused
+            gameStage.fire(if (paused) GamePauseEvent() else GameResumeEvent())
         }
         return false
     }
