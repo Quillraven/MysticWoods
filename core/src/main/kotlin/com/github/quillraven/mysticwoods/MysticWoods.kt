@@ -32,6 +32,7 @@ class MysticWoods : KtxGame<KtxScreen>(), EventListener {
     }
 
     override fun resize(width: Int, height: Int) {
+        super.resize(width, height)
         gameStage.viewport.update(width, height, true)
         uiStage.viewport.update(width, height, true)
     }
