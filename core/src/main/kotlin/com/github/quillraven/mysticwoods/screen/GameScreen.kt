@@ -5,18 +5,14 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
-import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.quillraven.fleks.world
+import com.github.quillraven.mysticwoods.MysticWoods
 import com.github.quillraven.mysticwoods.component.AIComponent.Companion.AIComponentListener
 import com.github.quillraven.mysticwoods.component.FloatingTextComponent.Companion.FloatingTextComponentListener
 import com.github.quillraven.mysticwoods.component.ImageComponent.Companion.ImageComponentListener
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.PhysicComponentListener
 import com.github.quillraven.mysticwoods.component.StateComponent.Companion.StateComponentListener
-import com.github.quillraven.mysticwoods.event.GamePauseEvent
-import com.github.quillraven.mysticwoods.event.GameResumeEvent
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
@@ -35,10 +31,10 @@ import ktx.assets.disposeSafely
 import ktx.box2d.createWorld
 import ktx.scene2d.actors
 
-class GameScreen : KtxScreen, EventListener {
+class GameScreen(game: MysticWoods) : KtxScreen {
+    private val gameStage = game.gameStage
+    private val uiStage = game.uiStage
     private val gameAtlas = TextureAtlas("graphics/game.atlas")
-    private val gameStage = Stage(ExtendViewport(16f, 9f))
-    private val uiStage = Stage(ExtendViewport(320f, 180f))
     private val phWorld = createWorld(gravity = Vector2.Zero).apply {
         autoClearForces = false
     }
@@ -84,7 +80,6 @@ class GameScreen : KtxScreen, EventListener {
         }
     }
     private var currentMap: TiledMap? = null
-    private var paused = false
 
     init {
         loadSkin()
@@ -95,7 +90,6 @@ class GameScreen : KtxScreen, EventListener {
         }
         PlayerInputProcessor(eWorld, gameStage, uiStage)
         gdxInputProcessor(uiStage)
-        gameStage.addListener(this)
 
         // UI
         uiStage.actors {
@@ -111,33 +105,7 @@ class GameScreen : KtxScreen, EventListener {
         setMap("maps/demo.tmx")
     }
 
-    private fun setMap(path: String) {
-        currentMap?.disposeSafely()
-        val newMap = TmxMapLoader().load(path)
-        currentMap = newMap
-        gameStage.fire(MapChangeEvent(newMap))
-    }
-
-    override fun resize(width: Int, height: Int) {
-        gameStage.viewport.update(width, height, true)
-        uiStage.viewport.update(width, height, true)
-    }
-
-    override fun render(delta: Float) {
-        // dt is set to zero during pause to
-        // stop animations
-        val dt = if (paused) 0f else delta.coerceAtMost(0.25f)
-        GdxAI.getTimepiece().update(dt)
-        eWorld.update(dt)
-    }
-
-    override fun handle(event: Event): Boolean {
-        when (event) {
-            is GamePauseEvent -> paused = true
-            is GameResumeEvent -> paused = false
-            else -> return false
-        }
-
+    private fun pauseWorld(pause: Boolean) {
         val mandatorySystems = setOf(
             AnimationSystem::class,
             CameraSystem::class,
@@ -146,11 +114,26 @@ class GameScreen : KtxScreen, EventListener {
         )
         eWorld.systems
             .filter { it::class !in mandatorySystems }
-            .forEach { it.enabled = !paused }
+            .forEach { it.enabled = !pause }
 
-        uiStage.actors.filterIsInstance<PauseView>().first().isVisible = paused
+        uiStage.actors.filterIsInstance<PauseView>().first().isVisible = pause
+    }
 
-        return true
+    override fun pause() = pauseWorld(true)
+
+    override fun resume() = pauseWorld(false)
+
+    private fun setMap(path: String) {
+        currentMap?.disposeSafely()
+        val newMap = TmxMapLoader().load(path)
+        currentMap = newMap
+        gameStage.fire(MapChangeEvent(newMap))
+    }
+
+    override fun render(delta: Float) {
+        val dt = delta.coerceAtMost(0.25f)
+        GdxAI.getTimepiece().update(dt)
+        eWorld.update(dt)
     }
 
     override fun dispose() {
