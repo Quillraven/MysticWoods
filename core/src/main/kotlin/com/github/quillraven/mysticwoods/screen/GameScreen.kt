@@ -150,8 +150,6 @@ class GameScreen(game: MysticWoods) : KtxScreen {
     override fun dispose() {
         eWorld.dispose()
         phWorld.disposeSafely()
-        gameStage.disposeSafely()
-        uiStage.disposeSafely()
         gameAtlas.disposeSafely()
         currentMap?.disposeSafely()
         disposeSkin()
