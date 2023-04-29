@@ -1,5 +1,7 @@
 package com.github.quillraven.mysticwoods.screen
 
+import box2dLight.Light
+import box2dLight.RayHandler
 import com.badlogic.gdx.ai.GdxAI
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
@@ -11,6 +13,8 @@ import com.github.quillraven.mysticwoods.MysticWoods
 import com.github.quillraven.mysticwoods.component.AIComponent.Companion.AIComponentListener
 import com.github.quillraven.mysticwoods.component.FloatingTextComponent.Companion.FloatingTextComponentListener
 import com.github.quillraven.mysticwoods.component.ImageComponent.Companion.ImageComponentListener
+import com.github.quillraven.mysticwoods.component.LightComponent
+import com.github.quillraven.mysticwoods.component.LightComponent.Companion.LightComponentListener
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.PhysicComponentListener
 import com.github.quillraven.mysticwoods.component.StateComponent.Companion.StateComponentListener
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
@@ -38,12 +42,23 @@ class GameScreen(game: MysticWoods) : KtxScreen {
     private val phWorld = createWorld(gravity = Vector2.Zero).apply {
         autoClearForces = false
     }
+    private val rayHandler = RayHandler(phWorld).apply {
+        // don't make light super bright
+        RayHandler.useDiffuseLight(true)
+
+        // player only throws shadows for map environment but not for enemies like slimes
+        Light.setGlobalContactFilter(LightComponent.b2dPlayer, 1, LightComponent.b2dEnvironment)
+
+        setAmbientLight(LightSystem.dayLightColor)
+    }
+
     private val eWorld = world {
         injectables {
             add(phWorld)
             add("GameStage", gameStage)
             add("UiStage", uiStage)
             add("GameAtlas", gameAtlas)
+            add(rayHandler)
         }
 
         components {
@@ -52,6 +67,7 @@ class GameScreen(game: MysticWoods) : KtxScreen {
             add<StateComponentListener>()
             add<AIComponentListener>()
             add<FloatingTextComponentListener>()
+            add<LightComponentListener>()
         }
 
         systems {
@@ -75,6 +91,7 @@ class GameScreen(game: MysticWoods) : KtxScreen {
             add<CameraSystem>()
             add<FloatingTextSystem>()
             add<RenderSystem>()
+            add<LightSystem>()
             add<AudioSystem>()
             add<DebugSystem>()
         }
@@ -119,6 +136,14 @@ class GameScreen(game: MysticWoods) : KtxScreen {
         uiStage.actors.filterIsInstance<PauseView>().first().isVisible = pause
     }
 
+    override fun resize(width: Int, height: Int) {
+        val screenX = gameStage.viewport.screenX
+        val screenY = gameStage.viewport.screenY
+        val screenW = gameStage.viewport.screenWidth
+        val screenH = gameStage.viewport.screenHeight
+        rayHandler.useCustomViewport(screenX, screenY, screenW, screenH)
+    }
+
     override fun pause() = pauseWorld(true)
 
     override fun resume() = pauseWorld(false)
@@ -142,5 +167,6 @@ class GameScreen(game: MysticWoods) : KtxScreen {
         gameAtlas.disposeSafely()
         currentMap?.disposeSafely()
         disposeSkin()
+        rayHandler.disposeSafely()
     }
 }

@@ -27,10 +27,13 @@ The controls are:
 - Space to attack which is also used to interact with chests
 - I to open/close inventory
 - P to pause/resume
+- D/N to switch between day and night lighting
 
 ![image](https://user-images.githubusercontent.com/93260/188718920-86c86b88-1ccb-4034-bd58-2fbbcee5cf78.png)
 ![image](https://user-images.githubusercontent.com/93260/188719043-2e4b731f-3792-47b8-808e-c0f8361afa93.png)
 ![image](https://user-images.githubusercontent.com/93260/199331080-148b98eb-60af-46a5-b635-bb0d84aef0ae.png)
+![image](https://user-images.githubusercontent.com/93260/235312333-bcd48bae-3e45-4ae9-bee3-6d28a46a2440.png)
+
 
 ## Credits
 

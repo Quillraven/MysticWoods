@@ -112,6 +112,7 @@ class CollisionSpawnSystem(
     }
 
     companion object {
-        const val SPAWN_AREA_SIZE = 1
+        // increase from 1 to 7 to correctly throw Light shadows for objects
+        const val SPAWN_AREA_SIZE = 7
     }
 }

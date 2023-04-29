@@ -47,6 +47,7 @@ class PhysicComponent(
                     position.set(x + width * 0.5f, y + height * 0.5f)
                     fixedRotation = true
                     allowSleep = false
+
                     this.fixtureAction(this@add, width, height)
                 }
                 prevPos.set(body.position)
@@ -76,7 +77,7 @@ class PhysicComponent(
                                 vec2(bodyW, 0f),
                                 vec2(bodyW, bodyH),
                                 vec2(0f, bodyH),
-                            )
+                            ) { filter.categoryBits = LightComponent.b2dEnvironment }
                             TMP_VEC.set(bodyW * 0.5f, bodyH * 0.5f)
                             box(SPAWN_AREA_SIZE + 4f, SPAWN_AREA_SIZE + 4f, TMP_VEC) {
                                 isSensor = true
