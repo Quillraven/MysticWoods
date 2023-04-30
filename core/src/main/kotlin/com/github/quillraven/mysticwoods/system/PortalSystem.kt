@@ -9,12 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.quillraven.fleks.*
 import com.github.quillraven.mysticwoods.MysticWoods.Companion.UNIT_SCALE
-import com.github.quillraven.mysticwoods.component.ImageComponent
-import com.github.quillraven.mysticwoods.component.PhysicComponent
+import com.github.quillraven.mysticwoods.component.*
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.bodyFromImageAndCfg
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.physicCmpFromShape2D
-import com.github.quillraven.mysticwoods.component.PlayerComponent
-import com.github.quillraven.mysticwoods.component.PortalComponent
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.system.EntitySpawnSystem.Companion.PLAYER_CFG
@@ -30,6 +27,7 @@ class PortalSystem(
     private val portalCmps: ComponentMapper<PortalComponent>,
     private val physicCmps: ComponentMapper<PhysicComponent>,
     private val imageCmps: ComponentMapper<ImageComponent>,
+    private val lightCmps: ComponentMapper<LightComponent>,
 ) : IteratingSystem(), EventListener {
 
     private var currentMap: TiledMap? = null
@@ -74,6 +72,8 @@ class PortalSystem(
                         body = bodyFromImageAndCfg(physicWorld, image, PLAYER_CFG)
                     }
                 }
+
+                lightCmps[playerEntity].light.attachToBody(physicCmps[playerEntity].body)
             }
         }
 

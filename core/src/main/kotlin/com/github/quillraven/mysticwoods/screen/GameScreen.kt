@@ -115,7 +115,7 @@ class GameScreen(game: MysticWoods) : KtxScreen {
     }
 
     override fun show() {
-        eWorld.system<PortalSystem>().setMap("maps/demo2.tmx")
+        eWorld.system<PortalSystem>().setMap("maps/demo.tmx")
     }
 
     private fun pauseWorld(pause: Boolean) {
