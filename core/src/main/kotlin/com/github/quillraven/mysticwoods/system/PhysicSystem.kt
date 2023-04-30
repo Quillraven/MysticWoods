@@ -20,6 +20,8 @@ class PhysicSystem(
     private val tiledCmps: ComponentMapper<TiledComponent>,
     private val collisionCmps: ComponentMapper<CollisionComponent>,
     private val aiCmps: ComponentMapper<AIComponent>,
+    private val portalCmps: ComponentMapper<PortalComponent>,
+    private val playerCmps: ComponentMapper<PlayerComponent>,
 ) : IteratingSystem(interval = Fixed(1 / 60f)), ContactListener {
     init {
         physicWorld.setContactListener(this)
@@ -85,16 +87,28 @@ class PhysicSystem(
             entityA in tiledCmps && entityB in collisionCmps && contact.isSensorA && !contact.isSensorB -> {
                 tiledCmps[entityA].nearbyEntities += entityB
             }
+
             entityB in tiledCmps && entityA in collisionCmps && contact.isSensorB && !contact.isSensorA -> {
                 tiledCmps[entityB].nearbyEntities += entityA
             }
+
             // AI entities keep track of their nearby entities to have this information available
             // for their behavior. E.g. a slime entity will attack a player if he comes close
             entityA in aiCmps && entityB in collisionCmps && contact.fixtureA.userData == ACTION_SENSOR -> {
                 aiCmps[entityA].nearbyEntities += entityB
             }
+
             entityB in aiCmps && entityA in collisionCmps && contact.fixtureB.userData == ACTION_SENSOR -> {
                 aiCmps[entityB].nearbyEntities += entityA
+            }
+
+            // portal collision
+            entityA in portalCmps && entityB in playerCmps && !contact.isSensorB -> {
+                portalCmps[entityA].triggerEntities += entityB
+            }
+
+            entityB in portalCmps && entityA in playerCmps && !contact.isSensorA -> {
+                portalCmps[entityB].triggerEntities += entityA
             }
         }
     }
@@ -112,12 +126,15 @@ class PhysicSystem(
             entityA in tiledCmps && contact.isSensorA && !contact.isSensorB -> {
                 tiledCmps[entityA].nearbyEntities -= entityB
             }
+
             entityB in tiledCmps && contact.isSensorB && !contact.isSensorA -> {
                 tiledCmps[entityB].nearbyEntities -= entityA
             }
+
             entityA in aiCmps && contact.fixtureA.userData == ACTION_SENSOR -> {
                 aiCmps[entityA].nearbyEntities - entityB
             }
+
             entityB in aiCmps && contact.fixtureB.userData == ACTION_SENSOR -> {
                 aiCmps[entityB].nearbyEntities -= entityA
             }

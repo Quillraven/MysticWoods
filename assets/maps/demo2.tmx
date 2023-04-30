@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="11">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="18" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="16">
  <properties>
   <property name="music" value="fields.ogg"/>
  </properties>
@@ -218,38 +218,34 @@
    <image width="16" height="16" source="images/chest.png"/>
   </tile>
  </tileset>
- <layer id="1" name="ground" width="32" height="18">
+ <layer id="1" name="ground" width="18" height="12">
   <data encoding="base64" compression="zlib">
-   eJzjYWBg4BkkOJMINUZArEkDc/HhECS7NYA4l4D6GDR9xGBi/KUPxIxAbIXHjcRifzR+GhZz8anxp0K40gv7kRjP1MbqRNqBHt4wTE44I5tlQEW/0CqMQDgGixiuMKEkbOjtR3Tz0N1Mqh8IlRWEwoxSjFwO0DI9oJtPqr9A4aRHIKxoHU4uDIj6ghj3Y8sDxGBcaQi9XMemjpiyHF2ekF+ISReZJKilBQbZCwBexSyB
+   eJzjYWBg4MGC9YE4F4ccKZha5qQBsRUVzBlq2AiINYdA+A0Vd9IbAwDMiQ1H
   </data>
  </layer>
- <layer id="2" name="bgd_1" width="32" height="18">
+ <layer id="2" name="bgd_1" width="18" height="12">
   <data encoding="base64" compression="zlib">
-   eJxjYKAvKANiISR+GJXMZSNSXSkQCwKxCZRvjUOdCQ7xPCjtCcS6QCxApL24AC77qQHSgdgCCYvT2X45JHYeGp+a9tsAcREDIi3B4g7dPmz2O2MRSwbibBLsDwDiSAZMvxCyH+TuPAZMYEukGAz4ALEHA8QvkiTYH4DHTGIBPndFAbE0lF0BxEoU2A/yF648SQxQwSJGDf9TAnDZT62yhRDwQeNTEr7E5BlYGU2MPfjSFTUBen1Eb/2w+mig9OOKixwsbFzpEtkMYuthXACWjkBlFaxsxFZuEwNg9QI6Rm5zAAB9kxjs
+   eJxjYMAEcljYAUAciQVbQ+WTgTgbzRwJLGwfIPbAgp2xuGOwAJOBdgAawBbW+MBAud8GiIuAOIxCc2Bpz5qQQgIAlvbomdYA3hgJbw==
   </data>
  </layer>
- <layer id="3" name="fgd_1" width="32" height="18">
+ <layer id="3" name="fgd_1" width="18" height="12">
   <data encoding="base64" compression="zlib">
-   eJxjYCAPhANxPBCnkqmfUlACxCxAXD5A9g93UDyAdrMCccIA2j/SgTsQRwIx0wDZP1TLlpGQZ/joYAcuMFLSJa50RI86b6SVvQB8hQn5
+   eJxjZWBgSGAYBfQArAyjYT3SAAAaogDL
   </data>
  </layer>
  <objectgroup id="4" name="entities">
-  <object id="1" name="PLAYER" gid="123" x="22.75" y="270" width="48" height="48"/>
-  <object id="2" name="CHEST" gid="125" x="400" y="80" width="16" height="16"/>
-  <object id="3" name="SLIME" gid="124" x="379" y="99.75" width="32" height="32"/>
-  <object id="4" name="SLIME" gid="124" x="409.5" y="112.25" width="32" height="32"/>
-  <object id="5" name="SLIME" gid="124" x="139.5" y="210" width="32" height="32"/>
-  <object id="6" name="SLIME" gid="124" x="127.5" y="91" width="32" height="32"/>
-  <object id="7" name="SLIME" gid="124" x="335" y="229.5" width="32" height="32"/>
-  <object id="8" name="CHEST" gid="125" x="432" y="16" width="16" height="16"/>
+  <object id="9" name="CHEST" gid="125" x="240" y="48" width="16" height="16"/>
+  <object id="10" name="SLIME" gid="124" x="197.833" y="86.5417" width="32" height="32"/>
+  <object id="11" name="SLIME" gid="124" x="50.3333" y="150.333" width="32" height="32"/>
+  <object id="12" name="PLAYER" gid="123" x="88" y="49.6667" width="48" height="48"/>
  </objectgroup>
  <objectgroup color="#0000ff" id="5" name="portals">
-  <object id="9" x="112.03" y="283.303" width="33.5455" height="4.45455">
+  <object id="13" x="107.125" y="27" width="9.5" height="9.125"/>
+  <object id="15" x="95.8522" y="0.147725" width="33.5455" height="4.45455">
    <properties>
-    <property name="toMap" value="demo2"/>
-    <property name="toPortal" type="int" value="13"/>
+    <property name="toMap" value="demo"/>
+    <property name="toPortal" type="int" value="10"/>
    </properties>
   </object>
-  <object id="10" x="122.886" y="262.438" width="9.5" height="9.125"/>
  </objectgroup>
 </map>

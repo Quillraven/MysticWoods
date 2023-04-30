@@ -4,8 +4,6 @@ import box2dLight.Light
 import box2dLight.RayHandler
 import com.badlogic.gdx.ai.GdxAI
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.maps.tiled.TiledMap
-import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.github.quillraven.fleks.world
@@ -17,8 +15,6 @@ import com.github.quillraven.mysticwoods.component.LightComponent
 import com.github.quillraven.mysticwoods.component.LightComponent.Companion.LightComponentListener
 import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.PhysicComponentListener
 import com.github.quillraven.mysticwoods.component.StateComponent.Companion.StateComponentListener
-import com.github.quillraven.mysticwoods.event.MapChangeEvent
-import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
 import com.github.quillraven.mysticwoods.input.gdxInputProcessor
 import com.github.quillraven.mysticwoods.system.*
@@ -88,6 +84,7 @@ class GameScreen(game: MysticWoods) : KtxScreen {
             add<DeadSystem>()
             add<LifeSystem>()
             add<StateSystem>()
+            add<PortalSystem>()
             add<CameraSystem>()
             add<FloatingTextSystem>()
             add<RenderSystem>()
@@ -96,7 +93,6 @@ class GameScreen(game: MysticWoods) : KtxScreen {
             add<DebugSystem>()
         }
     }
-    private var currentMap: TiledMap? = null
 
     init {
         loadSkin()
@@ -119,7 +115,7 @@ class GameScreen(game: MysticWoods) : KtxScreen {
     }
 
     override fun show() {
-        setMap("maps/demo.tmx")
+        eWorld.system<PortalSystem>().setMap("maps/demo2.tmx")
     }
 
     private fun pauseWorld(pause: Boolean) {
@@ -148,13 +144,6 @@ class GameScreen(game: MysticWoods) : KtxScreen {
 
     override fun resume() = pauseWorld(false)
 
-    private fun setMap(path: String) {
-        currentMap?.disposeSafely()
-        val newMap = TmxMapLoader().load(path)
-        currentMap = newMap
-        gameStage.fire(MapChangeEvent(newMap))
-    }
-
     override fun render(delta: Float) {
         val dt = delta.coerceAtMost(0.25f)
         GdxAI.getTimepiece().update(dt)
@@ -165,7 +154,6 @@ class GameScreen(game: MysticWoods) : KtxScreen {
         eWorld.dispose()
         phWorld.disposeSafely()
         gameAtlas.disposeSafely()
-        currentMap?.disposeSafely()
         disposeSkin()
         rayHandler.disposeSafely()
     }
