@@ -1,5 +1,6 @@
 package com.github.quillraven.mysticwoods.screen
 
+import box2dLight.RayHandler
 import com.badlogic.gdx.ai.GdxAI
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
@@ -27,8 +28,10 @@ abstract class TestScreen(private var testMapPath: String = "") : KtxScreen {
     private val phWorld = createWorld(gravity = Vector2.Zero).apply {
         autoClearForces = false
     }
+    private val rayHandler = RayHandler(phWorld)
     val eWorld = configureWorld {
         injectables {
+            add(rayHandler)
             add(phWorld)
             add("GameStage", gameStage)
             add("UiStage", uiStage)
@@ -96,5 +99,6 @@ abstract class TestScreen(private var testMapPath: String = "") : KtxScreen {
         gameAtlas.disposeSafely()
         tiledMap?.disposeSafely()
         disposeSkin()
+        rayHandler.disposeSafely()
     }
 }

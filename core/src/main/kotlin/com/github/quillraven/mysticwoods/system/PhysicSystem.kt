@@ -98,6 +98,15 @@ class PhysicSystem(
             entityB has AIComponent && entityA has CollisionComponent && contact.fixtureB.userData == ACTION_SENSOR -> {
                 entityB[AIComponent].nearbyEntities += entityA
             }
+
+            // portal collision
+            entityA has PortalComponent && entityB has PlayerComponent && !contact.isSensorB -> {
+                entityA[PortalComponent].triggerEntities += entityB
+            }
+
+            entityB has PortalComponent && entityA has PlayerComponent && !contact.isSensorA -> {
+                entityB[PortalComponent].triggerEntities += entityA
+            }
         }
     }
 
