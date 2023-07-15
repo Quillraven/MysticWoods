@@ -1,5 +1,7 @@
 package com.github.quillraven.mysticwoods.screen
 
+import box2dLight.Light
+import box2dLight.RayHandler
 import com.badlogic.gdx.ai.GdxAI
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
@@ -8,6 +10,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.github.quillraven.fleks.configureWorld
 import com.github.quillraven.mysticwoods.MysticWoods
+import com.github.quillraven.mysticwoods.component.LightComponent
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
@@ -33,12 +36,22 @@ class GameScreen(game: MysticWoods) : KtxScreen {
     private val phWorld = createWorld(gravity = Vector2.Zero).apply {
         autoClearForces = false
     }
+    private val rayHandler = RayHandler(phWorld).apply {
+        // don't make light super bright
+        RayHandler.useDiffuseLight(true)
+
+        // player only throws shadows for map environment but not for enemies like slimes
+        Light.setGlobalContactFilter(LightComponent.b2dPlayer, 1, LightComponent.b2dEnvironment)
+
+        setAmbientLight(LightSystem.dayLightColor)
+    }
     private val eWorld = configureWorld {
         injectables {
             add(phWorld)
             add("GameStage", gameStage)
             add("UiStage", uiStage)
             add("GameAtlas", gameAtlas)
+            add(rayHandler)
         }
 
         systems {
@@ -62,6 +75,7 @@ class GameScreen(game: MysticWoods) : KtxScreen {
             add(CameraSystem())
             add(FloatingTextSystem())
             add(RenderSystem())
+            add(LightSystem())
             add(AudioSystem())
             add(DebugSystem())
         }
@@ -106,6 +120,14 @@ class GameScreen(game: MysticWoods) : KtxScreen {
         uiStage.actors.filterIsInstance<PauseView>().first().isVisible = pause
     }
 
+    override fun resize(width: Int, height: Int) {
+        val screenX = gameStage.viewport.screenX
+        val screenY = gameStage.viewport.screenY
+        val screenW = gameStage.viewport.screenWidth
+        val screenH = gameStage.viewport.screenHeight
+        rayHandler.useCustomViewport(screenX, screenY, screenW, screenH)
+    }
+
     override fun pause() = pauseWorld(true)
 
     override fun resume() = pauseWorld(false)
@@ -129,5 +151,6 @@ class GameScreen(game: MysticWoods) : KtxScreen {
         gameAtlas.disposeSafely()
         currentMap?.disposeSafely()
         disposeSkin()
+        rayHandler.disposeSafely()
     }
 }

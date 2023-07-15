@@ -1,5 +1,6 @@
 package com.github.quillraven.mysticwoods.system
 
+import box2dLight.RayHandler
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
@@ -21,6 +22,7 @@ import ktx.tiled.forEachLayer
 class RenderSystem(
     private val gameStage: Stage = inject("GameStage"),
     private val uiStage: Stage = inject("UiStage"),
+    private val rayHandler: RayHandler = inject(),
 ) : EventListener, IteratingSystem(
     family = family { all(ImageComponent) },
     comparator = compareEntityBy(ImageComponent)
@@ -52,6 +54,10 @@ class RenderSystem(
                 fgdLayers.forEach { mapRenderer.renderTileLayer(it) }
             }
         }
+
+        // render lights
+        rayHandler.setCombinedMatrix(orthoCam)
+        rayHandler.updateAndRender()
 
         // render UI
         uiStage.run {

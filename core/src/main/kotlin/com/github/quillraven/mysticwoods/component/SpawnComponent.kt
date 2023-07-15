@@ -19,6 +19,8 @@ data class SpawnCfg(
     val scalePhysic: Vector2 = vec2(1f, 1f),
     val physicOffset: Vector2 = vec2(0f, 0f),
     val aiTreePath: String = "",
+    val hasLight: Boolean = false,
+    val categoryBit: Short = LightComponent.b2dEnvironment,
 ) {
     companion object {
         const val DEFAULT_SPEED = 2f

@@ -1,5 +1,7 @@
 package com.github.quillraven.mysticwoods.system
 
+import box2dLight.PointLight
+import box2dLight.RayHandler
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef
@@ -33,6 +35,7 @@ import kotlin.math.roundToInt
 class EntitySpawnSystem(
     private val atlas: TextureAtlas = inject("GameAtlas"),
     private val physicWorld: World = inject(),
+    private val rayHandler: RayHandler = inject(),
 ) : EventListener, IteratingSystem(family { all(SpawnComponent) }) {
     private val cachedCfgs = mutableMapOf<String, SpawnCfg>()
     private val cachedSizes = mutableMapOf<String, Vector2>()
@@ -66,6 +69,7 @@ class EntitySpawnSystem(
                     box(w, h, cmp.offset) {
                         isSensor = cfg.bodyType != BodyDef.BodyType.StaticBody
                         userData = HIT_BOX_SENSOR
+                        filter.categoryBits = cfg.categoryBit
                     }
 
                     if (cfg.bodyType != BodyDef.BodyType.StaticBody) {
@@ -73,8 +77,22 @@ class EntitySpawnSystem(
                         val collH = h * 0.4f
                         COLLISION_OFFSET.set(cmp.offset)
                         COLLISION_OFFSET.y -= h * 0.5f - collH * 0.5f
-                        box(w, collH, COLLISION_OFFSET)
+                        box(w, collH, COLLISION_OFFSET) { filter.categoryBits = cfg.categoryBit }
                     }
+                }
+
+                if (cfg.hasLight) {
+                    val dist = 5f..6.5f
+                    val physicCmp = it[PhysicComponent]
+                    it += LightComponent(
+                        distance = dist,
+                        light =
+                        PointLight(rayHandler, 64, LightComponent.lightColor, dist.endInclusive, 0f, 0f).apply {
+                            attachToBody(physicCmp.body, 0f, -0.25f)
+                            // softness allows light to go through objects
+                            // setSoftnessLength(3.5f)
+                        }
+                    )
                 }
 
                 if (cfg.scaleSpeed != 0f) {
@@ -152,6 +170,8 @@ class EntitySpawnSystem(
                 physicOffset = vec2(0f, -10f * UNIT_SCALE),
                 scaleAttackDamage = 1.25f,
                 attackExtraRange = 0.6f,
+                hasLight = true,
+                categoryBit = LightComponent.b2dPlayer,
             )
             // chest gets a StaticBody so that entities cannot walk through it
             // because DynamicBody entities do not collide with each other
@@ -167,7 +187,9 @@ class EntitySpawnSystem(
                 lifeScale = 0.75f,
                 scalePhysic = vec2(0.3f, 0.3f),
                 physicOffset = vec2(0f, -2f * UNIT_SCALE),
-                aiTreePath = "ai/slime.tree"
+                aiTreePath = "ai/slime.tree",
+                hasLight = true,
+                categoryBit = LightComponent.b2dSlime,
             )
 
             type.isNotBlank() -> SpawnCfg(type.lowercase())
