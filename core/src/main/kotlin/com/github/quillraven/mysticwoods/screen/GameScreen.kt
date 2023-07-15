@@ -6,17 +6,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.EventListener
-import com.github.quillraven.fleks.world
+import com.github.quillraven.fleks.configureWorld
 import com.github.quillraven.mysticwoods.MysticWoods
-import com.github.quillraven.mysticwoods.component.*
-import com.github.quillraven.mysticwoods.component.AIComponent.Companion.onAiAdd
-import com.github.quillraven.mysticwoods.component.FloatingTextComponent.Companion.onFloatingAdd
-import com.github.quillraven.mysticwoods.component.FloatingTextComponent.Companion.onFloatingRemove
-import com.github.quillraven.mysticwoods.component.ImageComponent.Companion.onImageAdd
-import com.github.quillraven.mysticwoods.component.ImageComponent.Companion.onImageRemove
-import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.onPhysicAdd
-import com.github.quillraven.mysticwoods.component.PhysicComponent.Companion.onPhysicRemove
-import com.github.quillraven.mysticwoods.component.StateComponent.Companion.onStateAdd
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
@@ -42,27 +33,12 @@ class GameScreen(game: MysticWoods) : KtxScreen {
     private val phWorld = createWorld(gravity = Vector2.Zero).apply {
         autoClearForces = false
     }
-    private val eWorld = world {
+    private val eWorld = configureWorld {
         injectables {
             add(phWorld)
             add("GameStage", gameStage)
             add("UiStage", uiStage)
             add("GameAtlas", gameAtlas)
-        }
-
-        components {
-            onAdd(PhysicComponent, onPhysicAdd)
-            onRemove(PhysicComponent, onPhysicRemove)
-
-            onAdd(ImageComponent, onImageAdd)
-            onRemove(ImageComponent, onImageRemove)
-
-            onAdd(StateComponent, onStateAdd)
-
-            onAdd(AIComponent, onAiAdd)
-
-            onAdd(FloatingTextComponent, onFloatingAdd)
-            onRemove(FloatingTextComponent, onFloatingRemove)
         }
 
         systems {

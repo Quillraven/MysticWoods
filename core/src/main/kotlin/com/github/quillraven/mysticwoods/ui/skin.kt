@@ -55,7 +55,7 @@ enum class Labels {
 
 fun loadSkin() {
     Scene2DSkin.defaultSkin = skin(TextureAtlas("ui/ui.atlas")) { skin ->
-        Fonts.values().forEach { fnt ->
+        Fonts.entries.forEach { fnt ->
             skin[fnt.skinKey] =
                 BitmapFont(Gdx.files.internal(fnt.fontPath), skin.getRegion(fnt.atlasRegionKey)).apply {
                     data.markupEnabled = true

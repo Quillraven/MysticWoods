@@ -9,7 +9,10 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.github.quillraven.fleks.*
+import com.github.quillraven.fleks.Component
+import com.github.quillraven.fleks.ComponentType
+import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.component.AIComponent.Companion.NO_TARGET
 import com.github.quillraven.mysticwoods.event.fire
 import ktx.math.component1
@@ -121,7 +124,7 @@ class AIEntity(
         moveToLocation(targetPhysicCmp.body.position)
     }
 
-    fun moveToLocation(target: Vector2) = with(world) {
+    fun moveToLocation(target: Vector2): Vector2 = with(world) {
         val (targetX, targetY) = target
         val physicCmp = entity[PhysicComponent]
         val (sourceX, sourceY) = physicCmp.body.position
@@ -131,7 +134,7 @@ class AIEntity(
         }
     }
 
-    fun stopMovement() = with(world) {
+    fun stopMovement(): Vector2 = with(world) {
         with(entity[MoveComponent]) { cosSin.setZero() }
     }
 
@@ -174,17 +177,17 @@ data class AIComponent(
 
     override fun type() = AIComponent
 
+    override fun World.onAddComponent(entity: Entity) {
+        if (treePath.isNotBlank()) {
+            behaviorTree = bTreeParser.parse(
+                Gdx.files.internal(treePath),
+                AIEntity(entity, this, inject("GameStage"))
+            )
+        }
+    }
+
     companion object : ComponentType<AIComponent>() {
         private val bTreeParser = BehaviorTreeParser<AIEntity>()
         val NO_TARGET = Entity(-1)
-
-        val onAiAdd: ComponentHook<AIComponent> = { entity, component ->
-            if (component.treePath.isNotBlank()) {
-                component.behaviorTree = bTreeParser.parse(
-                    Gdx.files.internal(component.treePath),
-                    AIEntity(entity, this, inject("GameStage"))
-                )
-            }
-        }
     }
 }

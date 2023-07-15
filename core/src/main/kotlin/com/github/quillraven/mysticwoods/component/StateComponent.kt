@@ -4,7 +4,10 @@ import com.badlogic.gdx.ai.fsm.DefaultStateMachine
 import com.badlogic.gdx.ai.fsm.State
 import com.badlogic.gdx.ai.msg.Telegram
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
-import com.github.quillraven.fleks.*
+import com.github.quillraven.fleks.Component
+import com.github.quillraven.fleks.ComponentType
+import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.state.DefaultState
 import com.github.quillraven.mysticwoods.state.GlobalState
 
@@ -97,9 +100,9 @@ data class StateComponent(
 ) : Component<StateComponent> {
     override fun type() = StateComponent
 
-    companion object : ComponentType<StateComponent>() {
-        val onStateAdd: ComponentHook<StateComponent> = { entity, component ->
-            component.stateMachine.owner = StateEntity(entity, this)
-        }
+    override fun World.onAddComponent(entity: Entity) {
+        stateMachine.owner = StateEntity(entity, this)
     }
+
+    companion object : ComponentType<StateComponent>()
 }

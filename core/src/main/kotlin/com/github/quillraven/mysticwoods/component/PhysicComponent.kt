@@ -9,8 +9,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType.StaticBody
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.github.quillraven.fleks.Component
-import com.github.quillraven.fleks.ComponentHook
 import com.github.quillraven.fleks.ComponentType
+import com.github.quillraven.fleks.Entity
 import com.github.quillraven.mysticwoods.MysticWoods.Companion.UNIT_SCALE
 import com.github.quillraven.mysticwoods.system.CollisionSpawnSystem.Companion.SPAWN_AREA_SIZE
 import ktx.app.gdxError
@@ -30,18 +30,17 @@ class PhysicComponent(
 
     override fun type() = PhysicComponent
 
+    override fun com.github.quillraven.fleks.World.onAddComponent(entity: Entity) {
+        body.userData = entity
+    }
+
+    override fun com.github.quillraven.fleks.World.onRemoveComponent(entity: Entity) {
+        body.world.destroyBody(body)
+        body.userData = null
+    }
+
     companion object : ComponentType<PhysicComponent>() {
         private val TMP_VEC = vec2()
-
-        val onPhysicAdd: ComponentHook<PhysicComponent> = { entity, component ->
-            component.body.userData = entity
-        }
-
-        val onPhysicRemove: ComponentHook<PhysicComponent> = { _, component ->
-            val body = component.body
-            body.world.destroyBody(body)
-            body.userData = null
-        }
 
         fun physicCmpFromImage(
             world: World,

@@ -8,8 +8,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.github.quillraven.fleks.world
-import com.github.quillraven.mysticwoods.component.*
+import com.github.quillraven.fleks.configureWorld
 import com.github.quillraven.mysticwoods.event.MapChangeEvent
 import com.github.quillraven.mysticwoods.event.fire
 import com.github.quillraven.mysticwoods.input.PlayerInputProcessor
@@ -28,27 +27,12 @@ abstract class TestScreen(private var testMapPath: String = "") : KtxScreen {
     private val phWorld = createWorld(gravity = Vector2.Zero).apply {
         autoClearForces = false
     }
-    val eWorld = world {
+    val eWorld = configureWorld {
         injectables {
             add(phWorld)
             add("GameStage", gameStage)
             add("UiStage", uiStage)
             add("GameAtlas", gameAtlas)
-        }
-
-        components {
-            onAdd(PhysicComponent, PhysicComponent.onPhysicAdd)
-            onRemove(PhysicComponent, PhysicComponent.onPhysicRemove)
-
-            onAdd(ImageComponent, ImageComponent.onImageAdd)
-            onRemove(ImageComponent, ImageComponent.onImageRemove)
-
-            onAdd(StateComponent, StateComponent.onStateAdd)
-
-            onAdd(AIComponent, AIComponent.onAiAdd)
-
-            onAdd(FloatingTextComponent, FloatingTextComponent.onFloatingAdd)
-            onRemove(FloatingTextComponent, FloatingTextComponent.onFloatingRemove)
         }
 
         systems {
@@ -81,7 +65,7 @@ abstract class TestScreen(private var testMapPath: String = "") : KtxScreen {
                 gameStage.addListener(sys)
             }
         }
-        PlayerInputProcessor(eWorld, uiStage)
+        PlayerInputProcessor(eWorld, gameStage, uiStage)
         gdxInputProcessor(uiStage)
     }
 

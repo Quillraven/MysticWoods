@@ -27,6 +27,6 @@ data class EntityAggroEvent(val aiEntity: Entity, val target: Entity) : Event()
 
 data class EntityAddItemEvent(val entity: Entity, val item: Entity) : Event()
 
-class GamePauseEvent() : Event()
+class GamePauseEvent : Event()
 
-class GameResumeEvent() : Event()
+class GameResumeEvent : Event()
