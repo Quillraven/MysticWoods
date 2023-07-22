@@ -16,7 +16,7 @@ data class LightComponent(
 
     override fun type() = LightComponent
 
-    override fun World.onRemoveComponent(entity: Entity) {
+    override fun World.onRemove(entity: Entity) {
         light.remove()
     }
 

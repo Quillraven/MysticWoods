@@ -100,7 +100,7 @@ data class StateComponent(
 ) : Component<StateComponent> {
     override fun type() = StateComponent
 
-    override fun World.onAddComponent(entity: Entity) {
+    override fun World.onAdd(entity: Entity) {
         stateMachine.owner = StateEntity(entity, this)
     }
 

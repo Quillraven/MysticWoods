@@ -5,11 +5,11 @@ import com.badlogic.gdx.math.Shape2D
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType.StaticBody
-import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.github.quillraven.fleks.Component
 import com.github.quillraven.fleks.ComponentType
 import com.github.quillraven.fleks.Entity
+import com.github.quillraven.fleks.World
 import com.github.quillraven.mysticwoods.MysticWoods.Companion.UNIT_SCALE
 import com.github.quillraven.mysticwoods.system.CollisionSpawnSystem.Companion.SPAWN_AREA_SIZE
 import com.github.quillraven.mysticwoods.system.EntitySpawnSystem
@@ -18,6 +18,7 @@ import ktx.box2d.body
 import ktx.box2d.box
 import ktx.box2d.loop
 import ktx.math.vec2
+import com.badlogic.gdx.physics.box2d.World as PhysicWorld
 
 class PhysicComponent(
     val impulse: Vector2 = vec2(),
@@ -29,11 +30,11 @@ class PhysicComponent(
 
     override fun type() = PhysicComponent
 
-    override fun com.github.quillraven.fleks.World.onAddComponent(entity: Entity) {
+    override fun World.onAdd(entity: Entity) {
         body.userData = entity
     }
 
-    override fun com.github.quillraven.fleks.World.onRemoveComponent(entity: Entity) {
+    override fun World.onRemove(entity: Entity) {
         body.world.destroyBody(body)
         body.userData = null
     }
@@ -42,7 +43,7 @@ class PhysicComponent(
         private val TMP_VEC = vec2()
         private val COLLISION_OFFSET = vec2()
 
-        fun PhysicComponent.bodyFromImageAndCfg(world: World, image: Image, cfg: SpawnCfg): Body {
+        fun PhysicComponent.bodyFromImageAndCfg(world: PhysicWorld, image: Image, cfg: SpawnCfg): Body {
             val x = image.x
             val y = image.y
             val width = image.width
@@ -81,7 +82,7 @@ class PhysicComponent(
         }
 
         fun physicCmpFromShape2D(
-            world: World,
+            world: PhysicWorld,
             x: Int,
             y: Int,
             shape: Shape2D,

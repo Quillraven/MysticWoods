@@ -23,7 +23,7 @@ data class FloatingTextComponent(
 
     override fun type() = FloatingTextComponent
 
-    override fun World.onAddComponent(entity: Entity) {
+    override fun World.onAdd(entity: Entity) {
         label += fadeOut(lifeSpan, Interpolation.pow3OutInverse)
         inject<Stage>("UiStage").addActor(label)
         txtTarget.set(
@@ -32,7 +32,7 @@ data class FloatingTextComponent(
         )
     }
 
-    override fun World.onRemoveComponent(entity: Entity) {
+    override fun World.onRemove(entity: Entity) {
         inject<Stage>("UiStage").root.removeActor(label)
     }
 

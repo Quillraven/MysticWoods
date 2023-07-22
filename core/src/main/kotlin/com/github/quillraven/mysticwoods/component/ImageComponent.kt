@@ -13,11 +13,11 @@ class ImageComponent : Component<ImageComponent>, Comparable<ImageComponent> {
 
     override fun type() = ImageComponent
 
-    override fun World.onAddComponent(entity: Entity) {
+    override fun World.onAdd(entity: Entity) {
         this.inject<Stage>("GameStage").addActor(image)
     }
 
-    override fun World.onRemoveComponent(entity: Entity) {
+    override fun World.onRemove(entity: Entity) {
         this.inject<Stage>("GameStage").root.removeActor(image)
     }
 

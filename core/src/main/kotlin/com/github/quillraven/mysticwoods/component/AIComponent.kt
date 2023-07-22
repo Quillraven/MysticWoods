@@ -177,7 +177,7 @@ data class AIComponent(
 
     override fun type() = AIComponent
 
-    override fun World.onAddComponent(entity: Entity) {
+    override fun World.onAdd(entity: Entity) {
         if (treePath.isNotBlank()) {
             behaviorTree = bTreeParser.parse(
                 Gdx.files.internal(treePath),
