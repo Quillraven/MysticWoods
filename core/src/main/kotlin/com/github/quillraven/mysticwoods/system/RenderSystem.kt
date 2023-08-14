@@ -1,6 +1,7 @@
 package com.github.quillraven.mysticwoods.system
 
 import box2dLight.RayHandler
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
@@ -37,6 +38,7 @@ class RenderSystem(
         AnimatedTiledMapTile.updateAnimationBaseTime()
         mapRenderer.setView(orthoCam)
         if (bgdLayers.isNotEmpty()) {
+            gameStage.batch.color = Color.WHITE
             gameStage.batch.use(orthoCam.combined) {
                 bgdLayers.forEach { mapRenderer.renderTileLayer(it) }
             }
@@ -48,6 +50,7 @@ class RenderSystem(
         }
 
         if (fgdLayers.isNotEmpty()) {
+            gameStage.batch.color = Color.WHITE
             gameStage.batch.use(orthoCam.combined) {
                 fgdLayers.forEach { mapRenderer.renderTileLayer(it) }
             }
