@@ -14,6 +14,7 @@ import ktx.math.component1
 import ktx.math.component2
 
 @AllOf([AttackComponent::class, PhysicComponent::class, ImageComponent::class])
+@NoneOf([DisarmComponent::class])
 class AttackSystem(
     private val attackCmps: ComponentMapper<AttackComponent>,
     private val animationCmps: ComponentMapper<AnimationComponent>,
@@ -22,6 +23,7 @@ class AttackSystem(
     private val lifeCmps: ComponentMapper<LifeComponent>,
     private val lootCmps: ComponentMapper<LootComponent>,
     private val playerCmps: ComponentMapper<PlayerComponent>,
+    private val dialogCmps: ComponentMapper<DialogComponent>,
     private val phWorld: World,
     @Qualifier("GameStage") private val stage: Stage,
 ) : IteratingSystem() {
@@ -106,6 +108,10 @@ class AttackSystem(
                         // player can open chests
                         lootCmps.getOrNull(it)?.let { lootCmp ->
                             lootCmp.interactEntity = entity
+                        }
+                        // player can trigger dialogs
+                        dialogCmps.getOrNull(it)?.let { dialogCmp ->
+                            dialogCmp.interactEntity = entity
                         }
                     }
                 }

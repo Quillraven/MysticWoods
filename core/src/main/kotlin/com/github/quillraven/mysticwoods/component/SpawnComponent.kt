@@ -1,5 +1,6 @@
 package com.github.quillraven.mysticwoods.component
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
 import ktx.math.vec2
@@ -19,6 +20,7 @@ data class SpawnCfg(
     val aiTreePath: String = "",
     val hasLight: Boolean = false,
     val categoryBit: Short = LightComponent.b2dEnvironment,
+    val dialogId: DialogId = DialogId.NONE,
 ) {
     companion object {
         const val DEFAULT_SPEED = 2f
@@ -29,5 +31,6 @@ data class SpawnCfg(
 
 data class SpawnComponent(
     var type: String = "",
-    var location: Vector2 = vec2()
+    var location: Vector2 = vec2(),
+    var color: Color = Color.WHITE
 )
