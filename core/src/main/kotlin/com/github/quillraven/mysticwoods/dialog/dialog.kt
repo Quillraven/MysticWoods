@@ -74,14 +74,14 @@ data class Dialog(
 data class Node(
     val id: Int,
     val text: String,
-    var imageKey: String = "",
-    private var options: MutableList<Option> = mutableListOf()
 ) {
+    var options: MutableList<Option> = mutableListOf()
+        private set
 
     fun hasNoOptions(): Boolean = options.isEmpty()
 
     fun option(text: String, cfg: Option.() -> Unit) {
-        options += Option(text).apply {
+        options += Option(options.size, text).apply {
             this.cfg()
             if (!this.hasAction()) {
                 gdxError("Option '$text' of node '${this@Node.id}' has no action.")
@@ -94,6 +94,7 @@ data class Node(
 
 @DialogDslMarker
 data class Option(
+    val idx: Int,
     val text: String,
     var action: () -> Unit = noAction,
 ) {
