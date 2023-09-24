@@ -9,10 +9,6 @@ import com.github.quillraven.mysticwoods.component.DeadComponent
 class AISystem : IteratingSystem(family { all(AIComponent).none(DeadComponent) }) {
     override fun onTickEntity(entity: Entity) {
         with(entity[AIComponent]) {
-            if (treePath.isBlank()) {
-                return
-            }
-
             behaviorTree.step()
         }
     }

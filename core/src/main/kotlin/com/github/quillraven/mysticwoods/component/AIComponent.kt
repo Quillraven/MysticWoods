@@ -1,8 +1,8 @@
 package com.github.quillraven.mysticwoods.component
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ai.btree.BehaviorTree
-import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser
+import com.badlogic.gdx.ai.utils.random.ConstantFloatDistribution
+import com.badlogic.gdx.ai.utils.random.UniformFloatDistribution
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
@@ -13,8 +13,15 @@ import com.github.quillraven.fleks.Component
 import com.github.quillraven.fleks.ComponentType
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.World
-import com.github.quillraven.mysticwoods.component.AIComponent.Companion.NO_TARGET
+import com.github.quillraven.mysticwoods.behavior.CanAttack
+import com.github.quillraven.mysticwoods.behavior.IsEnemyNearby
+import com.github.quillraven.mysticwoods.behavior.slime.AttackTask
+import com.github.quillraven.mysticwoods.behavior.slime.IdleTask
+import com.github.quillraven.mysticwoods.behavior.slime.MoveTask
+import com.github.quillraven.mysticwoods.behavior.slime.WanderTask
 import com.github.quillraven.mysticwoods.event.fire
+import ktx.ai.*
+import ktx.app.gdxError
 import ktx.math.component1
 import ktx.math.component2
 
@@ -31,7 +38,7 @@ class AIEntity(
 
     fun inTargetRange(range: Float): Boolean = with(world) {
         val aiCmp = entity[AIComponent]
-        if (aiCmp.target == NO_TARGET) {
+        if (aiCmp.target == AIComponent.NO_TARGET) {
             return true
         }
 
@@ -80,7 +87,7 @@ class AIEntity(
 
     fun canAttack(extraRange: Float): Boolean = with(world) {
         val aiCmp = entity[AIComponent]
-        if (aiCmp.target == NO_TARGET) {
+        if (aiCmp.target == AIComponent.NO_TARGET) {
             return false
         }
 
@@ -92,14 +99,14 @@ class AIEntity(
         val aiCmp = entity[AIComponent]
         aiCmp.target = aiCmp.nearbyEntities.firstOrNull {
             it has PlayerComponent && !it[LifeComponent].isDead()
-        } ?: NO_TARGET
-        return aiCmp.target != NO_TARGET
+        } ?: AIComponent.NO_TARGET
+        return aiCmp.target != AIComponent.NO_TARGET
     }
 
     fun checkTargetStillNearby() = with(world) {
         val aiCmp = entity[AIComponent]
         if (aiCmp.target !in aiCmp.nearbyEntities) {
-            aiCmp.target = NO_TARGET
+            aiCmp.target = AIComponent.NO_TARGET
         }
     }
 
@@ -115,7 +122,7 @@ class AIEntity(
 
     fun moveToTarget() = with(world) {
         val aiCmp = entity[AIComponent]
-        if (aiCmp.target == NO_TARGET) {
+        if (aiCmp.target == AIComponent.NO_TARGET) {
             with(entity[MoveComponent]) { cosSin.setZero() }
             return@with
         }
@@ -168,9 +175,13 @@ class AIEntity(
     }
 }
 
+enum class AIType {
+    NONE, SLIME
+}
+
 data class AIComponent(
     val nearbyEntities: MutableSet<Entity> = mutableSetOf(),
-    var treePath: String = "",
+    var type: AIType
 ) : Component<AIComponent> {
     lateinit var behaviorTree: BehaviorTree<AIEntity>
     var target: Entity = NO_TARGET
@@ -178,16 +189,40 @@ data class AIComponent(
     override fun type() = AIComponent
 
     override fun World.onAdd(entity: Entity) {
-        if (treePath.isNotBlank()) {
-            behaviorTree = bTreeParser.parse(
-                Gdx.files.internal(treePath),
-                AIEntity(entity, this, inject("GameStage"))
-            )
+        behaviorTree = newBehaviorTree(entity, this, this@AIComponent)
+    }
+
+    private fun World.newBehaviorTree(entity: Entity, world: World, component: AIComponent): BehaviorTree<AIEntity> {
+        if (component.type == AIType.SLIME) {
+            return behaviorTree {
+                `object` = AIEntity(entity, world, inject("GameStage"))
+
+                selector {
+                    sequence {
+                        guard = GdxAiSequence(IsEnemyNearby(), CanAttack(range = 1f))
+                        add(AttackTask())
+                        waitLeaf(UniformFloatDistribution(1.25f, 2.1f))
+                    }
+
+                    sequence {
+                        guard = GdxAiSequence(IsEnemyNearby())
+                        add(MoveTask(2f))
+                    }
+
+                    sequence {
+                        guard = GdxAiRandom(ConstantFloatDistribution(0.25f))
+                        add(IdleTask(UniformFloatDistribution(2f, 3.5f)))
+                    }
+
+                    add(WanderTask(6f))
+                }
+            }
+        } else {
+            gdxError("No behavior defined for ${component.type}")
         }
     }
 
     companion object : ComponentType<AIComponent>() {
-        private val bTreeParser = BehaviorTreeParser<AIEntity>()
         val NO_TARGET = Entity.NONE
     }
 }

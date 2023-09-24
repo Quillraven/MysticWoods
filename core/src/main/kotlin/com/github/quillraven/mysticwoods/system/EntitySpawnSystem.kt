@@ -124,10 +124,8 @@ class EntitySpawnSystem(
                         // use a behavior tree for its behavior.
                         // AIComponent entities also have a list of nearby other entities
                         // that they can interact with
-                        it += AIComponent().apply {
-                            if (cfg.aiTreePath.isNotBlank()) {
-                                treePath = cfg.aiTreePath
-                            }
+                        if (cfg.aiType != AIType.NONE) {
+                            it += AIComponent(type = cfg.aiType)
                         }
                         // such entities also get an "action sensor"
                         // entities who are within that sensor get added to the nearby entities list
@@ -161,7 +159,7 @@ class EntitySpawnSystem(
                 lifeScale = 0.75f,
                 scalePhysic = vec2(0.3f, 0.3f),
                 physicOffset = vec2(0f, -2f * UNIT_SCALE),
-                aiTreePath = "ai/slime.tree",
+                aiType = AIType.SLIME,
                 hasLight = true,
                 categoryBit = LightComponent.b2dSlime,
             )

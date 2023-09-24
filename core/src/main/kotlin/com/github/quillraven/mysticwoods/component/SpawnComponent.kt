@@ -19,7 +19,7 @@ data class SpawnCfg(
     val bodyType: BodyType = BodyType.DynamicBody,
     val scalePhysic: Vector2 = vec2(1f, 1f),
     val physicOffset: Vector2 = vec2(0f, 0f),
-    val aiTreePath: String = "",
+    val aiType: AIType = AIType.NONE,
     val hasLight: Boolean = false,
     val categoryBit: Short = LightComponent.b2dEnvironment,
     val dialogId: DialogId = DialogId.NONE,
