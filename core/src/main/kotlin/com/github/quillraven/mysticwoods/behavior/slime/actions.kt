@@ -2,7 +2,6 @@ package com.github.quillraven.mysticwoods.behavior.slime
 
 import com.badlogic.gdx.ai.GdxAI
 import com.badlogic.gdx.ai.btree.Task
-import com.badlogic.gdx.ai.btree.annotation.TaskAttribute
 import com.badlogic.gdx.ai.utils.random.FloatDistribution
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.math.MathUtils
@@ -30,11 +29,7 @@ class AttackTask : Action() {
     }
 }
 
-class MoveTask(
-    @JvmField
-    @TaskAttribute(required = true)
-    var range: Float = 0f
-) : Action() {
+class MoveTask(private var range: Float) : Action() {
     override fun execute(): Status {
         if (status != Status.RUNNING) {
             aiEntity.animation(AnimationType.RUN)
@@ -57,11 +52,7 @@ class MoveTask(
     }
 }
 
-class WanderTask(
-    @JvmField
-    @TaskAttribute(required = true)
-    var range: Float = 0f
-) : Action() {
+class WanderTask(private var range: Float) : Action() {
     private val startLoc = vec2()
     private val targetLoc = vec2()
 
@@ -99,17 +90,13 @@ class WanderTask(
     }
 }
 
-class IdleTask(
-    @JvmField
-    @TaskAttribute(required = true)
-    var duration: FloatDistribution? = null
-) : Action() {
+class IdleTask(private var duration: FloatDistribution) : Action() {
     private var currentDuration = 0f
 
     override fun execute(): Status {
         if (status != Status.RUNNING) {
             aiEntity.animation(AnimationType.IDLE)
-            currentDuration = duration?.nextFloat() ?: 1f
+            currentDuration = duration.nextFloat()
             return Status.RUNNING
         }
 
