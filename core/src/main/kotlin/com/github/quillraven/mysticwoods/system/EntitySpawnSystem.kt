@@ -2,6 +2,7 @@ package com.github.quillraven.mysticwoods.system
 
 import box2dLight.PointLight
 import box2dLight.RayHandler
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef
@@ -25,10 +26,7 @@ import ktx.app.gdxError
 import ktx.box2d.circle
 import ktx.log.logger
 import ktx.math.vec2
-import ktx.tiled.id
-import ktx.tiled.layer
-import ktx.tiled.x
-import ktx.tiled.y
+import ktx.tiled.*
 import kotlin.math.roundToInt
 
 class EntitySpawnSystem(
@@ -52,6 +50,7 @@ class EntitySpawnSystem(
                         setScaling(Scaling.fill)
                         setPosition(location.x, location.y)
                         setSize(relativeSize.x * cfg.scaleSize, relativeSize.y * cfg.scaleSize)
+                        color = this@with.color
                     }
                 }
 
@@ -95,6 +94,10 @@ class EntitySpawnSystem(
                     // entity is not static -> add collision component to spawn
                     // collision entities around it
                     it += CollisionComponent()
+                }
+
+                if (cfg.dialogId != DialogId.NONE) {
+                    it += DialogComponent(cfg.dialogId)
                 }
 
                 when (type) {
@@ -163,6 +166,16 @@ class EntitySpawnSystem(
                 categoryBit = LightComponent.b2dSlime,
             )
 
+            type == "BLOB" -> SpawnCfg(
+                atlasKey = "slime",
+                scalePhysic = vec2(0.3f, 0.3f),
+                physicOffset = vec2(0f, -2f * UNIT_SCALE),
+                hasLight = true,
+                categoryBit = LightComponent.b2dSlime,
+                dialogId = DialogId.BLOB,
+                lifeScale = 0f
+            )
+
             type.isNotBlank() -> SpawnCfg(type.lowercase())
             else -> gdxError("SpawnType must be specified")
         }
@@ -192,7 +205,11 @@ class EntitySpawnSystem(
                 }
 
                 world.entity {
-                    it += SpawnComponent(typeStr, vec2(mapObj.x * UNIT_SCALE, mapObj.y * UNIT_SCALE))
+                    it += SpawnComponent(
+                        typeStr,
+                        vec2(mapObj.x * UNIT_SCALE, mapObj.y * UNIT_SCALE),
+                        color = mapObj.property("color", Color.WHITE)
+                    )
                 }
             }
             return true

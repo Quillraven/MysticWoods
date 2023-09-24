@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.quillraven.fleks.Entity
+import com.github.quillraven.mysticwoods.dialog.Dialog
 
 fun Stage.fire(event: Event) = this.root.fire(event)
 
@@ -30,3 +31,5 @@ data class EntityAddItemEvent(val entity: Entity, val item: Entity) : Event()
 class GamePauseEvent : Event()
 
 class GameResumeEvent : Event()
+
+data class EntityDialogEvent(val dialog: Dialog) : Event()

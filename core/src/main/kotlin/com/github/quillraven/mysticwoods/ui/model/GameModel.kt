@@ -20,7 +20,7 @@ class GameModel(
 
     var playerLife by propertyNotify(1f)
 
-    private var lastEnemy = Entity(-1)
+    private var lastEnemy = Entity.NONE
     var enemyType by propertyNotify("")
 
     var enemyLife by propertyNotify(1f)

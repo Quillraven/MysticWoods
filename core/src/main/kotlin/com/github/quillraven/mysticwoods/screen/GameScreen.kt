@@ -14,12 +14,10 @@ import com.github.quillraven.mysticwoods.input.gdxInputProcessor
 import com.github.quillraven.mysticwoods.system.*
 import com.github.quillraven.mysticwoods.ui.disposeSkin
 import com.github.quillraven.mysticwoods.ui.loadSkin
+import com.github.quillraven.mysticwoods.ui.model.DialogModel
 import com.github.quillraven.mysticwoods.ui.model.GameModel
 import com.github.quillraven.mysticwoods.ui.model.InventoryModel
-import com.github.quillraven.mysticwoods.ui.view.PauseView
-import com.github.quillraven.mysticwoods.ui.view.gameView
-import com.github.quillraven.mysticwoods.ui.view.inventoryView
-import com.github.quillraven.mysticwoods.ui.view.pauseView
+import com.github.quillraven.mysticwoods.ui.view.*
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 import ktx.box2d.createWorld
@@ -60,6 +58,7 @@ class GameScreen(game: MysticWoods) : KtxScreen {
             add(MoveSystem())
             add(AttackSystem())
             add(LootSystem())
+            add(DialogSystem())
             add(InventorySystem())
             // DeadSystem must come before LifeSystem
             // because LifeSystem will add DeadComponent to an entity and sets its death animation.
@@ -91,6 +90,7 @@ class GameScreen(game: MysticWoods) : KtxScreen {
         // UI
         uiStage.actors {
             gameView(GameModel(eWorld, gameStage))
+            dialogView(DialogModel(gameStage))
             inventoryView(InventoryModel(eWorld, gameStage)) {
                 this.isVisible = false
             }

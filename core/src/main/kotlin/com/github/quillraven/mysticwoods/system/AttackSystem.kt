@@ -19,7 +19,7 @@ import ktx.math.component2
 class AttackSystem(
     private val phWorld: World = inject(),
     private val stage: Stage = inject("GameStage"),
-) : IteratingSystem(family { all(AttackComponent, PhysicComponent, ImageComponent) }) {
+) : IteratingSystem(family { all(AttackComponent, PhysicComponent, ImageComponent).none(DisarmComponent) }) {
     override fun onTickEntity(entity: Entity) {
         val attackCmp = entity[AttackComponent]
 
@@ -98,6 +98,10 @@ class AttackSystem(
                         lifeCmp.takeDamage += attackCmp.damage * MathUtils.random(0.9f, 1.1f)
                     }
                     if (isAttackerPlayer) {
+                        // player can trigger dialogs
+                        it.getOrNull(DialogComponent)?.let { dialogCmp ->
+                            dialogCmp.interactEntity = entity
+                        }
                         // player can open chests
                         it.getOrNull(LootComponent)?.let { lootCmp ->
                             lootCmp.interactEntity = entity

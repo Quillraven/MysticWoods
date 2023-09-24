@@ -188,6 +188,6 @@ data class AIComponent(
 
     companion object : ComponentType<AIComponent>() {
         private val bTreeParser = BehaviorTreeParser<AIEntity>()
-        val NO_TARGET = Entity(-1)
+        val NO_TARGET = Entity.NONE
     }
 }
