@@ -40,7 +40,7 @@ class DialogSystem(
             dialog = getDialog(dialogId).also { it.start() }
             currentDialog = dialog
             triggerEntity.getOrNull(MoveComponent)?.let { it.root = true }
-            triggerEntity.configure { it += DisarmComponent() }
+            triggerEntity.configure { it += DisarmComponent }
 
             stage.fire(EntityDialogEvent(dialog))
         }

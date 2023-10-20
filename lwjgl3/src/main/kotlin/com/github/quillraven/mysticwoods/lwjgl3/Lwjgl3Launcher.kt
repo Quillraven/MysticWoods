@@ -12,6 +12,6 @@ fun main() {
         setTitle("MysticWoods")
         setWindowedMode(1280, 720)
         setWindowIcon(*(arrayOf(128, 64, 32, 16).map { "libgdx$it.png" }.toTypedArray()))
-        useVsync(false)
+        useVsync(true)
     })
 }

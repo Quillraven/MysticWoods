@@ -93,7 +93,7 @@ class EntitySpawnSystem(
                 if (cfg.bodyType != BodyDef.BodyType.StaticBody) {
                     // entity is not static -> add collision component to spawn
                     // collision entities around it
-                    it += CollisionComponent()
+                    it += CollisionComponent
                 }
 
                 if (cfg.dialogId != DialogId.NONE) {
@@ -102,7 +102,7 @@ class EntitySpawnSystem(
 
                 when (type) {
                     PLAYER_TYPE -> {
-                        it += PlayerComponent()
+                        it += PlayerComponent
                         // add state component at the end since its ComponentListener initialization logic
                         // depends on some components added above
                         it += StateComponent()

@@ -1,10 +1,5 @@
 package com.github.quillraven.mysticwoods.component
 
-import com.github.quillraven.fleks.Component
-import com.github.quillraven.fleks.ComponentType
+import com.github.quillraven.fleks.EntityTag
 
-class DisarmComponent : Component<DisarmComponent> {
-    override fun type() = DisarmComponent
-
-    companion object : ComponentType<DisarmComponent>()
-}
+data object DisarmComponent : EntityTag()
