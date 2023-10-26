@@ -30,7 +30,7 @@ class CollisionSpawnSystem(
     private val physicWorld: World = inject(),
 ) : EventListener, IteratingSystem(family { all(CollisionComponent, PhysicComponent) }) {
     private val tileLayers = GdxArray<TiledMapTileLayer>()
-    private val processedCells = mutableSetOf<TiledMapTileLayer.Cell>()
+    private val processedCells = hashSetOf<TiledMapTileLayer.Cell>()
 
     private fun TiledMapTileLayer.forEachCell(
         startX: Int,

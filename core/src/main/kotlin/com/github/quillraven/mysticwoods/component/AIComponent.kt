@@ -180,7 +180,7 @@ enum class AIType {
 }
 
 data class AIComponent(
-    val nearbyEntities: MutableSet<Entity> = mutableSetOf(),
+    val nearbyEntities: MutableSet<Entity> = hashSetOf(),
     var type: AIType
 ) : Component<AIComponent> {
     lateinit var behaviorTree: BehaviorTree<AIEntity>

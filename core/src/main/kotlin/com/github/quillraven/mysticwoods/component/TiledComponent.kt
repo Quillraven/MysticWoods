@@ -9,7 +9,7 @@ class TiledComponent(
     val cell: TiledMapTileLayer.Cell
 ) : Component<TiledComponent> {
 
-    val nearbyEntities = mutableSetOf<Entity>()
+    val nearbyEntities = hashSetOf<Entity>()
 
     override fun type() = TiledComponent
 

@@ -8,7 +8,7 @@ data class PortalComponent(
     var id: Int = -1,
     var toMap: String = "",
     var toPortal: Int = 0,
-    var triggerEntities: MutableSet<Entity> = mutableSetOf(),
+    var triggerEntities: MutableSet<Entity> = hashSetOf(),
 ) : Component<PortalComponent> {
     override fun type() = PortalComponent
 

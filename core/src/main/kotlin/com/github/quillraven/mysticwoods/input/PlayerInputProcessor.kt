@@ -38,7 +38,7 @@ class PlayerInputProcessor(
     private var playerCos = 0f
     private var playerSin = 0f
     private var paused = false
-    private val pressedKeys = mutableSetOf<Int>()
+    private val pressedKeys = hashSetOf<Int>()
 
     init {
         gdxInputProcessor(this)
