@@ -21,7 +21,7 @@ class FlipImage : Image() {
         if (toDraw is TransformDrawable && (scaleX != 1f || scaleY != 1f || rotation != 0f)) {
             toDraw.draw(
                 batch,
-                if (flipX) x + imageX + imageWidth * scaleX else x + imageX,
+                if (flipX) x + imageX * scaleX else x + imageX,
                 y + imageY,
                 originX - imageX,
                 originY - imageY,
