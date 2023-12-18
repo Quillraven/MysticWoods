@@ -14,7 +14,7 @@ class InventoryTestScreen : TestScreen() {
     private val model = InventoryModel(eWorld, gameStage)
     private lateinit var overlay: InventoryView
     private val player = eWorld.entity {
-        it += PlayerComponent()
+        it += PlayerComponent
         it += InventoryComponent()
     }
 
