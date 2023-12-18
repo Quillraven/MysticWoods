@@ -1,8 +1,8 @@
 # Mystic Woods
 
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Quillraven/Fleks/blob/master/LICENSE)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.10-red.svg)](http://kotlinlang.org/)
-[![Fleks](https://img.shields.io/badge/Fleks-2.5-success.svg)](https://github.com/Quillraven/Fleks)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.21-red.svg)](http://kotlinlang.org/)
+[![Fleks](https://img.shields.io/badge/Fleks-2.6-success.svg)](https://github.com/Quillraven/Fleks)
 
 [![LibGDX](https://img.shields.io/badge/LibGDX-1.12-blue.svg)](https://github.com/libgdx/libgdx)
 [![LibKTX](https://img.shields.io/badge/LibKTX-1.12.0--rc1-blue.svg)](https://libktx.github.io/)
