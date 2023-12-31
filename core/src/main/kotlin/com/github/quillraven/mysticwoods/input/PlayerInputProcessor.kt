@@ -12,6 +12,7 @@ import com.github.quillraven.mysticwoods.component.PlayerComponent
 import com.github.quillraven.mysticwoods.event.GamePauseEvent
 import com.github.quillraven.mysticwoods.event.GameResumeEvent
 import com.github.quillraven.mysticwoods.event.fire
+import com.github.quillraven.mysticwoods.ui.view.InventoryView
 import ktx.app.KtxInputAdapter
 
 fun gdxInputProcessor(processor: InputProcessor) {
@@ -73,7 +74,8 @@ class PlayerInputProcessor(
             playerEntities.forEach { it[AttackComponent].doAttack = true }
             return true
         } else if (keycode == I) {
-            uiStage.actors.get(1).isVisible = !uiStage.actors.get(1).isVisible
+            val invView = uiStage.actors.first { it is InventoryView }
+            invView.isVisible = !invView.isVisible
         } else if (keycode == P) {
             paused = !paused
             gameStage.fire(if (paused) GamePauseEvent() else GameResumeEvent())
